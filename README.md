@@ -6,48 +6,23 @@
 <title>VERBOSE — Ultra Premium Earning Platform</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 <style>
-body {
-  margin:0; font-family:'Orbitron',sans-serif;
-  overflow-x:hidden;
-  background:#000;
-  color:#fff;
-}
+body {margin:0;font-family:'Orbitron',sans-serif;overflow-x:hidden;background:#000;color:#fff;}
 h1,h2,h3{text-align:center;color:#0ff;text-shadow:0 0 5px #0ff,0 0 10px #0ff;}
 .container{width:90%;margin:20px auto;}
-button{
-  cursor:pointer;padding:10px 20px;margin:5px;border:none;border-radius:10px;
-  background:#0ff;color:#000;font-weight:bold;font-size:16px;transition:0.3s;
-  box-shadow:0 0 5px #0ff,0 0 10px #0ff;
-}
-button:hover{
-  background:#0cc; box-shadow:0 0 15px #0ff,0 0 30px #0ff; transform:scale(1.05);
-}
+button{cursor:pointer;padding:10px 20px;margin:5px;border:none;border-radius:10px;background:#0ff;color:#000;font-weight:bold;font-size:16px;transition:0.3s;box-shadow:0 0 5px #0ff,0 0 10px #0ff;}
+button:hover{background:#0cc; box-shadow:0 0 15px #0ff,0 0 30px #0ff; transform:scale(1.05);}
 input,select{padding:10px;margin:5px;border-radius:5px;border:none;font-size:16px;}
-.plan-card{
-  background:rgba(0,255,255,0.1);border:1px solid #0ff;padding:15px;margin:10px 0;
-  border-radius:15px;animation:neonPulse 2s infinite alternate;position:relative;
-}
+.plan-card{background:rgba(0,255,255,0.1);border:1px solid #0ff;padding:15px;margin:10px 0;border-radius:15px;animation:neonPulse 2s infinite alternate;position:relative;}
 .plan-card h3{color:#0ff;text-shadow:0 0 10px #0ff;}
-.plan-card .badge{
-  position:absolute;top:10px;right:10px;background:#ff0;color:#000;padding:5px 10px;
-  border-radius:10px;font-weight:bold;animation:blink 1s infinite alternate;
-}
-@keyframes neonPulse{
-  0%{box-shadow:0 0 5px #0ff}100%{box-shadow:0 0 25px #0ff;}
-}
-@keyframes blink{
-  0%{opacity:1}100%{opacity:0.3}
-}
-/* Background animation particles */
+.plan-card .badge{position:absolute;top:10px;right:10px;background:#ff0;color:#000;padding:5px 10px;border-radius:10px;font-weight:bold;animation:blink 1s infinite alternate;}
+@keyframes neonPulse{0%{box-shadow:0 0 5px #0ff}100%{box-shadow:0 0 25px #0ff;}}
+@keyframes blink{0%{opacity:1}100%{opacity:0.3}}
 #bgCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;}
 .dashboard,.auth,.deposit,.withdrawal,.about{display:none;}
 .active{display:block;}
 .plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));grid-gap:15px;}
 .balance-display{font-weight:bold;color:#0ff;text-align:center;margin:10px 0;font-size:18px;}
-.notification{
-  position:fixed;bottom:20px;right:20px;background:#0ff;color:#000;padding:10px 20px;
-  border-radius:10px;font-weight:bold;box-shadow:0 0 10px #0ff;animation:fadeInOut 3s forwards;
-}
+.notification{position:fixed;bottom:20px;right:20px;background:#0ff;color:#000;padding:10px 20px;border-radius:10px;font-weight:bold;box-shadow:0 0 10px #0ff;animation:fadeInOut 3s forwards;}
 @keyframes fadeInOut{0%{opacity:0;transform:translateY(20px);}10%{opacity:1;transform:translateY(0);}90%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-20px);}}
 </style>
 </head>
@@ -113,20 +88,14 @@ input,select{padding:10px;margin:5px;border-radius:5px;border:none;font-size:16p
 </div>
 
 <script>
-// --- Canvas Background Neon Particles ---
+// --- Background Neon Particles ---
 const canvas = document.getElementById('bgCanvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 const particles = [];
 for(let i=0;i<150;i++){
-  particles.push({
-    x:Math.random()*canvas.width,
-    y:Math.random()*canvas.height,
-    r:Math.random()*2+1,
-    dx:(Math.random()-0.5)*1.5,
-    dy:(Math.random()-0.5)*1.5
-  });
+  particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,dx:(Math.random()-0.5)*1.5,dy:(Math.random()-0.5)*1.5});
 }
 function animateBG(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
@@ -134,10 +103,9 @@ function animateBG(){
     ctx.beginPath();
     ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
     ctx.fillStyle='rgba(0,255,255,0.7)';
-    ctx.shadowBlur = 10;
-    ctx.shadowColor = '#0ff';
+    ctx.shadowBlur = 10; ctx.shadowColor = '#0ff';
     ctx.fill();
-    p.x+=p.dx;p.y+=p.dy;
+    p.x+=p.dx; p.y+=p.dy;
     if(p.x<0||p.x>canvas.width)p.dx*=-1;
     if(p.y<0||p.y>canvas.height)p.dy*=-1;
   });
@@ -146,64 +114,43 @@ function animateBG(){
 animateBG();
 window.onresize=()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
 
-// --- User System ---
+// --- User System Fixed ---
+let users = JSON.parse(localStorage.getItem('users')) || [];
 let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
-const users = JSON.parse(localStorage.getItem('users')) || [];
 
-const plans=[
-  {name:'Plan 1', invest:250, days:25, totalProfit:900},
-  {name:'Plan 2', invest:500, days:30, totalProfit:2000},
-  {name:'Plan 3', invest:1000, days:35, totalProfit:4500},
-  {name:'Plan 4', invest:1500, days:40, totalProfit:7000},
-  {name:'Plan 5', invest:2000, days:45, totalProfit:9500},
-  {name:'Plan 6', invest:3000, days:50, totalProfit:15000},
-  {name:'Plan 7', invest:4000, days:60, totalProfit:10000},
-  {name:'Plan 8', invest:5000, days:70, totalProfit:12500},
-  {name:'Plan 9', invest:6000, days:80, totalProfit:15000},
-  {name:'Plan 10', invest:7000, days:90, totalProfit:17500},
-  {name:'Plan 11', invest:8000, days:100, totalProfit:20000},
-  {name:'Plan 12', invest:9000, days:110, totalProfit:22500},
-  {name:'Plan 13', invest:10000, days:120, totalProfit:25000},
-  {name:'Plan 14', invest:12000, days:130, totalProfit:30000},
-  {name:'Plan 15', invest:14000, days:140, totalProfit:35000},
-  {name:'Plan 16', invest:16000, days:150, totalProfit:40000},
-  {name:'Plan 17', invest:18000, days:160, totalProfit:45000},
-  {name:'Plan 18', invest:20000, days:170, totalProfit:50000},
-  {name:'Plan 19', invest:25000, days:180, totalProfit:62500},
-  {name:'Plan 20', invest:35000, days:200, totalProfit:87500},
-  {name:'Plan 21', invest:40000, days:210, totalProfit:100000},
-  {name:'Plan 22', invest:45000, days:220, totalProfit:112500},
-  {name:'Plan 23', invest:50000, days:230, totalProfit:125000},
-  {name:'Plan 24', invest:55000, days:240, totalProfit:137500},
-  {name:'Plan 25', invest:60000, days:250, totalProfit:150000}
-];
+const plans=[{name:'Plan 1', invest:250, days:25, totalProfit:900},{name:'Plan 2', invest:500, days:30, totalProfit:2000},{name:'Plan 3', invest:1000, days:35, totalProfit:4500},{name:'Plan 4', invest:1500, days:40, totalProfit:7000},{name:'Plan 5', invest:2000, days:45, totalProfit:9500},{name:'Plan 6', invest:3000, days:50, totalProfit:15000},{name:'Plan 7', invest:4000, days:60, totalProfit:10000},{name:'Plan 8', invest:5000, days:70, totalProfit:12500},{name:'Plan 9', invest:6000, days:80, totalProfit:15000},{name:'Plan 10', invest:7000, days:90, totalProfit:17500},{name:'Plan 11', invest:8000, days:100, totalProfit:20000},{name:'Plan 12', invest:9000, days:110, totalProfit:22500},{name:'Plan 13', invest:10000, days:120, totalProfit:25000},{name:'Plan 14', invest:12000, days:130, totalProfit:30000},{name:'Plan 15', invest:14000, days:140, totalProfit:35000},{name:'Plan 16', invest:16000, days:150, totalProfit:40000},{name:'Plan 17', invest:18000, days:160, totalProfit:45000},{name:'Plan 18', invest:20000, days:170, totalProfit:50000},{name:'Plan 19', invest:25000, days:180, totalProfit:62500},{name:'Plan 20', invest:35000, days:200, totalProfit:87500},{name:'Plan 21', invest:40000, days:210, totalProfit:100000},{name:'Plan 22', invest:45000, days:220, totalProfit:112500},{name:'Plan 23', invest:50000, days:230, totalProfit:125000},{name:'Plan 24', invest:55000, days:240, totalProfit:137500},{name:'Plan 25', invest:60000, days:250, totalProfit:150000}];
 
 function signup(){
-  const u=document.getElementById('username').value;
-  const p=document.getElementById('password').value;
-  if(!u||!p){alert('Enter username & password');return;}
-  if(users.find(x=>x.username===u)){alert('User exists');return;}
+  const u=document.getElementById('username').value.trim();
+  const p=document.getElementById('password').value.trim();
+  if(!u||!p){ alert('Enter username & password'); return; }
+  if(users.find(user=>user.username===u)){ alert('Username exists'); return; }
   users.push({username:u,password:p,balance:0});
   localStorage.setItem('users',JSON.stringify(users));
-  alert('Signup Success');
+  alert('Signup success. Please login.');
+  document.getElementById('username').value=''; document.getElementById('password').value='';
 }
 
 function login(){
-  const u=document.getElementById('username').value;
-  const p=document.getElementById('password').value;
-  const user=users.find(x=>x.username===u && x.password===p);
-  if(!user){alert('Invalid');return;}
-  currentUser=user;
+  const u=document.getElementById('username').value.trim();
+  const p=document.getElementById('password').value.trim();
+  const user = users.find(user=>user.username===u && user.password===p);
+  if(!user){ alert('Invalid username/password'); return; }
+  currentUser = user;
   localStorage.setItem('currentUser',JSON.stringify(currentUser));
   showDashboard();
 }
 
 function googleLogin(){
-  alert('Google login simulated.');
-  currentUser={username:'GmailUser', balance:0};
+  const gmailUser='GmailUser';
+  let user = users.find(u=>u.username===gmailUser);
+  if(!user){ user={username:gmailUser,password:'',balance:0}; users.push(user); localStorage.setItem('users',JSON.stringify(users)); }
+  currentUser = user;
   localStorage.setItem('currentUser',JSON.stringify(currentUser));
   showDashboard();
 }
+
+function saveCurrentUser(){ const idx = users.findIndex(u=>u.username===currentUser.username); if(idx>=0){ users[idx]=currentUser; localStorage.setItem('users',JSON.stringify(users)); } }
 
 function showDashboard(){
   document.getElementById('auth').classList.remove('active');
@@ -212,95 +159,37 @@ function showDashboard(){
   document.getElementById('about').classList.remove('active');
   document.getElementById('dashboard').classList.add('active');
   document.getElementById('userDisplay').innerText=currentUser.username;
-  document.getElementById('userBalance').innerText=currentUser.balance || 0;
-  loadPlans();
-  fillPlanSelect();
+  document.getElementById('userBalance').innerText=currentUser.balance||0;
+  loadPlans(); fillPlanSelect();
 }
 
-function logout(){
-  currentUser=null;
-  localStorage.removeItem('currentUser');
-  document.getElementById('dashboard').classList.remove('active');
-  document.getElementById('auth').classList.add('active');
-}
+function logout(){ currentUser=null; localStorage.removeItem('currentUser'); document.getElementById('dashboard').classList.remove('active'); document.getElementById('auth').classList.add('active'); }
 
 function loadPlans(){
-  const grid=document.getElementById('planGrid');
-  grid.innerHTML='';
+  const grid=document.getElementById('planGrid'); grid.innerHTML='';
   plans.forEach(p=>{
     const daily=Math.round(p.totalProfit/p.days);
-    const card=document.createElement('div');
-    card.className='plan-card';
-    const badge = p.totalProfit>10000 ? `<div class="badge">🔥Turbo🔥</div>` : '';
-    card.innerHTML=`${badge}<h3>${p.name}</h3>
-      <p>Invest: ${p.invest} PKR</p>
-      <p>Days: ${p.days}</p>
-      <p>Daily Profit: ${daily} PKR</p>
-      <p>Total Profit: ${p.totalProfit} PKR</p>
-      <p>Total Return: ${p.invest+p.totalProfit} PKR</p>`;
+    const card=document.createElement('div'); card.className='plan-card';
+    const badge=p.totalProfit>10000?'<div class="badge">🔥Turbo🔥</div>':'';
+    card.innerHTML=`${badge}<h3>${p.name}</h3><p>Invest: ${p.invest} PKR</p><p>Days: ${p.days}</p><p>Daily Profit: ${daily} PKR</p><p>Total Profit: ${p.totalProfit} PKR</p><p>Total Return: ${p.invest+p.totalProfit} PKR</p>`;
     grid.appendChild(card);
   });
 }
 
-function fillPlanSelect(){
-  const sel=document.getElementById('planSelect');
-  sel.innerHTML='';
-  plans.forEach((p,i)=>{
-    const opt=document.createElement('option');
-    opt.value=i;
-    opt.innerText=`${p.name} — ${p.invest} PKR`;
-    sel.appendChild(opt);
-  });
-  fillAmount();
-}
-
-function fillAmount(){
-  const idx=document.getElementById('planSelect').value;
-  document.getElementById('amountInput').value=plans[idx].invest;
-}
-
-function copyNumber(){
-  const method=document.getElementById('paymentMethod').value;
-  document.getElementById('paymentNumber').value=method==='jazzcash'?'03705519562':'03379827882';
-}
-
-function submitDeposit(){
-  const amount=parseInt(document.getElementById('amountInput').value);
-  currentUser.balance = (currentUser.balance||0)+amount;
-  document.getElementById('userBalance').innerText=currentUser.balance;
-  saveCurrentUser();
-  showNotification('Deposit submitted!');
-}
-
-function submitWithdrawal(){
-  const amount=parseInt(document.getElementById('withdrawAmount').value);
-  if(amount>currentUser.balance){alert('Insufficient balance');return;}
-  currentUser.balance -= amount;
-  document.getElementById('userBalance').innerText=currentUser.balance;
-  saveCurrentUser();
-  showNotification('Withdrawal submitted!');
-}
-
-function saveCurrentUser(){
-  const idx=users.findIndex(u=>u.username===currentUser.username);
-  if(idx>=0){users[idx]=currentUser; localStorage.setItem('users',JSON.stringify(users));}
-}
+function fillPlanSelect(){ const sel=document.getElementById('planSelect'); sel.innerHTML=''; plans.forEach((p,i)=>{ const opt=document.createElement('option'); opt.value=i; opt.innerText=`${p.name} — ${p.invest} PKR`; sel.appendChild(opt); }); fillAmount(); }
+function fillAmount(){ const idx=document.getElementById('planSelect').value; document.getElementById('amountInput').value=plans[idx].invest; }
+function copyNumber(){ const method=document.getElementById('paymentMethod').value; document.getElementById('paymentNumber').value=method==='jazzcash'?'03705519562':'03379827882'; }
+function submitDeposit(){ const amount=parseInt(document.getElementById('amountInput').value); currentUser.balance=(currentUser.balance||0)+amount; document.getElementById('userBalance').innerText=currentUser.balance; saveCurrentUser(); showNotification('Deposit submitted!'); }
+function submitWithdrawal(){ const amount=parseInt(document.getElementById('withdrawAmount').value); if(amount>currentUser.balance){alert('Insufficient balance'); return;} currentUser.balance-=amount; document.getElementById('userBalance').innerText=currentUser.balance; saveCurrentUser(); showNotification('Withdrawal submitted!'); }
 
 function showDeposit(){document.getElementById('dashboard').classList.remove('active');document.getElementById('deposit').classList.add('active');fillPlanSelect();copyNumber();}
 function showWithdrawal(){document.getElementById('dashboard').classList.remove('active');document.getElementById('withdrawal').classList.add('active');}
 function showAbout(){document.getElementById('dashboard').classList.remove('active');document.getElementById('about').classList.add('active');}
 function backDashboard(){document.querySelectorAll('.dashboard,.deposit,.withdrawal,.about').forEach(el=>el.classList.remove('active'));document.getElementById('dashboard').classList.add('active');}
 
-// Floating notifications
-function showNotification(msg){
-  const notif=document.createElement('div');
-  notif.className='notification';
-  notif.innerText=msg;
-  document.body.appendChild(notif);
-  setTimeout(()=>{document.body.removeChild(notif);},3000);
-}
+function showNotification(msg){ const notif=document.createElement('div'); notif.className='notification'; notif.innerText=msg; document.body.appendChild(notif); setTimeout(()=>{document.body.removeChild(notif);},3000); }
 
-window.onload = function(){ if(currentUser){showDashboard();} }
+window.onload=function(){ if(currentUser){showDashboard();} }
 </script>
 </body>
 </html>
