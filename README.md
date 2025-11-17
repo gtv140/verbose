@@ -219,147 +219,190 @@ document.getElementById('openAuth').addEventListener('click',()=>showTab('authSe
 const logoutBtn=document.getElementById('logoutBtn');
 logoutBtn.addEventListener('click',()=>{simpleLogout();});
 
+// plans array
+const plans=[
+  {name:'Plan 1',invest:250,days:25,totalProfit:900},
+  {name:'Plan 2',invest:500,days:30,totalProfit:2000},
+  {name:'Plan 3',invest:1000,days:35,totalProfit:4500},
+  {name:'Plan 4',invest:1500,days:40,totalProfit:7000}
+];
+
 // init view
 function initView(){
-if(currentUser){document.getElementById('welcome').innerText=`Hi, ${currentUser.username}`;document.getElementById('logoutBtn').style.display='block';showTab('dashboard');updateBalanceUI();}
-else{document.getElementById('welcome').innerText='Not logged in';document.getElementById('logoutBtn').style.display='none';showTab('authSection');}
-buildPlanGrid();populatePlanSelect();renderTransactions();
+  if(currentUser){
+    document.getElementById('welcome').innerText=`Hi, ${currentUser.username}`;
+    document.getElementById('logoutBtn').style.display='block';
+    showTab('dashboard');
+    updateBalanceUI();
+  } else {
+    document.getElementById('welcome').innerText='Not logged in';
+    document.getElementById('logoutBtn').style.display='none';
+    showTab('authSection');
+  }
+  buildPlanGrid();
+  populatePlanSelect();
+  renderTransactions();
 }
 initView();
 
 // AUTH
 function simpleSignup(){
-const u=document.getElementById('inpUser').value.trim();
-const p=document.getElementById('inpPass').value.trim();
-if(!u||!p){showNotif('Fill username & password');return;}
-realUser={username:u,password:p,balance:0,activePlans:[]};
-setSavedUser(realUser);showNotif('Signup saved. Now login.');document.getElementById('inpPass').value='';
+  const u=document.getElementById('inpUser').value.trim();
+  const p=document.getElementById('inpPass').value.trim();
+  if(!u||!p){showNotif('Fill username & password');return;}
+  realUser={username:u,password:p,balance:0,activePlans:[]};
+  setSavedUser(realUser);
+  showNotif('Signup saved. Now login.');
+  document.getElementById('inpPass').value='';
 }
 function simpleLogin(){
-const u=document.getElementById('inpUser').value.trim();
-const p=document.getElementById('inpPass').value.trim();
-if(!u||!p){showNotif('Enter credentials');return;}
-const saved=getSavedUser();
-if(!saved){showNotif('No account. Signup first');return;}
-if(saved.username===u && saved.password===p){
-currentUser=saved;setCurrent(currentUser);document.getElementById('welcome').innerText=`Hi, ${currentUser.username}`;document.getElementById('logoutBtn').style.display='block';updateBalanceUI();showNotif('Login successful');showTab('dashboard');renderTransactions();
-}else{showNotif('Invalid credentials');}
+  const u=document.getElementById('inpUser').value.trim();
+  const p=document.getElementById('inpPass').value.trim();
+  const saved=getSavedUser();
+  if(!saved){showNotif('No account. Signup first');return;}
+  if(saved.username===u && saved.password===p){
+    currentUser=saved;setCurrent(currentUser);
+    document.getElementById('welcome').innerText=`Hi, ${currentUser.username}`;
+    document.getElementById('logoutBtn').style.display='block';
+    updateBalanceUI();
+    showNotif('Login successful');
+    showTab('dashboard');
+    renderTransactions();
+  }else{showNotif('Invalid credentials');}
 }
-function simpleLogout(){currentUser=null;localStorage.removeItem('currentUser');document.getElementById('welcome').innerText='Not logged in';document.getElementById('logoutBtn').style.display='none';showNotif('Logged out');showTab('authSection');}
+function simpleLogout(){
+  currentUser=null;
+  localStorage.removeItem('currentUser');
+  document.getElementById('welcome').innerText='Not logged in';
+  document.getElementById('logoutBtn').style.display='none';
+  showNotif('Logged out');
+  showTab('authSection');
+}
 
 // show tabs
-function showTab(id){document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));document.getElementById(id)?.classList.add('active');navButtons.forEach(b=>b.classList.remove('active'));document.querySelector(`nav button[data-tab="${id}"]`)?document.querySelector(`nav button[data-tab="${id}"]`).classList.add('active'):null;}
+function showTab(id){
+  document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+  navButtons.forEach(b=>b.classList.remove('active'));
+  document.querySelector(`nav button[data-tab="${id}"]`)?document.querySelector(`nav button[data-tab="${id}"]`).classList.add('active'):null;
+}
 
 // notifications
-function showNotif(msg){const n=document.createElement('div');n.className='notif';n.innerText=msg;document.body.appendChild(n);setTimeout(()=>{n.remove();},2500);}
+function showNotif(msg){
+  const n=document.createElement('div');
+  n.className='notif';
+  n.innerText=msg;
+  document.body.appendChild(n);
+  setTimeout(()=>{n.remove();},2500);
+}
 
 // balance & active plans
-function updateBalanceUI(){if(!currentUser) return;document.getElementById('balDisplay').innerText=(currentUser.balance||0)+' PKR';document.getElementById('activePlans').innerText=(currentUser.activePlans&&currentUser.activePlans.length)?currentUser.activePlans.map(x=>x.name).join(', '):'No active plans';realUser=currentUser;setSavedUser(realUser);setCurrent(currentUser);}
-function backToDashboard(){showTab('dashboard');}
+function updateBalanceUI(){
+  if(!currentUser) return;
+  document.getElementById('balDisplay').innerText = currentUser.balance + " PKR";
+  const ap = document.getElementById('activePlans');
+  if(currentUser.activePlans.length === 0){
+    ap.innerText = "No active plans";
+  } else {
+    ap.innerHTML = currentUser.activePlans.map(p=>`${p.name} — ${p.invest} PKR`).join('<br>');
+  }
+}
 
-// plans
-const plans=[
-  {name:'Plan 1',invest:250,days:25,totalProfit:900},
-  {name:'Plan 2',invest:500,days:30,totalProfit:1800},
-  {name:'Plan 3',invest:1000,days:45,totalProfit:4000},
-  {name:'Plan 4',invest:2000,days:60,totalProfit:9000}
-];
-
-// build plan cards
+// build plans grid
 function buildPlanGrid(){
-  const grid=document.getElementById('planGrid');
-  grid.innerHTML='';
+  const grid = document.getElementById('planGrid');
+  grid.innerHTML = '';
   plans.forEach(p=>{
-    const card=document.createElement('div');
+    const card = document.createElement('div');
     card.className='plan-card';
-    card.innerHTML=`<h3>${p.name}</h3>
-      <div>Investment: ${p.invest} PKR</div>
-      <div>Duration: ${p.days} Days</div>
-      <div>Total Profit: ${p.totalProfit} PKR</div>
-      <button class="primary" onclick="selectPlan('${p.name}')">Select Plan</button>`;
+    card.innerHTML=`<div class="badge">${p.invest} PKR</div>
+                    <h4>${p.name}</h4>
+                    <div class="small muted">Duration: ${p.days} days</div>
+                    <div class="small muted">Profit: ${p.totalProfit} PKR</div>`;
     grid.appendChild(card);
   });
 }
 
-// populate deposit plan dropdown
+// populate deposit plan select
 function populatePlanSelect(){
-  const sel=document.getElementById('planSelect');
-  sel.innerHTML='<option value="">Select a plan</option>';
-  plans.forEach(p=>{sel.innerHTML+=`<option value="${p.name}">${p.name} - ${p.invest} PKR</option>`;});
-  onPlanChange();
+  const sel = document.getElementById('planSelect');
+  sel.innerHTML = '<option value="">Select Plan</option>';
+  plans.forEach((p,i)=>{
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.innerText = `${p.name} — ${p.invest} PKR`;
+    sel.appendChild(opt);
+  });
 }
 
-// when plan dropdown changes
+// on plan change
 function onPlanChange(){
-  const sel=document.getElementById('planSelect');
-  const val=sel.value;
-  const amtInput=document.getElementById('amountInput');
-  if(!val){amtInput.value='';return;}
-  const plan=plans.find(x=>x.name===val);
-  if(plan) amtInput.value=plan.invest;
-  updatePayNumber();
+  const idx = document.getElementById('planSelect').value;
+  if(idx === ""){document.getElementById('amountInput').value=''; return;}
+  const p = plans[idx];
+  document.getElementById('amountInput').value = p.invest;
+  onMethodChange();
 }
 
-// copy number
-function copyText(txt){navigator.clipboard.writeText(txt);showNotif('Copied: '+txt);}
-function copyCurrentNumber(){const n=document.getElementById('payNumber').value; if(n) copyText(n);}
-function onMethodChange(){updatePayNumber();}
-function updatePayNumber(){
-  const method=document.getElementById('payMethod').value;
-  const numbers={jazzcash:'03705519562',easypaisa:'03379827882'};
-  document.getElementById('payNumber').value=numbers[method]||'';
+// on payment method change
+function onMethodChange(){
+  const method = document.getElementById('payMethod').value;
+  const jazz = '03705519562';
+  const easy = '03379827882';
+  document.getElementById('payNumber').value = (method==='jazzcash')?jazz:easy;
 }
 
-// select plan button in plan cards
-function selectPlan(name){
-  document.getElementById('planSelect').value=name;
-  onPlanChange();
-  showTab('deposit');
-}
+// copy functions
+function copyText(txt){navigator.clipboard.writeText(txt); showNotif('Copied!');}
+function copyCurrentNumber(){const num=document.getElementById('payNumber').value; if(num) copyText(num);}
 
 // submit deposit
 function submitDeposit(){
   if(!currentUser){showNotif('Login first'); return;}
-  const planName=document.getElementById('planSelect').value;
-  if(!planName){showNotif('Select a plan'); return;}
-  const plan=plans.find(p=>p.name===planName);
-  const amount=parseFloat(document.getElementById('amountInput').value);
-  if(isNaN(amount)||amount<=0){showNotif('Invalid amount');return;}
-  currentUser.balance=(currentUser.balance||0)+amount;
-  currentUser.activePlans.push({name:plan.name,invest:plan.invest,date:new Date().toLocaleString()});
-  const tx={type:'Deposit',amount:amount,plan:plan.name,time:new Date().toLocaleString(),status:'Success'};
-  transactions.push(tx);localStorage.setItem('verbose_tx',JSON.stringify(transactions));
-  updateBalanceUI();renderTransactions();
-  showNotif(`Deposited ${amount} PKR to ${plan.name}`);
-  backToDashboard();
+  const idx = document.getElementById('planSelect').value;
+  if(idx===""){showNotif('Select a plan'); return;}
+  const p = plans[idx];
+  // simulate deposit
+  currentUser.balance += p.invest;
+  currentUser.activePlans.push(p);
+  setCurrent(currentUser); setSavedUser(currentUser);
+  transactions.push({type:'Deposit',amount:p.invest,plan:p.name,time:new Date().toLocaleString(),status:'Success'});
+  localStorage.setItem('verbose_tx',JSON.stringify(transactions));
+  showNotif('Deposit successful');
+  updateBalanceUI(); renderTransactions(); backToDashboard();
+}
+
+// back to dashboard
+function backToDashboard(){showTab('dashboard');}
+
+// transactions render
+function renderTransactions(){
+  const tbody = document.querySelector('#txTable tbody');
+  tbody.innerHTML='';
+  transactions.slice().reverse().forEach(tx=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML=`<td>${tx.type}</td><td>${tx.amount}</td><td>${tx.plan||'-'}</td><td>${tx.time}</td><td class="${tx.status==='Success'?'success':''}">${tx.status}</td>`;
+    tbody.appendChild(tr);
+  });
 }
 
 // withdrawal
 function submitWithdrawal(){
   if(!currentUser){showNotif('Login first'); return;}
-  const amt=parseFloat(document.getElementById('withdrawAmount').value);
-  if(isNaN(amt)||amt<=0){showNotif('Enter valid amount'); return;}
+  const amt = parseInt(document.getElementById('withdrawAmount').value);
+  if(isNaN(amt) || amt<=0){showNotif('Enter valid amount'); return;}
   if(amt>currentUser.balance){showNotif('Insufficient balance'); return;}
-  const method=document.getElementById('withdrawMethod').value;
-  const account=document.getElementById('withdrawAccount').value.trim();
-  if(!account){showNotif('Enter account'); return;}
-  currentUser.balance-=amt;
-  const tx={type:'Withdrawal',amount:amt,plan:'-',time:new Date().toLocaleString(),status:'Pending'};
-  transactions.push(tx);localStorage.setItem('verbose_tx',JSON.stringify(transactions));
-  updateBalanceUI();renderTransactions();
-  showNotif(`Withdrawal requested: ${amt} PKR via ${method}`);
-  backToDashboard();
+  const method = document.getElementById('withdrawMethod').value;
+  const acc = document.getElementById('withdrawAccount').value.trim();
+  if(!acc){showNotif('Enter account number'); return;}
+  currentUser.balance -= amt;
+  setCurrent(currentUser); setSavedUser(currentUser);
+  transactions.push({type:'Withdrawal',amount:amt,plan:'-',time:new Date().toLocaleString(),status:'Success'});
+  localStorage.setItem('verbose_tx',JSON.stringify(transactions));
+  showNotif('Withdrawal requested');
+  updateBalanceUI(); renderTransactions(); backToDashboard();
 }
 
-// transactions table
-function renderTransactions(){
-  const tbody=document.querySelector('#txTable tbody'); tbody.innerHTML='';
-  transactions.forEach(tx=>{
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${tx.type}</td><td>${tx.amount}</td><td>${tx.plan}</td><td>${tx.time}</td><td>${tx.status}</td>`;
-    tbody.appendChild(tr);
-  });
-}
 </script>
 </body>
 </html>
