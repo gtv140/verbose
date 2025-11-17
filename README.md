@@ -3,22 +3,49 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VERBOSE — Premium Earning Platform</title>
+<title>VERBOSE — Ultra Premium Earning Platform</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 <style>
-body { margin:0; font-family:'Orbitron',sans-serif; background:linear-gradient(270deg,#0f0c29,#302b63,#24243e); background-size:600% 600%; animation:gradientBG 15s ease infinite; color:#fff; overflow-x:hidden;}
-@keyframes gradientBG {0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+body {
+  margin:0; font-family:'Orbitron',sans-serif;
+  background:linear-gradient(270deg,#0f0c29,#302b63,#24243e);
+  background-size:600% 600%;
+  animation:gradientBG 15s ease infinite;
+  color:#fff; overflow-x:hidden;
+}
+@keyframes gradientBG {
+  0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}
+}
 h1,h2,h3{text-align:center;color:#0ff;text-shadow:0 0 5px #0ff,0 0 10px #0ff;}
 .container{width:90%;margin:20px auto;}
-button{cursor:pointer;padding:10px 20px;margin:5px;border:none;border-radius:5px;background:#0ff;color:#000;font-weight:bold;transition:0.3s;}
-button:hover{background:#0cc;}
-input,select{padding:10px;margin:5px;border-radius:5px;border:none;}
-.plan-card{background:rgba(0,255,255,0.1);border:1px solid #0ff;padding:15px;margin:10px 0;border-radius:10px;animation:neonPulse 2s infinite alternate;}
-@keyframes neonPulse{0%{box-shadow:0 0 5px #0ff}100%{box-shadow:0 0 20px #0ff;}}
+button{
+  cursor:pointer;padding:10px 20px;margin:5px;border:none;border-radius:10px;
+  background:#0ff;color:#000;font-weight:bold;font-size:16px;transition:0.3s;
+  box-shadow:0 0 5px #0ff,0 0 10px #0ff;
+}
+button:hover{
+  background:#0cc; box-shadow:0 0 15px #0ff,0 0 30px #0ff; transform:scale(1.05);
+}
+input,select{padding:10px;margin:5px;border-radius:5px;border:none;font-size:16px;}
+.plan-card{
+  background:rgba(0,255,255,0.1);border:1px solid #0ff;padding:15px;margin:10px 0;
+  border-radius:15px;animation:neonPulse 2s infinite alternate;position:relative;
+}
+.plan-card h3{color:#0ff;text-shadow:0 0 10px #0ff;}
+.plan-card .badge{
+  position:absolute;top:10px;right:10px;background:#ff0;color:#000;padding:5px 10px;
+  border-radius:10px;font-weight:bold;animation:blink 1s infinite alternate;
+}
+@keyframes neonPulse{
+  0%{box-shadow:0 0 5px #0ff}100%{box-shadow:0 0 25px #0ff;}
+}
+@keyframes blink{
+  0%{opacity:1}100%{opacity:0.3}
+}
 .dashboard,.auth,.deposit,.withdrawal,.about{display:none;}
 .active{display:block;}
 .plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));grid-gap:15px;}
-.balance-display{font-weight:bold;color:#0ff;text-align:center;margin:10px 0;}
+.balance-display{font-weight:bold;color:#0ff;text-align:center;margin:10px 0;font-size:18px;}
 .icon{margin-right:5px;}
 </style>
 </head>
@@ -167,7 +194,13 @@ function loadPlans(){
     const daily=Math.round(p.totalProfit/p.days);
     const card=document.createElement('div');
     card.className='plan-card';
-    card.innerHTML=`<h3>${p.name}</h3><p>Invest: ${p.invest} PKR</p><p>Days: ${p.days}</p><p>Daily Profit: ${daily} PKR</p><p>Total Profit: ${p.totalProfit} PKR</p><p>Total Return: ${p.invest+p.totalProfit} PKR</p>`;
+    const badge = p.totalProfit>10000 ? `<div class="badge">🔥Turbo🔥</div>` : '';
+    card.innerHTML=`${badge}<h3>${p.name}</h3>
+      <p>Invest: ${p.invest} PKR</p>
+      <p>Days: ${p.days}</p>
+      <p>Daily Profit: ${daily} PKR</p>
+      <p>Total Profit: ${p.totalProfit} PKR</p>
+      <p>Total Return: ${p.invest+p.totalProfit} PKR</p>`;
     grid.appendChild(card);
   });
 }
