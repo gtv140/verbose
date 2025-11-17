@@ -6,108 +6,85 @@
 <title>VERBOSE — Premium Earning Platform</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  body { margin:0; font-family:'Orbitron',sans-serif; background:linear-gradient(270deg,#0f0c29,#302b63,#24243e); background-size:600% 600%; animation:gradientBG 15s ease infinite; color:#fff; overflow-x:hidden;}
-  @keyframes gradientBG {0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-  h1,h2,h3{text-align:center;color:#0ff;text-shadow:0 0 5px #0ff,0 0 10px #0ff;}
-  .container{width:90%;margin:20px auto;}
-  button{cursor:pointer;padding:10px 20px;margin:5px;border:none;border-radius:5px;background:#0ff;color:#000;font-weight:bold;transition:0.3s;}
-  button:hover{background:#0cc;}
-  input,select{padding:10px;margin:5px;border-radius:5px;border:none;}
-  .plan-card{background:rgba(0,255,255,0.1);border:1px solid #0ff;padding:15px;margin:10px 0;border-radius:10px;animation:neonPulse 2s infinite alternate;}
-  @keyframes neonPulse{0%{box-shadow:0 0 5px #0ff}100%{box-shadow:0 0 20px #0ff;}}
-  .dashboard,.auth,.deposit,.withdrawal,.about{display:none;}
-  .active{display:block;}
-  .plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));grid-gap:15px;}
+body { margin:0; font-family:'Orbitron',sans-serif; background:linear-gradient(270deg,#0f0c29,#302b63,#24243e); background-size:600% 600%; animation:gradientBG 15s ease infinite; color:#fff; overflow-x:hidden;}
+@keyframes gradientBG {0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+h1,h2,h3{text-align:center;color:#0ff;text-shadow:0 0 5px #0ff,0 0 10px #0ff;}
+.container{width:90%;margin:20px auto;}
+button{cursor:pointer;padding:10px 20px;margin:5px;border:none;border-radius:5px;background:#0ff;color:#000;font-weight:bold;transition:0.3s;}
+button:hover{background:#0cc;}
+input,select{padding:10px;margin:5px;border-radius:5px;border:none;}
+.plan-card{background:rgba(0,255,255,0.1);border:1px solid #0ff;padding:15px;margin:10px 0;border-radius:10px;animation:neonPulse 2s infinite alternate;}
+@keyframes neonPulse{0%{box-shadow:0 0 5px #0ff}100%{box-shadow:0 0 20px #0ff;}}
+.dashboard,.auth,.deposit,.withdrawal,.about{display:none;}
+.active{display:block;}
+.plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));grid-gap:15px;}
+.balance-display{font-weight:bold;color:#0ff;text-align:center;margin:10px 0;}
+.icon{margin-right:5px;}
 </style>
 </head>
 <body>
 <h1>VERBOSE Earning Platform</h1>
 <h3>Owner: John Wilson | Launch Date: 17 Nov 2025</h3>
 <div class="container">
-  <div class="auth active" id="auth">
-    <h2>Login / Signup</h2>
-    <input type="text" id="username" placeholder="Enter Username">
-    <input type="password" id="password" placeholder="Enter Password">
-    <br>
-    <button onclick="login()">Login</button>
-    <button onclick="signup()">Signup</button>
-  </div>
 
-  <div class="dashboard" id="dashboard">
-    <h2>Welcome <span id="userDisplay"></span></h2>
-    <button onclick="logout()">Logout</button>
-    <div class="plan-grid" id="planGrid"></div>
-    <button onclick="showDeposit()">Deposit</button>
-    <button onclick="showWithdrawal()">Withdrawal</button>
-    <button onclick="showAbout()">About VERBOSE</button>
-  </div>
+<div class="auth" id="auth">
+<h2>Login / Signup</h2>
+<input type="text" id="username" placeholder="Enter Username">
+<input type="password" id="password" placeholder="Enter Password">
+<br>
+<button onclick="login()">Login</button>
+<button onclick="signup()">Signup</button>
+<button onclick="googleLogin()">Login with Gmail</button>
+</div>
 
-  <div class="deposit" id="deposit">
-    <h2>Deposit Funds</h2>
-    <select id="planSelect" onchange="fillAmount()"></select>
-    <input type="text" id="amountInput" readonly>
-    <select id="paymentMethod" onchange="copyNumber()">
-      <option value="jazzcash">JazzCash</option>
-      <option value="easypaisa">Easypaisa</option>
-    </select>
-    <input type="text" id="paymentNumber" readonly>
-    <input type="text" id="transactionId" placeholder="Transaction ID">
-    <input type="file" id="uploadProof">
-    <button onclick="submitDeposit()">Submit Deposit</button>
-    <button onclick="backDashboard()">Back</button>
-  </div>
+<div class="dashboard" id="dashboard">
+<h2>Welcome <span id="userDisplay"></span></h2>
+<div class="balance-display">Balance: <span id="userBalance">0</span> PKR</div>
+<button onclick="logout()">Logout</button>
+<div class="plan-grid" id="planGrid"></div>
+<button onclick="showDeposit()">💰 Deposit</button>
+<button onclick="showWithdrawal()">💸 Withdrawal</button>
+<button onclick="showAbout()">📊 About VERBOSE</button>
+</div>
 
-  <div class="withdrawal" id="withdrawal">
-    <h2>Withdrawal</h2>
-    <select id="withdrawMethod">
-      <option value="jazzcash">JazzCash</option>
-      <option value="easypaisa">Easypaisa</option>
-    </select>
-    <input type="text" id="accountNumber" placeholder="Account Number">
-    <input type="number" id="withdrawAmount" placeholder="Amount">
-    <button onclick="submitWithdrawal()">Submit Withdrawal</button>
-    <button onclick="backDashboard()">Back</button>
-  </div>
+<div class="deposit" id="deposit">
+<h2>Deposit Funds</h2>
+<select id="planSelect" onchange="fillAmount()"></select>
+<input type="text" id="amountInput" readonly>
+<select id="paymentMethod" onchange="copyNumber()">
+<option value="jazzcash">JazzCash</option>
+<option value="easypaisa">Easypaisa</option>
+</select>
+<input type="text" id="paymentNumber" readonly>
+<input type="text" id="transactionId" placeholder="Transaction ID">
+<input type="file" id="uploadProof">
+<button onclick="submitDeposit()">Submit Deposit</button>
+<button onclick="backDashboard()">Back</button>
+</div>
 
-  <div class="about" id="about">
-    <h2>About VERBOSE</h2>
-    <p>VERBOSE ek cutting-edge digital earning platform hai jo users ko simple aur transparent ways me online income generate karne ka mauka deta hai. Humari mission hai har individual ko financial freedom aur flexible earning opportunities provide karna. Humari team advanced technology aur secure systems ka use kar ke seamless experience ensure karti hai. VERBOSE ke plans fully transparent, reliable aur user-friendly hain. Har user apni growth track kar sakta hai aur daily profits instantly check kar sakta hai. Humari special offers aur turbo-boost plans users ko fast-track earning ka option dete hain. Customer support always available hai, taake koi bhi query ya issue instantly solve ho jaye. VERBOSE har step me trustworthy aur innovative solutions provide karta hai, jahan har investor confident feel kare.</p>
-    <button onclick="backDashboard()">Back</button>
-  </div>
+<div class="withdrawal" id="withdrawal">
+<h2>Withdrawal</h2>
+<select id="withdrawMethod">
+<option value="jazzcash">JazzCash</option>
+<option value="easypaisa">Easypaisa</option>
+</select>
+<input type="text" id="accountNumber" placeholder="Account Number">
+<input type="number" id="withdrawAmount" placeholder="Amount">
+<button onclick="submitWithdrawal()">Submit Withdrawal</button>
+<button onclick="backDashboard()">Back</button>
+</div>
+
+<div class="about" id="about">
+<h2>About VERBOSE</h2>
+<p>VERBOSE ek cutting-edge digital earning platform hai jo users ko simple aur transparent ways me online income generate karne ka mauka deta hai. Humari mission hai har individual ko financial freedom aur flexible earning opportunities provide karna. Humari team advanced technology aur secure systems ka use kar ke seamless experience ensure karti hai. VERBOSE ke plans fully transparent, reliable aur user-friendly hain. Har user apni growth track kar sakta hai aur daily profits instantly check kar sakta hai. Humari special offers aur turbo-boost plans users ko fast-track earning ka option dete hain. Customer support always available hai, taake koi bhi query ya issue instantly solve ho jaye. VERBOSE har step me trustworthy aur innovative solutions provide karta hai, jahan har investor confident feel kare.</p>
+<button onclick="backDashboard()">Back</button>
+</div>
+
 </div>
 
 <script>
-let currentUser = null;
+let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
 const users = JSON.parse(localStorage.getItem('users')) || [];
-
-function signup(){
-  const u = document.getElementById('username').value;
-  const p = document.getElementById('password').value;
-  if(!u||!p){alert('Enter username & password');return;}
-  if(users.find(x=>x.username===u)){alert('User exists');return;}
-  users.push({username:u,password:p});
-  localStorage.setItem('users',JSON.stringify(users));
-  alert('Signup Success');
-}
-
-function login(){
-  const u=document.getElementById('username').value;
-  const p=document.getElementById('password').value;
-  const user=users.find(x=>x.username===u && x.password===p);
-  if(!user){alert('Invalid');return;}
-  currentUser=user;
-  document.getElementById('auth').classList.remove('active');
-  document.getElementById('dashboard').classList.add('active');
-  document.getElementById('userDisplay').innerText=currentUser.username;
-  loadPlans();
-  fillPlanSelect();
-}
-
-function logout(){
-  currentUser=null;
-  document.getElementById('dashboard').classList.remove('active');
-  document.getElementById('auth').classList.add('active');
-}
 
 const plans=[
   {name:'Plan 1', invest:250, days:25, totalProfit:900},
@@ -136,6 +113,52 @@ const plans=[
   {name:'Plan 24', invest:55000, days:240, totalProfit:137500},
   {name:'Plan 25', invest:60000, days:250, totalProfit:150000}
 ];
+
+function signup(){
+  const u=document.getElementById('username').value;
+  const p=document.getElementById('password').value;
+  if(!u||!p){alert('Enter username & password');return;}
+  if(users.find(x=>x.username===u)){alert('User exists');return;}
+  users.push({username:u,password:p,balance:0});
+  localStorage.setItem('users',JSON.stringify(users));
+  alert('Signup Success');
+}
+
+function login(){
+  const u=document.getElementById('username').value;
+  const p=document.getElementById('password').value;
+  const user=users.find(x=>x.username===u && x.password===p);
+  if(!user){alert('Invalid');return;}
+  currentUser=user;
+  localStorage.setItem('currentUser',JSON.stringify(currentUser));
+  showDashboard();
+}
+
+function googleLogin(){
+  alert('Google login simulated for demo.');
+  currentUser={username:'GmailUser', balance:0};
+  localStorage.setItem('currentUser',JSON.stringify(currentUser));
+  showDashboard();
+}
+
+function showDashboard(){
+  document.getElementById('auth').classList.remove('active');
+  document.getElementById('deposit').classList.remove('active');
+  document.getElementById('withdrawal').classList.remove('active');
+  document.getElementById('about').classList.remove('active');
+  document.getElementById('dashboard').classList.add('active');
+  document.getElementById('userDisplay').innerText=currentUser.username;
+  document.getElementById('userBalance').innerText=currentUser.balance || 0;
+  loadPlans();
+  fillPlanSelect();
+}
+
+function logout(){
+  currentUser=null;
+  localStorage.removeItem('currentUser');
+  document.getElementById('dashboard').classList.remove('active');
+  document.getElementById('auth').classList.add('active');
+}
 
 function loadPlans(){
   const grid=document.getElementById('planGrid');
@@ -171,12 +194,36 @@ function copyNumber(){
   document.getElementById('paymentNumber').value=method==='jazzcash'?'03705519562':'03379827882';
 }
 
-function submitDeposit(){alert('Deposit submitted!');}
+function submitDeposit(){
+  const amount=parseInt(document.getElementById('amountInput').value);
+  currentUser.balance = (currentUser.balance||0)+amount;
+  document.getElementById('userBalance').innerText=currentUser.balance;
+  saveCurrentUser();
+  alert('Deposit submitted!');
+}
+
+function submitWithdrawal(){
+  const amount=parseInt(document.getElementById('withdrawAmount').value);
+  if(amount>currentUser.balance){alert('Insufficient balance');return;}
+  currentUser.balance -= amount;
+  document.getElementById('userBalance').innerText=currentUser.balance;
+  saveCurrentUser();
+  alert('Withdrawal submitted!');
+}
+
+function saveCurrentUser(){
+  const idx=users.findIndex(u=>u.username===currentUser.username);
+  if(idx>=0){users[idx]=currentUser; localStorage.setItem('users',JSON.stringify(users));}
+}
+
 function showDeposit(){document.getElementById('dashboard').classList.remove('active');document.getElementById('deposit').classList.add('active');fillPlanSelect();copyNumber();}
 function showWithdrawal(){document.getElementById('dashboard').classList.remove('active');document.getElementById('withdrawal').classList.add('active');}
 function showAbout(){document.getElementById('dashboard').classList.remove('active');document.getElementById('about').classList.add('active');}
-function backDashboard(){document.querySelectorAll('.dashboard, .deposit, .withdrawal, .about').forEach(el=>el.classList.remove('active'));document.getElementById('dashboard').classList.add('active');}
-function submitWithdrawal(){alert('Withdrawal request submitted!');}
+function backDashboard(){document.querySelectorAll('.dashboard,.deposit,.withdrawal,.about').forEach(el=>el.classList.remove('active'));document.getElementById('dashboard').classList.add('active');}
+
+window.onload = function(){
+  if(currentUser){showDashboard();}
+}
 </script>
 </body>
 </html>
