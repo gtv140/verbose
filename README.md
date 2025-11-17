@@ -8,13 +8,9 @@
 <style>
 body {
   margin:0; font-family:'Orbitron',sans-serif;
-  background:linear-gradient(270deg,#0f0c29,#302b63,#24243e);
-  background-size:600% 600%;
-  animation:gradientBG 15s ease infinite;
-  color:#fff; overflow-x:hidden;
-}
-@keyframes gradientBG {
-  0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}
+  overflow-x:hidden;
+  background:#000;
+  color:#fff;
 }
 h1,h2,h3{text-align:center;color:#0ff;text-shadow:0 0 5px #0ff,0 0 10px #0ff;}
 .container{width:90%;margin:20px auto;}
@@ -42,14 +38,21 @@ input,select{padding:10px;margin:5px;border-radius:5px;border:none;font-size:16p
 @keyframes blink{
   0%{opacity:1}100%{opacity:0.3}
 }
+/* Animated background particles */
+#bgCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;}
 .dashboard,.auth,.deposit,.withdrawal,.about{display:none;}
 .active{display:block;}
 .plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));grid-gap:15px;}
 .balance-display{font-weight:bold;color:#0ff;text-align:center;margin:10px 0;font-size:18px;}
-.icon{margin-right:5px;}
+.notification{
+  position:fixed;bottom:20px;right:20px;background:#0ff;color:#000;padding:10px 20px;
+  border-radius:10px;font-weight:bold;box-shadow:0 0 10px #0ff;animation:fadeInOut 3s forwards;
+}
+@keyframes fadeInOut{0%{opacity:0;transform:translateY(20px);}10%{opacity:1;transform:translateY(0);}90%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-20px);}}
 </style>
 </head>
 <body>
+<canvas id="bgCanvas"></canvas>
 <h1>VERBOSE Earning Platform</h1>
 <h3>Owner: John Wilson | Launch Date: 17 Nov 2025</h3>
 <div class="container">
@@ -110,6 +113,40 @@ input,select{padding:10px;margin:5px;border-radius:5px;border:none;font-size:16p
 </div>
 
 <script>
+// --- Canvas Background Neon Particles ---
+const canvas = document.getElementById('bgCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const particles = [];
+for(let i=0;i<150;i++){
+  particles.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    r:Math.random()*2+1,
+    dx:(Math.random()-0.5)*1.5,
+    dy:(Math.random()-0.5)*1.5
+  });
+}
+function animateBG(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle='rgba(0,255,255,0.7)';
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = '#0ff';
+    ctx.fill();
+    p.x+=p.dx;p.y+=p.dy;
+    if(p.x<0||p.x>canvas.width)p.dx*=-1;
+    if(p.y<0||p.y>canvas.height)p.dy*=-1;
+  });
+  requestAnimationFrame(animateBG);
+}
+animateBG();
+window.onresize=()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+
+// --- User System ---
 let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
 const users = JSON.parse(localStorage.getItem('users')) || [];
 
@@ -162,7 +199,7 @@ function login(){
 }
 
 function googleLogin(){
-  alert('Google login simulated for demo.');
+  alert('Google login simulated.');
   currentUser={username:'GmailUser', balance:0};
   localStorage.setItem('currentUser',JSON.stringify(currentUser));
   showDashboard();
@@ -232,7 +269,7 @@ function submitDeposit(){
   currentUser.balance = (currentUser.balance||0)+amount;
   document.getElementById('userBalance').innerText=currentUser.balance;
   saveCurrentUser();
-  alert('Deposit submitted!');
+  showNotification('Deposit submitted!');
 }
 
 function submitWithdrawal(){
@@ -241,7 +278,7 @@ function submitWithdrawal(){
   currentUser.balance -= amount;
   document.getElementById('userBalance').innerText=currentUser.balance;
   saveCurrentUser();
-  alert('Withdrawal submitted!');
+  showNotification('Withdrawal submitted!');
 }
 
 function saveCurrentUser(){
@@ -254,9 +291,16 @@ function showWithdrawal(){document.getElementById('dashboard').classList.remove(
 function showAbout(){document.getElementById('dashboard').classList.remove('active');document.getElementById('about').classList.add('active');}
 function backDashboard(){document.querySelectorAll('.dashboard,.deposit,.withdrawal,.about').forEach(el=>el.classList.remove('active'));document.getElementById('dashboard').classList.add('active');}
 
-window.onload = function(){
-  if(currentUser){showDashboard();}
+// Floating notifications
+function showNotification(msg){
+  const notif=document.createElement('div');
+  notif.className='notification';
+  notif.innerText=msg;
+  document.body.appendChild(notif);
+  setTimeout(()=>{document.body.removeChild(notif);},3000);
 }
+
+window.onload = function(){ if(currentUser){showDashboard();} }
 </script>
 </body>
 </html>
