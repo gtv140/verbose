@@ -258,66 +258,103 @@ function updateBalanceUI(){if(!currentUser) return;document.getElementById('balD
 function backToDashboard(){showTab('dashboard');}
 
 // plans
-const plans=[{name:'Plan 1',invest:250,days:25,totalProfit:900},{name:'Plan 2',invest:500,days:30,totalProfit:2000},{name:'Plan 3',invest:1000,days:35,totalProfit:4500},{name:'Plan 4',invest:1500,days:40,totalProfit:7000}];
+const plans=[
+  {name:'Plan 1',invest:250,days:25,totalProfit:900},
+  {name:'Plan 2',invest:500,days:30,totalProfit:1800},
+  {name:'Plan 3',invest:1000,days:45,totalProfit:4000},
+  {name:'Plan 4',invest:2000,days:60,totalProfit:9000}
+];
 
-// build plans grid
+// build plan cards
 function buildPlanGrid(){
-  const container=document.getElementById('planGrid');container.innerHTML='';
+  const grid=document.getElementById('planGrid');
+  grid.innerHTML='';
   plans.forEach(p=>{
-    const div=document.createElement('div');div.className='plan-card';
-    div.innerHTML=`<div class="badge">${p.invest} PKR</div>
-      <h3>${p.name}</h3>
-      <p class="small muted">Duration: ${p.days} days<br>Total Profit: ${p.totalProfit} PKR</p>
+    const card=document.createElement('div');
+    card.className='plan-card';
+    card.innerHTML=`<h3>${p.name}</h3>
+      <div>Investment: ${p.invest} PKR</div>
+      <div>Duration: ${p.days} Days</div>
+      <div>Total Profit: ${p.totalProfit} PKR</div>
       <button class="primary" onclick="selectPlan('${p.name}')">Select Plan</button>`;
-    container.appendChild(div);
+    grid.appendChild(card);
   });
 }
 
-// populate select dropdown
+// populate deposit plan dropdown
 function populatePlanSelect(){
-  const sel=document.getElementById('planSelect');sel.innerHTML='';
-  plans.forEach(p=>{const opt=document.createElement('option');opt.value=p.name;opt.innerText=p.name;sel.appendChild(opt);});
+  const sel=document.getElementById('planSelect');
+  sel.innerHTML='<option value="">Select a plan</option>';
+  plans.forEach(p=>{sel.innerHTML+=`<option value="${p.name}">${p.name} - ${p.invest} PKR</option>`;});
   onPlanChange();
 }
 
-// select plan
-function selectPlan(name){document.getElementById('planSelect').value=name;onPlanChange();showTab('deposit');}
+// when plan dropdown changes
+function onPlanChange(){
+  const sel=document.getElementById('planSelect');
+  const val=sel.value;
+  const amtInput=document.getElementById('amountInput');
+  if(!val){amtInput.value='';return;}
+  const plan=plans.find(x=>x.name===val);
+  if(plan) amtInput.value=plan.invest;
+  updatePayNumber();
+}
 
-// update deposit amount and number
-function onPlanChange(){const p=plans.find(x=>x.name===document.getElementById('planSelect').value);if(!p) return;document.getElementById('amountInput').value=p.invest;onMethodChange();}
-function onMethodChange(){const method=document.getElementById('payMethod').value;const num=method==='jazzcash'?'03705519562':'03379827882';document.getElementById('payNumber').value=num;}
-function copyText(txt){navigator.clipboard.writeText(txt);showNotif('Copied!');}
-function copyCurrentNumber(){copyText(document.getElementById('payNumber').value);}
+// copy number
+function copyText(txt){navigator.clipboard.writeText(txt);showNotif('Copied: '+txt);}
+function copyCurrentNumber(){const n=document.getElementById('payNumber').value; if(n) copyText(n);}
+function onMethodChange(){updatePayNumber();}
+function updatePayNumber(){
+  const method=document.getElementById('payMethod').value;
+  const numbers={jazzcash:'03705519562',easypaisa:'03379827882'};
+  document.getElementById('payNumber').value=numbers[method]||'';
+}
 
-// deposit submit
+// select plan button in plan cards
+function selectPlan(name){
+  document.getElementById('planSelect').value=name;
+  onPlanChange();
+  showTab('deposit');
+}
+
+// submit deposit
 function submitDeposit(){
-  if(!currentUser){showNotif('Login first');return;}
+  if(!currentUser){showNotif('Login first'); return;}
   const planName=document.getElementById('planSelect').value;
+  if(!planName){showNotif('Select a plan'); return;}
+  const plan=plans.find(p=>p.name===planName);
   const amount=parseFloat(document.getElementById('amountInput').value);
   if(isNaN(amount)||amount<=0){showNotif('Invalid amount');return;}
   currentUser.balance=(currentUser.balance||0)+amount;
-  currentUser.activePlans.push(plans.find(p=>p.name===planName));
-  const tx={type:'Deposit',amount,plan:planName,time:new Date().toLocaleString(),status:'Success'};
+  currentUser.activePlans.push({name:plan.name,invest:plan.invest,date:new Date().toLocaleString()});
+  const tx={type:'Deposit',amount:amount,plan:plan.name,time:new Date().toLocaleString(),status:'Success'};
   transactions.push(tx);localStorage.setItem('verbose_tx',JSON.stringify(transactions));
-  updateBalanceUI();renderTransactions();showNotif('Deposit successful');backToDashboard();
+  updateBalanceUI();renderTransactions();
+  showNotif(`Deposited ${amount} PKR to ${plan.name}`);
+  backToDashboard();
 }
 
 // withdrawal
 function submitWithdrawal(){
-  if(!currentUser){showNotif('Login first');return;}
+  if(!currentUser){showNotif('Login first'); return;}
   const amt=parseFloat(document.getElementById('withdrawAmount').value);
-  if(isNaN(amt)||amt<=0){showNotif('Enter valid amount');return;}
-  if(amt>currentUser.balance){showNotif('Insufficient balance');return;}
+  if(isNaN(amt)||amt<=0){showNotif('Enter valid amount'); return;}
+  if(amt>currentUser.balance){showNotif('Insufficient balance'); return;}
+  const method=document.getElementById('withdrawMethod').value;
+  const account=document.getElementById('withdrawAccount').value.trim();
+  if(!account){showNotif('Enter account'); return;}
   currentUser.balance-=amt;
-  const tx={type:'Withdrawal',amount:amt,plan:'-',time:new Date().toLocaleString(),status:'Requested'};
+  const tx={type:'Withdrawal',amount:amt,plan:'-',time:new Date().toLocaleString(),status:'Pending'};
   transactions.push(tx);localStorage.setItem('verbose_tx',JSON.stringify(transactions));
-  updateBalanceUI();renderTransactions();showNotif('Withdrawal requested');backToDashboard();
+  updateBalanceUI();renderTransactions();
+  showNotif(`Withdrawal requested: ${amt} PKR via ${method}`);
+  backToDashboard();
 }
 
 // transactions table
 function renderTransactions(){
-  const tbody=document.querySelector('#txTable tbody');tbody.innerHTML='';
-  transactions.slice().reverse().forEach(tx=>{
+  const tbody=document.querySelector('#txTable tbody'); tbody.innerHTML='';
+  transactions.forEach(tx=>{
     const tr=document.createElement('tr');
     tr.innerHTML=`<td>${tx.type}</td><td>${tx.amount}</td><td>${tx.plan}</td><td>${tx.time}</td><td>${tx.status}</td>`;
     tbody.appendChild(tr);
