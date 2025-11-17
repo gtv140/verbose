@@ -6,55 +6,33 @@
 <title>VERBOSE — Premium Earning Platform</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --neon:#00ffff;
-    --bg1:#0f0c29;
-    --bg2:#302b63;
-    --bg3:#24243e;
-  }
+  :root{--neon:#00ffff;--bg1:#0f0c29;--bg2:#302b63;--bg3:#24243e}
   html,body{height:100%;margin:0;font-family:'Orbitron',sans-serif;background:#000;color:#fff;overflow-x:hidden}
-  /* animated gradient */
-  body{
-    background:linear-gradient(270deg,var(--bg1),var(--bg2),var(--bg3));
-    background-size:600% 600%;
-    animation:gradientBG 18s ease infinite;
-  }
+  body{background:linear-gradient(270deg,var(--bg1),var(--bg2),var(--bg3));background-size:600% 600%;animation:gradientBG 18s ease infinite}
   @keyframes gradientBG{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-  /* layout */
-  #app{max-width:1100px;margin:18px auto;padding:18px;}
+  #app{max-width:1100px;margin:18px auto;padding:18px}
   header{display:flex;align-items:center;justify-content:space-between;gap:12px}
   header h1{margin:0;color:var(--neon);text-shadow:0 0 8px var(--neon)}
-  .small{font-size:13px;color:#cfe;}
+  .small{font-size:13px;color:#cfe}
   .card{background:rgba(0,255,255,0.04);border:1px solid rgba(0,255,255,0.12);padding:14px;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,0.6);backdrop-filter:blur(6px)}
-  /* main grid */
   .layout{display:grid;grid-template-columns:320px 1fr;gap:18px;margin-top:18px}
   nav{position:sticky;top:18px;height:fit-content;display:flex;flex-direction:column;gap:8px}
   nav button{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;border:none;background:linear-gradient(90deg,rgba(0,255,255,0.06),rgba(0,255,255,0.03));color:var(--neon);cursor:pointer}
   nav button.active{box-shadow:0 0 18px rgba(0,255,255,0.18);transform:scale(1.01)}
   main section{display:none}
   main section.active{display:block}
-  /* auth box */
-  .auth .field{margin:8px 0}
   input,select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:rgba(0,0,0,0.35);color:#fff;outline:none}
   button.primary{background:var(--neon);color:#000;font-weight:700;border-radius:10px;padding:10px 12px;border:none;cursor:pointer}
-  button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#fff}
-  /* plan grid */
+  button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#fff;padding:10px;border-radius:8px}
   .plan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
   .plan-card{border-radius:12px;padding:12px;background:linear-gradient(180deg, rgba(0,255,255,0.03), rgba(0,255,255,0.02));border:1px solid rgba(0,255,255,0.06);position:relative;transition:transform .18s,box-shadow .18s}
   .plan-card:hover{transform:translateY(-8px);box-shadow:0 12px 40px rgba(0,255,255,0.06)}
   .badge{position:absolute;top:10px;right:10px;background:linear-gradient(90deg,#ffea00,#ff9900);color:#000;padding:6px 8px;border-radius:8px;font-weight:800;box-shadow:0 6px 20px rgba(255,150,0,0.15)}
   .muted{color:#bfe}
   .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-  .icon{width:20px;height:20px;display:inline-block}
-  /* neon icons */
-  .neon-icon{filter:drop-shadow(0 0 8px rgba(0,255,255,0.2));}
-  /* notifications */
   .notif{position:fixed;right:18px;bottom:18px;background:var(--neon);color:#000;padding:12px 18px;border-radius:12px;font-weight:700;box-shadow:0 10px 30px rgba(0,255,255,0.12)}
-  /* particles canvas */
   #bgCanvas{position:fixed;left:0;top:0;width:100%;height:100%;z-index:-1;pointer-events:none}
-  /* responsive */
-  @media(max-width:900px){.layout{grid-template-columns:1fr;}.container-left{order:2}}
-  /* transactions table */
+  @media(max-width:900px){.layout{grid-template-columns:1fr}}
   table{width:100%;border-collapse:collapse}
   th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:left;font-size:13px}
   .success{color:#0f0}
@@ -71,12 +49,12 @@
     </div>
     <div id="topActions" class="row">
       <div id="welcome" class="small muted">Not logged in</div>
-      <button id="loginBtn" class="primary">Login / Signup</button>
+      <button id="openAuth" class="primary">Login / Signup</button>
     </div>
   </header>
 
   <div class="layout">
-    <aside class="container-left card">
+    <aside class="card">
       <nav>
         <button data-tab="dashboard" class="active">📊 Dashboard</button>
         <button data-tab="plans">💼 Plans</button>
@@ -86,7 +64,9 @@
         <button data-tab="about">📑 Company</button>
         <button id="logoutBtn" style="margin-top:10px;background:linear-gradient(90deg,#ff4d4d,#ff1a1a);color:#fff;display:none">Logout</button>
       </nav>
+
       <hr style="border:none;border-top:1px solid rgba(255,255,255,0.04);margin:12px 0"/>
+
       <div class="small muted">Payment Numbers</div>
       <div class="row" style="margin-top:8px">
         <div class="card" style="padding:10px;width:100%">
@@ -104,30 +84,24 @@
     </aside>
 
     <main>
-      <!-- AUTH area (modal-like inside main) -->
+      <!-- AUTH -->
       <section id="authSection" class="card active">
-        <div id="authBox">
-          <h2 style="margin-top:0">Login / Signup</h2>
-          <div class="field">
-            <input id="inpUser" placeholder="Username" />
-          </div>
-          <div class="field">
-            <input id="inpPass" type="password" placeholder="Password" />
-          </div>
-          <div class="row">
-            <button class="primary" onclick="handleLogin()">Login</button>
-            <button class="ghost" onclick="handleSignup()">Signup</button>
-          </div>
-          <div class="small muted" style="margin-top:10px">Note: Signup saves locally (demo). Refresh will keep you logged in.</div>
+        <h2 style="margin-top:0">Login / Signup</h2>
+        <div class="field"><input id="inpUser" placeholder="Username" /></div>
+        <div class="field"><input id="inpPass" type="password" placeholder="Password" /></div>
+        <div class="row">
+          <button class="primary" onclick="simpleLogin()">Login</button>
+          <button class="ghost" onclick="simpleSignup()">Signup</button>
         </div>
+        <div class="small muted" style="margin-top:10px">Note: Signup data saved locally (single-user). Refresh will keep you logged in.</div>
       </section>
 
-      <!-- Dashboard -->
+      <!-- DASHBOARD -->
       <section id="dashboard" class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
           <div>
-            <h2 style="margin:0" id="dashTitle">Dashboard</h2>
-            <div class="small muted" id="dashSub">Overview & Quick Actions</div>
+            <h2 style="margin:0">Dashboard</h2>
+            <div class="small muted" id="dashSub">Overview</div>
           </div>
           <div class="row">
             <div class="card" style="padding:8px;">
@@ -137,15 +111,12 @@
             <button onclick="showTab('deposit')" class="primary">Deposit Now</button>
           </div>
         </div>
-
         <hr style="border:none;border-top:1px solid rgba(255,255,255,0.04);margin:12px 0"/>
-
         <div style="display:flex;gap:12px;flex-wrap:wrap">
           <div class="card" style="flex:1;min-width:220px">
             <h4 style="margin:0">Active Plans</h4>
             <div id="activePlans" class="small muted" style="margin-top:8px">No active plans</div>
           </div>
-
           <div class="card" style="flex:1;min-width:220px">
             <h4 style="margin:0">Achievements</h4>
             <div id="achv" class="small muted" style="margin-top:8px">No badges yet</div>
@@ -153,22 +124,20 @@
         </div>
       </section>
 
-      <!-- Plans -->
+      <!-- PLANS -->
       <section id="plans" class="card">
         <h2 style="margin-top:0">Plans</h2>
         <div class="plan-grid" id="planGrid"></div>
       </section>
 
-      <!-- Deposit -->
+      <!-- DEPOSIT -->
       <section id="deposit" class="card">
         <h2 style="margin-top:0">Deposit</h2>
-        <div class="small muted">Select plan & send payment to number below. Upload proof and submit.</div>
-
+        <div class="small muted">Select plan, send payment and upload proof.</div>
         <div style="margin-top:12px">
           <label class="small muted">Choose Plan</label>
           <select id="planSelect" onchange="onPlanChange()"></select>
         </div>
-
         <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap">
           <div style="flex:1">
             <label class="small muted">Amount (auto)</label>
@@ -182,230 +151,137 @@
             </select>
           </div>
         </div>
-
         <div style="display:flex;gap:10px;margin-top:8px;align-items:center">
           <input id="payNumber" readonly style="flex:1" />
           <button class="ghost" onclick="copyCurrentNumber()">Copy</button>
         </div>
-
         <div style="margin-top:8px">
           <input id="txId" placeholder="Transaction ID (optional)" />
         </div>
         <div style="margin-top:8px">
           <input id="proof" type="file" />
         </div>
-
         <div style="display:flex;gap:10px;margin-top:10px">
           <button class="primary" onclick="submitDeposit()">Submit Deposit</button>
           <button class="ghost" onclick="backToDashboard()">Back</button>
         </div>
       </section>
 
-      <!-- Withdrawal -->
+      <!-- WITHDRAWAL -->
       <section id="withdrawal" class="card">
         <h2 style="margin-top:0">Withdrawal</h2>
-        <div class="small muted">Choose method and request withdrawal (simulated).</div>
-
+        <div class="small muted">Request withdrawal (simulated).</div>
         <div style="margin-top:12px">
           <label class="small muted">Method</label>
-          <select id="withdrawMethod">
-            <option value="jazzcash">JazzCash</option>
-            <option value="easypaisa">EasyPaisa</option>
-          </select>
+          <select id="withdrawMethod"><option value="jazzcash">JazzCash</option><option value="easypaisa">EasyPaisa</option></select>
         </div>
-
-        <div style="margin-top:8px">
-          <input id="withdrawAccount" placeholder="Account Number / Username" />
-        </div>
-        <div style="margin-top:8px">
-          <input id="withdrawAmount" placeholder="Amount PKR" type="number" />
-        </div>
-
+        <div style="margin-top:8px"><input id="withdrawAccount" placeholder="Account Number / Username" /></div>
+        <div style="margin-top:8px"><input id="withdrawAmount" placeholder="Amount PKR" type="number" /></div>
         <div style="display:flex;gap:10px;margin-top:10px">
           <button class="primary" onclick="submitWithdrawal()">Request Withdrawal</button>
           <button class="ghost" onclick="backToDashboard()">Back</button>
         </div>
       </section>
 
-      <!-- Transactions -->
+      <!-- TRANSACTIONS -->
       <section id="transactions" class="card">
         <h2 style="margin-top:0">Transactions</h2>
         <div style="overflow:auto;max-height:320px">
-          <table id="txTable">
-            <thead><tr><th>Type</th><th>Amount</th><th>Plan</th><th>Time</th><th>Status</th></tr></thead>
-            <tbody></tbody>
-          </table>
+          <table id="txTable"><thead><tr><th>Type</th><th>Amount</th><th>Plan</th><th>Time</th><th>Status</th></tr></thead><tbody></tbody></table>
         </div>
       </section>
 
-      <!-- About / Company -->
+      <!-- ABOUT -->
       <section id="about" class="card">
         <h2 style="margin-top:0">About VERBOSE</h2>
-        <p class="small muted">
-          VERBOSE ek premium earning platform hai jo modern digital finance ko neon style me present karta hai.
-          Owner: <strong>John Wilson</strong>. Launch Date: <strong>17 Nov 2025</strong>.
-          Mission: Financial freedom, transparent plans, aur easy UX. Contact support via in-app messages (demo).
-        </p>
-        <div style="display:flex;gap:10px;margin-top:8px">
-          <button class="primary" onclick="backToDashboard()">Back</button>
-        </div>
+        <p class="small muted">VERBOSE ek premium earning platform hai. Owner: <strong>John Wilson</strong>. Launch Date: <strong>17 Nov 2025</strong>.</p>
+        <div style="display:flex;gap:10px;margin-top:8px"><button class="primary" onclick="backToDashboard()">Back</button></div>
       </section>
-
     </main>
   </div>
 </div>
 
-<!-- notification container -->
 <div id="notifRoot"></div>
 
 <script>
-/* ------------------------------
-   Neon particle background (canvas)
-   ------------------------------ */
-const canvas = document.getElementById('bgCanvas');
-const ctx = canvas.getContext('2d');
+/* neon particles */
+const canvas = document.getElementById('bgCanvas'), ctx = canvas.getContext('2d');
 let W=canvas.width=innerWidth, H=canvas.height=innerHeight;
-window.addEventListener('resize',()=>{W=canvas.width=innerWidth;H=canvas.height=innerHeight;});
-const particles=[];
-for(let i=0;i<140;i++){
-  particles.push({
-    x:Math.random()*W,
-    y:Math.random()*H,
-    r: Math.random()*1.6+0.6,
-    vx:(Math.random()-0.5)*0.6,
-    vy:(Math.random()-0.5)*0.6,
-    hue: 180 + Math.random()*60
-  });
-}
-function drawBG(){
-  ctx.clearRect(0,0,W,H);
-  particles.forEach(p=>{
-    ctx.beginPath();
-    ctx.fillStyle = `hsla(${p.hue},100%,60%,0.12)`;
-    ctx.shadowBlur = 12;
-    ctx.shadowColor = 'rgba(0,255,255,0.15)';
-    ctx.fillRect(p.x,p.y,p.r*2,p.r*2);
-    p.x+=p.vx; p.y+=p.vy;
-    if(p.x<0)p.x=W; if(p.x>W)p.x=0; if(p.y<0)p.y=H; if(p.y>H)p.y=0;
-  });
-  requestAnimationFrame(drawBG);
-}
-drawBG();
+window.addEventListener('resize', ()=>{ W=canvas.width=innerWidth; H=canvas.height=innerHeight; });
+const parts=[]; for(let i=0;i<140;i++){ parts.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.6+0.6,vx:(Math.random()-0.5)*0.6,vy:(Math.random()-0.5)*0.6,hue:180+Math.random()*60}); }
+function drawBG(){ ctx.clearRect(0,0,W,H); parts.forEach(p=>{ ctx.beginPath(); ctx.fillStyle=`hsla(${p.hue},100%,60%,0.12)`; ctx.shadowBlur=12; ctx.shadowColor='rgba(0,255,255,0.15)'; ctx.fillRect(p.x,p.y,p.r*2,p.r*2); p.x+=p.vx; p.y+=p.vy; if(p.x<0)p.x=W; if(p.x>W)p.x=0; if(p.y<0)p.y=H; if(p.y>H)p.y=0; }); requestAnimationFrame(drawBG); } drawBG();
 
-/* ------------------------------
-   App Data (localStorage)
-   ------------------------------ */
-let users = JSON.parse(localStorage.getItem('verbose_users')||'[]'); // array
-let currentUser = JSON.parse(localStorage.getItem('verbose_current')||'null'); // object or null
-let transactions = JSON.parse(localStorage.getItem('verbose_tx')||'[]'); // array tx
+/* SIMPLE single-user auth like tumhari original */
+function getSavedUser(){ try{ return JSON.parse(localStorage.getItem('realUser')||'null'); }catch(e){return null;} }
+function setSavedUser(u){ localStorage.setItem('realUser', JSON.stringify(u)); }
+function getCurrent(){ try{ return JSON.parse(localStorage.getItem('currentUser')||'null'); }catch(e){return null;} }
+function setCurrent(u){ localStorage.setItem('currentUser', JSON.stringify(u)); }
 
-/* UI refs */
+/* app state */
+let realUser = getSavedUser(); // single saved user
+let currentUser = getCurrent(); // logged in user
+let transactions = JSON.parse(localStorage.getItem('verbose_tx')||'[]');
+
 const navButtons = document.querySelectorAll('nav button[data-tab]');
-navButtons.forEach(btn=>btn.addEventListener('click',()=>showTab(btn.dataset.tab)));
-document.getElementById('loginBtn').addEventListener('click',()=>showTab('authSection'));
+navButtons.forEach(b=>b.addEventListener('click', ()=>showTab(b.dataset.tab)));
+document.getElementById('openAuth').addEventListener('click', ()=>showTab('authSection'));
 const logoutBtn = document.getElementById('logoutBtn');
-logoutBtn.addEventListener('click',()=>{ logout(); });
+logoutBtn.addEventListener('click', ()=>{ simpleLogout(); });
 
-/* show specific tab */
-function showTab(tab){
-  // nav active
-  navButtons.forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
-  // main sections
-  document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
-  const sec = document.getElementById(tab);
-  if(sec) sec.classList.add('active');
-  // special: show login box if authSection
-  if(tab==='authSection'){ document.getElementById('authSection').classList.add('active'); }
-}
-
-/* initial tab depending on login */
+/* init view */
 function initView(){
-  if(currentUser){
-    document.getElementById('welcome').innerText = `Hi, ${currentUser.username}`;
-    document.getElementById('logoutBtn').style.display='block';
-    showTab('dashboard');
-    updateBalanceUI();
-  } else {
-    document.getElementById('welcome').innerText = 'Not logged in';
-    document.getElementById('logoutBtn').style.display='none';
-    showTab('authSection');
-  }
-  buildPlanGrid();
-  populatePlanSelect();
-  renderTransactions();
+  if(currentUser){ document.getElementById('welcome').innerText = `Hi, ${currentUser.username}`; document.getElementById('logoutBtn').style.display='block'; showTab('dashboard'); updateBalanceUI(); }
+  else { document.getElementById('welcome').innerText='Not logged in'; document.getElementById('logoutBtn').style.display='none'; showTab('authSection'); }
+  buildPlanGrid(); populatePlanSelect(); renderTransactions();
 }
 initView();
 
-/* ------------------------------
-   AUTH (Signup / Login)
-   ------------------------------ */
-function handleSignup(){
-  handleSignup = window.handleSignup || function(){};
-}
-function handleLogin(){
-  handleLogin = window.handleLogin || function(){};
-}
-
-/* implemented handlers */
-window.handleSignup = function(){
+/* AUTH: simpleSignup + simpleLogin (single-user) */
+function simpleSignup(){
   const u = document.getElementById('inpUser').value.trim();
   const p = document.getElementById('inpPass').value.trim();
-  if(!u || !p){ showNotif('Fill username & password'); return; }
-  if(users.find(x=>x.username===u)){ showNotif('Username exists'); return; }
-  const user = { username:u, password:p, balance:0, activePlans:[] };
-  users.push(user);
-  localStorage.setItem('verbose_users', JSON.stringify(users));
-  showNotif('Signup saved. You can login now.');
-  // auto-fill login inputs
-  document.getElementById('inpUser').value=u;
+  if(!u||!p){ showNotif('Fill username & password'); return; }
+  realUser = { username:u, password:p, balance:0, activePlans:[] };
+  setSavedUser(realUser);
+  showNotif('Signup saved. Now login.');
   document.getElementById('inpPass').value='';
-};
-
-window.handleLogin = function(){
+}
+function simpleLogin(){
   const u = document.getElementById('inpUser').value.trim();
   const p = document.getElementById('inpPass').value.trim();
-  if(!u || !p){ showNotif('Enter credentials'); return; }
-  const user = users.find(x=>x.username===u && x.password===p);
-  if(!user){ showNotif('Invalid credentials'); return; }
-  currentUser = user;
-  localStorage.setItem('verbose_current', JSON.stringify(currentUser));
-  document.getElementById('welcome').innerText = `Hi, ${currentUser.username}`;
-  document.getElementById('logoutBtn').style.display='block';
-  updateBalanceUI();
-  showNotif('Login successful');
-  showTab('dashboard');
-  renderTransactions();
-};
-
-/* LOGOUT */
-function logout(){
+  if(!u||!p){ showNotif('Enter credentials'); return; }
+  const saved = getSavedUser();
+  if(!saved){ showNotif('No account. Signup first'); return; }
+  if(saved.username===u && saved.password===p){
+    currentUser = saved;
+    setCurrent(currentUser);
+    document.getElementById('welcome').innerText = `Hi, ${currentUser.username}`;
+    document.getElementById('logoutBtn').style.display='block';
+    updateBalanceUI(); showNotif('Login successful'); showTab('dashboard'); renderTransactions();
+  } else { showNotif('Invalid credentials'); }
+}
+function simpleLogout(){
   currentUser = null;
-  localStorage.removeItem('verbose_current');
-  document.getElementById('welcome').innerText = 'Not logged in';
+  localStorage.removeItem('currentUser');
+  document.getElementById('welcome').innerText='Not logged in';
   document.getElementById('logoutBtn').style.display='none';
   showNotif('Logged out');
   showTab('authSection');
 }
 
-/* update balance UI */
+/* update balance display */
 function updateBalanceUI(){
   if(!currentUser) return;
-  document.getElementById('balDisplay').innerText = (currentUser.balance || 0) + ' PKR';
-  document.getElementById('activePlans').innerText = (currentUser.activePlans && currentUser.activePlans.length) ? currentUser.activePlans.map(p=>p.name).join(', ') : 'No active plans';
+  document.getElementById('balDisplay').innerText = (currentUser.balance||0) + ' PKR';
+  document.getElementById('activePlans').innerText = (currentUser.activePlans && currentUser.activePlans.length) ? currentUser.activePlans.map(x=>x.name).join(', ') : 'No active plans';
+  // keep saved user synced
+  realUser = currentUser; setSavedUser(realUser); setCurrent(currentUser);
 }
 
-/* save current user into users array and localStorage */
-function persistCurrentUser(){
-  if(!currentUser) return;
-  const i = users.findIndex(u=>u.username===currentUser.username);
-  if(i>=0) users[i] = currentUser;
-  localStorage.setItem('verbose_users', JSON.stringify(users));
-  localStorage.setItem('verbose_current', JSON.stringify(currentUser));
-}
+/* persist transaction list */
+function persistTx(){ localStorage.setItem('verbose_tx', JSON.stringify(transactions)); }
 
-/* ------------------------------
-   Plans display & selection
-   ------------------------------ */
+/* PLANS */
 const plans = [
   {name:'Plan 1', invest:250, days:25, totalProfit:900},
   {name:'Plan 2', invest:500, days:30, totalProfit:2000},
@@ -435,12 +311,10 @@ const plans = [
 ];
 
 function buildPlanGrid(){
-  const grid = document.getElementById('planGrid');
-  grid.innerHTML = '';
+  const grid = document.getElementById('planGrid'); grid.innerHTML='';
   plans.forEach((p,idx)=>{
     const daily = Math.round(p.totalProfit / p.days);
-    const card = document.createElement('div');
-    card.className = 'plan-card';
+    const card = document.createElement('div'); card.className='plan-card';
     const isTurbo = p.totalProfit >= 15000;
     card.innerHTML = `
       ${isTurbo?'<div class="badge">🔥Turbo</div>':''}
@@ -458,140 +332,114 @@ function buildPlanGrid(){
 }
 
 function populatePlanSelect(){
-  const sel = document.getElementById('planSelect');
-  sel.innerHTML='';
-  plans.forEach((p,i)=>{
-    const opt = document.createElement('option'); opt.value=i; opt.innerText = `${p.name} — ${p.invest} PKR`;
-    sel.appendChild(opt);
-  });
+  const sel = document.getElementById('planSelect'); sel.innerHTML='';
+  plans.forEach((p,i)=>{ const opt=document.createElement('option'); opt.value=i; opt.innerText = `${p.name} — ${p.invest} PKR`; sel.appendChild(opt); });
   onPlanChange();
 }
-function onPlanChange(){
-  const i = +document.getElementById('planSelect').value;
-  const p = plans[i];
-  document.getElementById('amountInput').value = p.invest + " PKR";
-  updatePayNumber();
-}
+function onPlanChange(){ const i = +document.getElementById('planSelect').value; const p = plans[i]; document.getElementById('amountInput').value = p.invest; updatePayNumber(); }
+function onMethodChange(){ updatePayNumber(); }
+function updatePayNumber(){ const m = document.getElementById('payMethod').value; document.getElementById('payNumber').value = (m==='jazzcash')?'03705519562':'03379827882'; }
+function copyCurrentNumber(){ copyText(document.getElementById('payNumber').value); showNotif('Number copied'); }
+function copyText(t){ navigator.clipboard?.writeText(t).catch(()=>{}); }
 
-function onMethodChange(){
-  updatePayNumber();
-}
-
-function updatePayNumber(){
-  const method = document.getElementById('payMethod').value;
-  const num = method === 'jazzcash' ? "03705519562" : "03379827882";
-  document.getElementById('payNumber').value = num;
-}
-
-function copyCurrentNumber(){
-  const text = document.getElementById('payNumber').value;
-  navigator.clipboard.writeText(text);
-  showNotif("Copied");
-}
-
-/* Quick deposit */
-function quickDeposit(idx){
-  document.getElementById('planSelect').value = idx;
-  onPlanChange();
-  showTab('deposit');
-}
-
-/* Plan details (simple popup) */
-function showPlanDetails(i){
-  const p = plans[i];
-  showNotif(`${p.name}: Invest ${p.invest}, Days ${p.days}, Profit ${p.totalProfit}`);
-}
-
-/* Submit Deposit */
+/* Deposit */
 function submitDeposit(){
-  if(!currentUser){ showNotif("Login required"); return; }
-
-  const idx = +document.getElementById('planSelect').value;
-  const p = plans[idx];
-
-  // Add plan
-  currentUser.activePlans.push(p);
-  persistCurrentUser();
-
-  // Add transaction
-  const tx = {
-    type: "Deposit",
-    amount: p.invest,
-    plan: p.name,
-    time: new Date().toLocaleString(),
-    status: "Pending"
-  };
-  transactions.push(tx);
-  localStorage.setItem('verbose_tx', JSON.stringify(transactions));
-
-  showNotif("Deposit submitted");
-  renderTransactions();
-  showTab('dashboard');
-  updateBalanceUI();
+  if(!currentUser){ showNotif('Login first'); showTab('authSection'); return; }
+  const idx = +document.getElementById('planSelect').value; const p = plans[idx];
+  const txId = document.getElementById('txId').value || 'N/A';
+  const proofName = document.getElementById('proof').files.length ? document.getElementById('proof').files[0].name : 'no-file';
+  // add balance and active plan
+  currentUser.balance = (currentUser.balance||0) + p.invest;
+  currentUser.activePlans = currentUser.activePlans||[];
+  currentUser.activePlans.push({ name:p.name, start:new Date().toLocaleString(), invested:p.invest, days:p.days });
+  setSavedUser(currentUser); setCurrent(currentUser); updateBalanceUI();
+  // record tx
+  const tx = { id:Date.now(), type:'Deposit', amount:p.invest, plan:p.name, time:new Date().toLocaleString(), status:'Confirmed', txId, proof:proofName };
+  transactions.push(tx); persistTx();
+  showNotif('Deposit recorded & balance updated');
+  renderTransactions(); showTab('dashboard');
 }
 
 /* Withdrawal */
 function submitWithdrawal(){
-  if(!currentUser){ showNotif("Login required"); return; }
-
-  const amt = +document.getElementById('withdrawAmount').value;
-  if(!amt || amt <= 0){ showNotif("Enter valid amount"); return; }
-
-  if(amt > currentUser.balance){
-    showNotif("Insufficient balance");
-    return;
-  }
-
-  currentUser.balance -= amt;
-  persistCurrentUser();
+  if(!currentUser){ showNotif('Login first'); showTab('authSection'); return; }
+  const amt = +document.getElementById('withdrawAmount').value; const acct = document.getElementById('withdrawAccount').value.trim();
+  if(!amt || amt<=0){ showNotif('Enter valid amount'); return; }
+  if(amt > (currentUser.balance||0)){ showNotif('Insufficient balance'); return; }
+  if(!acct){ showNotif('Enter account'); return; }
+  currentUser.balance -= amt; setSavedUser(currentUser); setCurrent(currentUser);
+  updateBalanceUI();
 
   const tx = {
+    id: Date.now(),
     type: "Withdrawal",
     amount: amt,
     plan: "-",
     time: new Date().toLocaleString(),
-    status: "Pending"
+    status: "Pending",
+    account: acct,
+    method: document.getElementById("withdrawMethod").value
   };
+
   transactions.push(tx);
-  localStorage.setItem('verbose_tx', JSON.stringify(transactions));
-
-  updateBalanceUI();
+  persistTx();
   renderTransactions();
-  showNotif("Withdrawal requested");
-  showTab('dashboard');
+  showNotif("Withdrawal request submitted");
+  showTab("dashboard");
 }
 
-/* Back button */
-function backToDashboard(){
-  showTab('dashboard');
+/* Quick Deposit → auto select plan */
+function quickDeposit(i) {
+  document.getElementById("planSelect").value = i;
+  onPlanChange();
+  showTab("deposit");
 }
 
-/* Transactions table render */
-function renderTransactions(){
-  const tbody = document.querySelector("#txTable tbody");
-  tbody.innerHTML = "";
+/* Show plan details popup */
+function showPlanDetails(i) {
+  const p = plans[i];
+  showNotif(`${p.name}: Invest ${p.invest} — Total Profit ${p.totalProfit} — ${p.days} Days`);
+}
 
-  transactions.forEach(t=>{
-    const tr = document.createElement('tr');
+/* Dashboard Back */
+function backToDashboard() {
+  showTab("dashboard");
+}
+
+/* Render Transactions Table */
+function renderTransactions() {
+  const tb = document.querySelector("#txTable tbody");
+  tb.innerHTML = "";
+  transactions.forEach(tx => {
+    const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${t.type}</td>
-      <td>${t.amount} PKR</td>
-      <td>${t.plan}</td>
-      <td>${t.time}</td>
-      <td class="success">${t.status}</td>
+      <td>${tx.type}</td>
+      <td>${tx.amount} PKR</td>
+      <td>${tx.plan}</td>
+      <td>${tx.time}</td>
+      <td class="${tx.status === "Confirmed" ? "success" : "muted"}">${tx.status}</td>
     `;
-    tbody.appendChild(tr);
+    tb.appendChild(tr);
   });
 }
 
-/* Notif system */
-function showNotif(msg){
-  const root = document.getElementById('notifRoot');
-  const div = document.createElement('div');
-  div.className = 'notif';
+/* Navigation Tabs */
+function showTab(id) {
+  document.querySelectorAll("main section").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+
+  navButtons.forEach(b =>
+    b.classList.toggle("active", b.dataset.tab === id)
+  );
+}
+
+/* Notification System */
+function showNotif(msg) {
+  const div = document.createElement("div");
+  div.className = "notif";
   div.innerText = msg;
-  root.appendChild(div);
-  setTimeout(()=>div.remove(), 2500);
+  document.getElementById("notifRoot").appendChild(div);
+  setTimeout(() => div.remove(), 2600);
 }
 </script>
 
