@@ -38,7 +38,7 @@ input,select{padding:10px;margin:5px;border-radius:5px;border:none;font-size:16p
 @keyframes blink{
   0%{opacity:1}100%{opacity:0.3}
 }
-/* Animated background particles */
+/* Background animation particles */
 #bgCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;}
 .dashboard,.auth,.deposit,.withdrawal,.about{display:none;}
 .active{display:block;}
@@ -57,7 +57,7 @@ input,select{padding:10px;margin:5px;border-radius:5px;border:none;font-size:16p
 <h3>Owner: John Wilson | Launch Date: 17 Nov 2025</h3>
 <div class="container">
 
-<div class="auth" id="auth">
+<div class="auth active" id="auth">
 <h2>Login / Signup</h2>
 <input type="text" id="username" placeholder="Enter Username">
 <input type="password" id="password" placeholder="Enter Password">
