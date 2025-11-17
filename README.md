@@ -32,6 +32,7 @@ input,select{padding:10px;margin:5px;border-radius:5px;border:none;font-size:16p
 <h3>Owner: John Wilson | Launch Date: 17 Nov 2025</h3>
 <div class="container">
 
+<!-- Login/Signup -->
 <div class="auth active" id="auth">
 <h2>Login / Signup</h2>
 <input type="text" id="username" placeholder="Enter Username">
@@ -41,6 +42,7 @@ input,select{padding:10px;margin:5px;border-radius:5px;border:none;font-size:16p
 <button onclick="signup()">Signup</button>
 </div>
 
+<!-- Dashboard -->
 <div class="dashboard" id="dashboard">
 <h2>Welcome <span id="userDisplay"></span></h2>
 <div class="balance-display">Balance: <span id="userBalance">0</span> PKR</div>
@@ -51,6 +53,7 @@ input,select{padding:10px;margin:5px;border-radius:5px;border:none;font-size:16p
 <button onclick="showAbout()">📊 About VERBOSE</button>
 </div>
 
+<!-- Deposit -->
 <div class="deposit" id="deposit">
 <h2>Deposit Funds</h2>
 <select id="planSelect" onchange="fillAmount()"></select>
@@ -66,6 +69,7 @@ input,select{padding:10px;margin:5px;border-radius:5px;border:none;font-size:16p
 <button onclick="backDashboard()">Back</button>
 </div>
 
+<!-- Withdrawal -->
 <div class="withdrawal" id="withdrawal">
 <h2>Withdrawal</h2>
 <select id="withdrawMethod">
@@ -78,6 +82,7 @@ input,select{padding:10px;margin:5px;border-radius:5px;border:none;font-size:16p
 <button onclick="backDashboard()">Back</button>
 </div>
 
+<!-- About -->
 <div class="about" id="about">
 <h2>About VERBOSE</h2>
 <p>VERBOSE ek cutting-edge digital earning platform hai jo users ko simple aur transparent ways me online income generate karne ka mauka deta hai. Humari mission hai har individual ko financial freedom aur flexible earning opportunities provide karna. Humari team advanced technology aur secure systems ka use kar ke seamless experience ensure karti hai. VERBOSE ke plans fully transparent, reliable aur user-friendly hain. Har user apni growth track kar sakta hai aur daily profits instantly check kar sakta hai. Humari special offers aur turbo-boost plans users ko fast-track earning ka option dete hain. Customer support always available hai, taake koi bhi query ya issue instantly solve ho jaye. VERBOSE har step me trustworthy aur innovative solutions provide karta hai, jahan har investor confident feel kare.</p>
@@ -113,7 +118,7 @@ function animateBG(){
 animateBG();
 window.onresize=()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
 
-// --- User System without Gmail ---
+// --- User System ---
 let users = JSON.parse(localStorage.getItem('users')) || [];
 let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
 
@@ -146,38 +151,47 @@ const plans=[
 ];
 
 function signup(){
-  const u = document.getElementById('username').value.trim();
-  const p = document.getElementById('password').value.trim();
-  if(!u || !p){ alert('Enter username & password'); return; }
-  if(users.find(user => user.username===u)){ alert('Username exists'); return; }
+  const u=document.getElementById('username').value.trim();
+  const p=document.getElementById('password').value.trim();
+  if(!u||!p){ alert('Enter username & password'); return; }
+  if(users.find(user=>user.username===u)){ alert('Username exists'); return; }
   users.push({username:u,password:p,balance:0});
   localStorage.setItem('users',JSON.stringify(users));
   alert('Signup success. Please login.');
-  document.getElementById('username').value=''; document.getElementById('password').value='';
 }
 
 function login(){
-  const u = document.getElementById('username').value.trim();
-  const p = document.getElementById('password').value.trim();
-  const user = users.find(user => user.username===u && user.password===p);
+  const u=document.getElementById('username').value.trim();
+  const p=document.getElementById('password').value.trim();
+  const user = users.find(user=>user.username===u && user.password===p);
   if(!user){ alert('Invalid username or password'); return; }
   currentUser = user;
   localStorage.setItem('currentUser',JSON.stringify(currentUser));
   showDashboard();
 }
 
-function saveCurrentUser(){ const idx = users.findIndex(u => u.username===currentUser.username); if(idx>=0){ users[idx]=currentUser; localStorage.setItem('users',JSON.stringify(users)); } }
-function logout(){ currentUser=null; localStorage.removeItem('currentUser'); document.getElementById('dashboard').classList.remove('active'); document.getElementById('auth').classList.add('active'); }
+function logout(){
+  currentUser=null;
+  localStorage.removeItem('currentUser');
+  document.getElementById('dashboard').style.display='none';
+  document.getElementById('auth').style.display='block';
+}
+
+function saveCurrentUser(){ 
+  const idx = users.findIndex(u => u.username===currentUser.username);
+  if(idx>=0){ users[idx]=currentUser; localStorage.setItem('users',JSON.stringify(users)); } 
+}
 
 function showDashboard(){
-  document.getElementById('auth').classList.remove('active');
-  document.getElementById('deposit').classList.remove('active');
-  document.getElementById('withdrawal').classList.remove('active');
-  document.getElementById('about').classList.remove('active');
-  document.getElementById('dashboard').classList.add('active');
+  document.getElementById('auth').style.display='none';
+  document.getElementById('deposit').style.display='none';
+  document.getElementById('withdrawal').style.display='none';
+  document.getElementById('about').style.display='none';
+  document.getElementById('dashboard').style.display='block';
   document.getElementById('userDisplay').innerText=currentUser.username;
   document.getElementById('userBalance').innerText=currentUser.balance||0;
-  loadPlans(); fillPlanSelect();
+  loadPlans();
+  fillPlanSelect();
 }
 
 function loadPlans(){
@@ -191,23 +205,29 @@ function loadPlans(){
   });
 }
 
-function fillPlanSelect(){ const sel=document.getElementById('planSelect'); sel.innerHTML=''; plans.forEach((p,i)=>{ const opt=document.createElement('option'); opt.value=i; opt.innerText=`${p.name} — ${p.invest} PKR`; sel.appendChild(opt); }); fillAmount(); }
+function fillPlanSelect(){ 
+  const sel=document.getElementById('planSelect'); sel.innerHTML=''; 
+  plans.forEach((p,i)=>{ const opt=document.createElement('option'); opt.value=i; opt.innerText=`${p.name} — ${p.invest} PKR`; sel.appendChild(opt); }); 
+  fillAmount(); 
+}
 function fillAmount(){ const idx=document.getElementById('planSelect').value; document.getElementById('amountInput').value=plans[idx].invest; }
 function copyNumber(){ const method=document.getElementById('paymentMethod').value; document.getElementById('paymentNumber').value=method==='jazzcash'?'03705519562':'03379827882'; }
 function submitDeposit(){ const amount=parseInt(document.getElementById('amountInput').value); currentUser.balance=(currentUser.balance||0)+amount; document.getElementById('userBalance').innerText=currentUser.balance; saveCurrentUser(); showNotification('Deposit submitted!'); }
 function submitWithdrawal(){ const amount=parseInt(document.getElementById('withdrawAmount').value); if(amount>currentUser.balance){alert('Insufficient balance'); return;} currentUser.balance-=amount; document.getElementById('userBalance').innerText=currentUser.balance; saveCurrentUser(); showNotification('Withdrawal submitted!'); }
 
-function showDeposit(){document.getElementById('dashboard').classList.remove('active');document.getElementById('deposit').classList.add('active');fillPlanSelect();copyNumber();}
-function showWithdrawal(){document.getElementById('dashboard').classList.remove('active');document.getElementById('withdrawal').classList.add('active');}
-function showAbout(){document.getElementById('dashboard').classList.remove('active');document.getElementById('about').classList.add('active');}
-function backDashboard(){document.querySelectorAll('.dashboard,.deposit,.withdrawal,.about').forEach(el=>el.classList.remove('active'));document.getElementById('dashboard').classList.add('active');}
+function showDeposit(){document.getElementById('dashboard').style.display='none';document.getElementById('deposit').style.display='block';fillPlanSelect();copyNumber();}
+function showWithdrawal(){document.getElementById('dashboard').style.display='none';document.getElementById('withdrawal').style.display='block';}
+function showAbout(){document.getElementById('dashboard').style.display='none';document.getElementById('about').style.display='block';}
+function backDashboard(){document.getElementById('deposit').style.display='none';document.getElementById('withdrawal').style.display='none';document.getElementById('about').style.display='none';document.getElementById('dashboard').style.display='block';}
 
 function showNotification(msg){ const notif=document.createElement('div'); notif.className='notification'; notif.innerText=msg; document.body.appendChild(notif); setTimeout(()=>{document.body.removeChild(notif);},3000); }
 
 // On load persistent login
-window.onload=function(){
-  if(currentUser){ showDashboard(); }
-}
+window.addEventListener('load',()=>{
+  if(currentUser){
+    showDashboard();
+  }
+});
 </script>
 </body>
 </html>
