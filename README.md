@@ -3,35 +3,152 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login Test</title>
+<title>VERBOSE — Ultra Premium Earning Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 <style>
-body{font-family:sans-serif;background:#000;color:#0ff;text-align:center;padding:50px;}
-input{padding:10px;margin:5px;}
-button{padding:10px 20px;margin:5px;cursor:pointer;background:#0ff;color:#000;border:none;border-radius:5px;}
-.dashboard{display:none;margin-top:20px;}
+body {margin:0;font-family:'Orbitron',sans-serif;overflow-x:hidden;background:#000;color:#fff;}
+h1,h2,h3{text-align:center;color:#0ff;text-shadow:0 0 5px #0ff,0 0 10px #0ff;}
+.container{width:90%;margin:20px auto;}
+button{cursor:pointer;padding:10px 20px;margin:5px;border:none;border-radius:10px;background:#0ff;color:#000;font-weight:bold;font-size:16px;transition:0.3s;box-shadow:0 0 5px #0ff,0 0 10px #0ff;}
+button:hover{background:#0cc; box-shadow:0 0 15px #0ff,0 0 30px #0ff; transform:scale(1.05);}
+input,select{padding:10px;margin:5px;border-radius:5px;border:none;font-size:16px;}
+.plan-card{background:rgba(0,255,255,0.1);border:1px solid #0ff;padding:15px;margin:10px 0;border-radius:15px;animation:neonPulse 2s infinite alternate;position:relative;}
+.plan-card h3{color:#0ff;text-shadow:0 0 10px #0ff;}
+.plan-card .badge{position:absolute;top:10px;right:10px;background:#ff0;color:#000;padding:5px 10px;border-radius:10px;font-weight:bold;animation:blink 1s infinite alternate;}
+@keyframes neonPulse{0%{box-shadow:0 0 5px #0ff}100%{box-shadow:0 0 25px #0ff;}}
+@keyframes blink{0%{opacity:1}100%{opacity:0.3}}
+#bgCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;}
+.dashboard,.auth,.deposit,.withdrawal,.about{display:none;}
+.active{display:block;}
+.plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));grid-gap:15px;}
+.balance-display{font-weight:bold;color:#0ff;text-align:center;margin:10px 0;font-size:18px;}
+.notification{position:fixed;bottom:20px;right:20px;background:#0ff;color:#000;padding:10px 20px;border-radius:10px;font-weight:bold;box-shadow:0 0 10px #0ff;animation:fadeInOut 3s forwards;}
+@keyframes fadeInOut{0%{opacity:0;transform:translateY(20px);}10%{opacity:1;transform:translateY(0);}90%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-20px);}}
 </style>
 </head>
 <body>
+<canvas id="bgCanvas"></canvas>
+<h1>VERBOSE Earning Platform</h1>
+<h3>Owner: John Wilson | Launch Date: 17 Nov 2025</h3>
+<div class="container">
 
-<div id="auth">
+<!-- Login/Signup -->
+<div class="auth active" id="auth">
 <h2>Login / Signup</h2>
-<input type="text" id="username" placeholder="Username">
-<input type="password" id="password" placeholder="Password">
+<input type="text" id="username" placeholder="Enter Username">
+<input type="password" id="password" placeholder="Enter Password">
 <br>
 <button id="loginBtn">Login</button>
 <button id="signupBtn">Signup</button>
 </div>
 
+<!-- Dashboard -->
 <div class="dashboard" id="dashboard">
 <h2>Welcome <span id="userDisplay"></span></h2>
-<div>Balance: <span id="userBalance">0</span></div>
+<div class="balance-display">Balance: <span id="userBalance">0</span> PKR</div>
 <button id="logoutBtn">Logout</button>
+<div class="plan-grid" id="planGrid"></div>
+<button onclick="showDeposit()">💰 Deposit</button>
+<button onclick="showWithdrawal()">💸 Withdrawal</button>
+<button onclick="showAbout()">📊 About VERBOSE</button>
+</div>
+
+<!-- Deposit -->
+<div class="deposit" id="deposit">
+<h2>Deposit Funds</h2>
+<select id="planSelect" onchange="fillAmount()"></select>
+<input type="text" id="amountInput" readonly>
+<select id="paymentMethod" onchange="copyNumber()">
+<option value="jazzcash">JazzCash</option>
+<option value="easypaisa">Easypaisa</option>
+</select>
+<input type="text" id="paymentNumber" readonly>
+<input type="text" id="transactionId" placeholder="Transaction ID">
+<input type="file" id="uploadProof">
+<button onclick="submitDeposit()">Submit Deposit</button>
+<button onclick="backDashboard()">Back</button>
+</div>
+
+<!-- Withdrawal -->
+<div class="withdrawal" id="withdrawal">
+<h2>Withdrawal</h2>
+<select id="withdrawMethod">
+<option value="jazzcash">JazzCash</option>
+<option value="easypaisa">Easypaisa</option>
+</select>
+<input type="text" id="accountNumber" placeholder="Account Number">
+<input type="number" id="withdrawAmount" placeholder="Amount">
+<button onclick="submitWithdrawal()">Submit Withdrawal</button>
+<button onclick="backDashboard()">Back</button>
+</div>
+
+<!-- About -->
+<div class="about" id="about">
+<h2>About VERBOSE</h2>
+<p>VERBOSE ek cutting-edge digital earning platform hai jo users ko simple aur transparent ways me online income generate karne ka mauka deta hai. Humari mission hai har individual ko financial freedom aur flexible earning opportunities provide karna. Humari team advanced technology aur secure systems ka use kar ke seamless experience ensure karti hai. VERBOSE ke plans fully transparent, reliable aur user-friendly hain. Har user apni growth track kar sakta hai aur daily profits instantly check kar sakta hai. Humari special offers aur turbo-boost plans users ko fast-track earning ka option dete hain. Customer support always available hai, taake koi bhi query ya issue instantly solve ho jaye. VERBOSE har step me trustworthy aur innovative solutions provide karta hain, jahan har investor confident feel kare.</p>
+<button onclick="backDashboard()">Back</button>
+</div>
+
 </div>
 
 <script>
-// --- User system ---
+// --- Background Neon Particles ---
+const canvas = document.getElementById('bgCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const particles = [];
+for(let i=0;i<150;i++){
+  particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,dx:(Math.random()-0.5)*1.5,dy:(Math.random()-0.5)*1.5});
+}
+function animateBG(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle='rgba(0,255,255,0.7)';
+    ctx.shadowBlur = 10; ctx.shadowColor = '#0ff';
+    ctx.fill();
+    p.x+=p.dx; p.y+=p.dy;
+    if(p.x<0||p.x>canvas.width)p.dx*=-1;
+    if(p.y<0||p.y>canvas.height)p.dy*=-1;
+  });
+  requestAnimationFrame(animateBG);
+}
+animateBG();
+window.onresize=()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+
+// --- User System ---
 let users = JSON.parse(localStorage.getItem('users')) || [];
 let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+
+const plans=[
+  {name:'Plan 1', invest:250, days:25, totalProfit:900},
+  {name:'Plan 2', invest:500, days:30, totalProfit:2000},
+  {name:'Plan 3', invest:1000, days:35, totalProfit:4500},
+  {name:'Plan 4', invest:1500, days:40, totalProfit:7000},
+  {name:'Plan 5', invest:2000, days:45, totalProfit:9500},
+  {name:'Plan 6', invest:3000, days:50, totalProfit:15000},
+  {name:'Plan 7', invest:4000, days:60, totalProfit:10000},
+  {name:'Plan 8', invest:5000, days:70, totalProfit:12500},
+  {name:'Plan 9', invest:6000, days:80, totalProfit:15000},
+  {name:'Plan 10', invest:7000, days:90, totalProfit:17500},
+  {name:'Plan 11', invest:8000, days:100, totalProfit:20000},
+  {name:'Plan 12', invest:9000, days:110, totalProfit:22500},
+  {name:'Plan 13', invest:10000, days:120, totalProfit:25000},
+  {name:'Plan 14', invest:12000, days:130, totalProfit:30000},
+  {name:'Plan 15', invest:14000, days:140, totalProfit:35000},
+  {name:'Plan 16', invest:16000, days:150, totalProfit:40000},
+  {name:'Plan 17', invest:18000, days:160, totalProfit:45000},
+  {name:'Plan 18', invest:20000, days:170, totalProfit:50000},
+  {name:'Plan 19', invest:25000, days:180, totalProfit:62500},
+  {name:'Plan 20', invest:35000, days:200, totalProfit:87500},
+  {name:'Plan 21', invest:40000, days:210, totalProfit:100000},
+  {name:'Plan 22', invest:45000, days:220, totalProfit:112500},
+  {name:'Plan 23', invest:50000, days:230, totalProfit:125000},
+  {name:'Plan 24', invest:55000, days:240, totalProfit:137500},
+  {name:'Plan 25', invest:60000, days:250, totalProfit:150000}
+];
 
 // --- Functions ---
 function signup(){
@@ -55,27 +172,67 @@ function login(){
 }
 
 function logout(){
-  currentUser = null;
+  currentUser=null;
   localStorage.removeItem('currentUser');
   document.getElementById('dashboard').style.display='none';
   document.getElementById('auth').style.display='block';
 }
 
-function showDashboard(){
-  document.getElementById('auth').style.display='none';
-  document.getElementById('dashboard').style.display='block';
-  document.getElementById('userDisplay').innerText=currentUser.username;
-  document.getElementById('userBalance').innerText=currentUser.balance;
+function saveCurrentUser(){ 
+  const idx = users.findIndex(u => u.username===currentUser.username);
+  if(idx>=0){ users[idx]=currentUser; localStorage.setItem('users',JSON.stringify(users)); } 
 }
 
-// --- Event Listeners ---
+function showDashboard(){
+  document.getElementById('auth').style.display='none';
+  document.getElementById('deposit').style.display='none';
+  document.getElementById('withdrawal').style.display='none';
+  document.getElementById('about').style.display='none';
+  document.getElementById('dashboard').style.display='block';
+  document.getElementById('userDisplay').innerText=currentUser.username;
+  document.getElementById('userBalance').innerText=currentUser.balance||0;
+  loadPlans();
+  fillPlanSelect();
+}
+
+function loadPlans(){
+  const grid=document.getElementById('planGrid'); grid.innerHTML='';
+  plans.forEach(p=>{
+    const daily=Math.round(p.totalProfit/p.days);
+    const card=document.createElement('div'); card.className='plan-card';
+    const badge=p.totalProfit>10000?'<div class="badge">🔥Turbo🔥</div>':'';
+    card.innerHTML=`${badge}<h3>${p.name}</h3><p>Invest: ${p.invest} PKR</p><p>Days: ${p.days}</p><p>Daily Profit: ${daily} PKR</p><p>Total Profit: ${p.totalProfit} PKR</p><p>Total Return: ${p.invest+p.totalProfit} PKR</p>`;
+    grid.appendChild(card);
+  });
+}
+
+function fillPlanSelect(){ 
+  const sel=document.getElementById('planSelect'); sel.innerHTML=''; 
+  plans.forEach((p,i)=>{ const opt=document.createElement('option'); opt.value=i; opt.innerText=`${p.name} — ${p.invest} PKR`; sel.appendChild(opt); }); 
+  fillAmount(); 
+}
+function fillAmount(){ const idx=document.getElementById('planSelect').value; document.getElementById('amountInput').value=plans[idx].invest; }
+function copyNumber(){ const method=document.getElementById('paymentMethod').value; document.getElementById('paymentNumber').value=method==='jazzcash'?'03705519562':'03379827882'; }
+function submitDeposit(){ const amount=parseInt(document.getElementById('amountInput').value); currentUser.balance=(currentUser.balance||0)+amount; document.getElementById('userBalance').innerText=currentUser.balance; saveCurrentUser(); showNotification('Deposit submitted!'); }
+function submitWithdrawal(){ const amount=parseInt(document.getElementById('withdrawAmount').value); if(amount>currentUser.balance){alert('Insufficient balance'); return;} currentUser.balance-=amount; document.getElementById('userBalance').innerText=currentUser.balance; saveCurrentUser(); showNotification('Withdrawal submitted!'); }
+
+function showDeposit(){document.getElementById('dashboard').style.display='none';document.getElementById('deposit').style.display='block';fillPlanSelect();copyNumber();}
+function showWithdrawal(){document.getElementById('dashboard').style.display='none';document.getElementById('withdrawal').style.display='block';}
+function showAbout(){document.getElementById('dashboard').style.display='none';document.getElementById('about').style.display='block';}
+function backDashboard(){document.getElementById('deposit').style.display='none';document.getElementById('withdrawal').style.display='none';document.getElementById('about').style.display='none';document.getElementById('dashboard').style.display='block';}
+
+function showNotification(msg){ const notif=document.createElement('div'); notif.className='notification'; notif.innerText=msg; document.body.appendChild(notif); setTimeout(()=>{document.body.removeChild(notif);},3000); }
+
+// --- Event Listeners for login/signup buttons ---
 document.getElementById('loginBtn').addEventListener('click', login);
 document.getElementById('signupBtn').addEventListener('click', signup);
 document.getElementById('logoutBtn').addEventListener('click', logout);
 
 // --- Persistent login ---
-window.addEventListener('load', ()=>{
-  if(currentUser){ showDashboard(); }
+window.addEventListener('load',()=>{
+  if(currentUser){
+    showDashboard();
+  }
 });
 </script>
 </body>
