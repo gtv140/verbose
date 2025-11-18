@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NEON EARN — Premium Platform</title>
+<title>VERBOSE — Premium Platform</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -17,6 +17,7 @@ body{background:linear-gradient(270deg,#0f0c29,#302b63,#24243e);background-size:
 @keyframes gradientBG{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 header{display:flex;justify-content:space-between;align-items:center;padding:15px;}
 header h1{color:var(--neon);text-shadow:0 0 15px var(--neon);}
+header .small{font-size:13px;color:#cfe;}
 nav{display:flex;gap:10px;flex-wrap:wrap;}
 button{cursor:pointer;border:none;border-radius:10px;padding:10px 15px;font-weight:700;transition:0.2s;}
 button.primary{background:var(--neon);color:#000;}
@@ -24,7 +25,7 @@ button.primary:hover{opacity:0.9;}
 button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.2);color:#fff;}
 button.ghost:hover{opacity:0.8;}
 .layout{display:flex;gap:20px;padding:15px;}
-aside{flex:0 0 200px;background:rgba(0,255,255,0.05);border-radius:12px;padding:15px;backdrop-filter:blur(5px);}
+aside{flex:0 0 200px;background:rgba(0,255,255,0.05);border-radius:12px;padding:15px;backdrop-filter:blur(5px);display:none;}
 aside button{display:block;width:100%;margin-bottom:10px;text-align:left;}
 main{flex:1;}
 .card{background:rgba(0,255,255,0.05);padding:15px;border-radius:12px;margin-bottom:15px;backdrop-filter:blur(5px);}
@@ -37,7 +38,10 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.1);}
 </head>
 <body>
 <header>
-  <h1>NEON EARN</h1>
+  <div>
+    <h1>VERBOSE</h1>
+    <div class="small">Owner: John Wilson • Launch Date: 17 Nov 2025</div>
+  </div>
   <div>
     <span id="welcomeText" class="muted"></span>
     <button id="authBtn" class="primary">Login / Signup</button>
@@ -46,15 +50,17 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.1);}
 </header>
 
 <div class="layout">
-  <aside>
-    <button data-tab="dashboard" class="tabBtn">Dashboard</button>
-    <button data-tab="plans" class="tabBtn">Plans</button>
-    <button data-tab="deposit" class="tabBtn">Deposit</button>
-    <button data-tab="withdraw" class="tabBtn">Withdrawal</button>
-    <button data-tab="transactions" class="tabBtn">Transactions</button>
+  <aside id="sideNav">
+    <button data-tab="dashboard" class="tabBtn">📊 Dashboard</button>
+    <button data-tab="plans" class="tabBtn">💼 Plans</button>
+    <button data-tab="deposit" class="tabBtn">💰 Deposit</button>
+    <button data-tab="withdraw" class="tabBtn">💸 Withdrawal</button>
+    <button data-tab="transactions" class="tabBtn">🧾 Transactions</button>
+    <button data-tab="about" class="tabBtn">📑 Company</button>
   </aside>
 
   <main>
+    <!-- Login / Signup -->
     <section id="authSection" class="card">
       <h2>Login / Signup</h2>
       <input id="username" placeholder="Username">
@@ -65,17 +71,20 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.1);}
       </div>
     </section>
 
+    <!-- Dashboard -->
     <section id="dashboard" class="card" style="display:none;">
       <h2>Dashboard</h2>
       <p>Balance: <span id="balance">0</span> PKR</p>
       <p>Total Profit: <span id="totalProfit">0</span> PKR</p>
     </section>
 
+    <!-- Plans -->
     <section id="plans" class="card" style="display:none;">
       <h2>Plans</h2>
       <div id="planContainer"></div>
     </section>
 
+    <!-- Deposit -->
     <section id="deposit" class="card" style="display:none;">
       <h2>Deposit</h2>
       <label>Plan</label>
@@ -99,6 +108,7 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.1);}
       <button class="primary" onclick="submitDeposit()">Submit Deposit</button>
     </section>
 
+    <!-- Withdrawal -->
     <section id="withdraw" class="card" style="display:none;">
       <h2>Withdrawal</h2>
       <label>Method</label>
@@ -113,6 +123,7 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.1);}
       <button class="primary" onclick="submitWithdraw()">Request Withdrawal</button>
     </section>
 
+    <!-- Transactions -->
     <section id="transactions" class="card" style="display:none;">
       <h2>Transactions</h2>
       <table>
@@ -122,15 +133,26 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.1);}
         <tbody id="txTable"></tbody>
       </table>
     </section>
+
+    <!-- Company -->
+    <section id="about" class="card" style="display:none;">
+      <h2>About VERBOSE</h2>
+      <p class="muted">
+        VERBOSE ek premium earning platform hai jo modern digital finance ko neon style me present karta hai.<br>
+        Owner: <strong>John Wilson</strong><br>
+        Launch Date: <strong>17 Nov 2025</strong><br>
+        Mission: Financial freedom, transparent plans aur easy UX.
+      </p>
+    </section>
   </main>
 </div>
 
 <div id="notif">Copied!</div>
 
 <script>
-let users = JSON.parse(localStorage.getItem('neon_users')||'[]');
-let currentUser = JSON.parse(localStorage.getItem('neon_current')||'null');
-let transactions = JSON.parse(localStorage.getItem('neon_tx')||'[]');
+let users = JSON.parse(localStorage.getItem('verbose_users')||'[]');
+let currentUser = JSON.parse(localStorage.getItem('verbose_current')||'null');
+let transactions = JSON.parse(localStorage.getItem('verbose_tx')||'[]');
 
 const plans = [];
 for(let i=1;i<=25;i++){
@@ -139,9 +161,9 @@ for(let i=1;i<=25;i++){
 
 const depositNumbers = { jazzcash:'03705519562', easypaisa:'03379827882' };
 
+const sideNav = document.getElementById('sideNav');
 function showTab(tab){
   document.querySelectorAll('main section').forEach(s=>s.style.display='none');
-  if(tab==='dashboard' && !currentUser){tab='authSection';}
   document.getElementById(tab).style.display='block';
 }
 document.querySelectorAll('.tabBtn').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
@@ -152,7 +174,7 @@ function signupUser(){
   if(!u||!p){alert('Enter username and password');return;}
   if(users.find(x=>x.username===u)){alert('User exists');return;}
   users.push({username:u,password:p,balance:0});
-  localStorage.setItem('neon_users',JSON.stringify(users));
+  localStorage.setItem('verbose_users',JSON.stringify(users));
   alert('Signup successful');
 }
 
@@ -162,7 +184,8 @@ function loginUser(){
   const user = users.find(x=>x.username===u && x.password===p);
   if(user){
     currentUser = user;
-    localStorage.setItem('neon_current',JSON.stringify(currentUser));
+    localStorage.setItem('verbose_current',JSON.stringify(currentUser));
+    sideNav.style.display='block';
     updateUI();
     showTab('dashboard');
   } else {alert('Invalid credentials');}
@@ -170,7 +193,8 @@ function loginUser(){
 
 function logoutUser(){
   currentUser=null;
-  localStorage.setItem('neon_current',JSON.stringify(null));
+  localStorage.setItem('verbose_current',JSON.stringify(null));
+  sideNav.style.display='none';
   updateUI();
   showTab('authSection');
 }
@@ -233,11 +257,11 @@ function submitDeposit(){
   if(!plan){alert('Select plan');return;}
   const tx={type:'Deposit',amount:plan.invest,plan:plan.name,status:'Pending',user:currentUser.username};
   transactions.push(tx);
-  localStorage.setItem('neon_tx',JSON.stringify(transactions));
+  localStorage.setItem('verbose_tx',JSON.stringify(transactions));
   currentUser.balance += plan.invest;
   users = users.map(u=>u.username===currentUser.username?currentUser:u);
-  localStorage.setItem('neon_users',JSON.stringify(users));
-  localStorage.setItem('neon_current',JSON.stringify(currentUser));
+  localStorage.setItem('verbose_users',JSON.stringify(users));
+  localStorage.setItem('verbose_current',JSON.stringify(currentUser));
   updateUI();
   alert('Deposit submitted');
 }
@@ -249,9 +273,9 @@ function submitWithdraw(){
   transactions.push(tx);
   currentUser.balance -= amt;
   users = users.map(u=>u.username===currentUser.username?currentUser:u);
-  localStorage.setItem('neon_users',JSON.stringify(users));
-  localStorage.setItem('neon_current',JSON.stringify(currentUser));
-  localStorage.setItem('neon_tx',JSON.stringify(transactions));
+  localStorage.setItem('verbose_users',JSON.stringify(users));
+  localStorage.setItem('verbose_current',JSON.stringify(currentUser));
+  localStorage.setItem('verbose_tx',JSON.stringify(transactions));
   updateUI();
   alert('Withdrawal requested');
 }
@@ -266,6 +290,8 @@ function renderTransactions(){
 }
 
 // Initialize
+if(currentUser){sideNav.style.display='block';}
+else{sideNav.style.display='none';}
 updateUI();
 updatePayNumber();
 </script>
