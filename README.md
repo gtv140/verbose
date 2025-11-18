@@ -406,6 +406,3 @@ updateUI();
 </script>
 </body>
 </html>
-        document.getElementById('welcome').innerText=`Hi, ${currentUser.user}`;
-        document.getElementById('logoutBtn').style.display='block';
-        document.getElementById('
