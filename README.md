@@ -2,229 +2,272 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NEON EARN — Premium Platform</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root{
-    --neon:#00fff7;
-    --accent:#ff3eff;
-    --bg1:#0a0a0a;
-    --bg2:#1a1a1a;
+:root {
+  --neon:#00ffff;
+  --accent:#ffea00;
+  --bg:#0f0c29;
 }
 *{box-sizing:border-box;}
-body{margin:0;font-family:'Orbitron',sans-serif;background:linear-gradient(120deg,var(--bg1),var(--bg2));color:#fff;overflow-x:hidden;}
-h1,h2,h3,h4,h5,h6{margin:0;}
-header{display:flex;justify-content:space-between;align-items:center;padding:15px;background:#111;border-bottom:1px solid var(--neon);}
-header h1{color:var(--neon);text-shadow:0 0 8px var(--neon);}
-button{cursor:pointer;transition:0.2s;}
-button:hover{opacity:0.85;transform:scale(1.02);}
-.card{background:rgba(0,255,255,0.05);border:1px solid rgba(0,255,255,0.2);padding:15px;margin:15px 0;border-radius:12px;text-align:center;box-shadow:0 0 15px rgba(0,255,255,0.3);}
-input,select{padding:10px;border-radius:8px;border:none;background:rgba(0,0,0,0.4);color:#fff;width:100%;margin:5px 0;outline:none;}
-button.primary{background:var(--neon);color:#000;padding:10px 15px;border-radius:8px;border:none;font-weight:700;}
-button.accent{background:var(--accent);color:#000;padding:8px 12px;border-radius:6px;border:none;font-weight:600;}
-nav{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0;}
-section{display:none;}
-section.active{display:block;}
-.notif{position:fixed;bottom:20px;right:20px;padding:12px 18px;border-radius:10px;background:var(--neon);color:#000;font-weight:700;box-shadow:0 0 20px rgba(0,255,255,0.3);}
-.plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:10px;}
-.plan-card{padding:12px;border-radius:10px;background:rgba(255,255,255,0.05);border:1px solid var(--neon);text-align:center;transition:0.3s;}
-.plan-card:hover{box-shadow:0 0 20px var(--neon);transform:translateY(-5px);}
+html,body{height:100%;margin:0;font-family:'Orbitron',sans-serif;background:#000;color:#fff;overflow-x:hidden;}
+body{background:linear-gradient(270deg,#0f0c29,#302b63,#24243e);background-size:600% 600%;animation:gradientBG 20s ease infinite;}
+@keyframes gradientBG{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+header{display:flex;justify-content:space-between;align-items:center;padding:15px;}
+header h1{color:var(--neon);text-shadow:0 0 15px var(--neon);}
+nav{display:flex;gap:10px;flex-wrap:wrap;}
+button{cursor:pointer;border:none;border-radius:10px;padding:10px 15px;font-weight:700;transition:0.2s;}
+button.primary{background:var(--neon);color:#000;}
+button.primary:hover{opacity:0.9;}
+button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.2);color:#fff;}
+button.ghost:hover{opacity:0.8;}
+.layout{display:flex;gap:20px;padding:15px;}
+aside{flex:0 0 200px;background:rgba(0,255,255,0.05);border-radius:12px;padding:15px;backdrop-filter:blur(5px);}
+aside button{display:block;width:100%;margin-bottom:10px;text-align:left;}
+main{flex:1;}
+.card{background:rgba(0,255,255,0.05);padding:15px;border-radius:12px;margin-bottom:15px;backdrop-filter:blur(5px);}
+input,select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.3);color:#fff;outline:none;}
+table{width:100%;border-collapse:collapse;}
+th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.1);}
+.muted{color:#ccc;}
+#notif{position:fixed;bottom:20px;right:20px;background:var(--neon);color:#000;padding:12px 18px;border-radius:12px;display:none;}
 </style>
 </head>
 <body>
-
 <header>
-<h1>NEON EARN</h1>
-<div id="topActions">
-    <span id="welcome"></span>
-    <button id="openAuth" class="primary">Login / Signup</button>
-    <button id="logoutBtn" class="primary" style="display:none;">Logout</button>
-</div>
+  <h1>NEON EARN</h1>
+  <div>
+    <span id="welcomeText" class="muted"></span>
+    <button id="authBtn" class="primary">Login / Signup</button>
+    <button id="logoutBtn" class="primary" style="display:none;background:#ff4d4d;">Logout</button>
+  </div>
 </header>
 
-<div style="padding:15px; max-width:900px;margin:auto;">
+<div class="layout">
+  <aside>
+    <button data-tab="dashboard" class="tabBtn">Dashboard</button>
+    <button data-tab="plans" class="tabBtn">Plans</button>
+    <button data-tab="deposit" class="tabBtn">Deposit</button>
+    <button data-tab="withdraw" class="tabBtn">Withdrawal</button>
+    <button data-tab="transactions" class="tabBtn">Transactions</button>
+  </aside>
 
-<nav>
-<button data-tab="dashboard" class="accent">Dashboard</button>
-<button data-tab="plans" class="accent">Plans</button>
-<button data-tab="deposit" class="accent">Deposit</button>
-<button data-tab="withdrawal" class="accent">Withdraw</button>
-<button data-tab="transactions" class="accent">Transactions</button>
-</nav>
+  <main>
+    <section id="authSection" class="card">
+      <h2>Login / Signup</h2>
+      <input id="username" placeholder="Username">
+      <input id="password" type="password" placeholder="Password">
+      <div style="margin-top:10px;">
+        <button class="primary" onclick="loginUser()">Login</button>
+        <button class="ghost" onclick="signupUser()">Signup</button>
+      </div>
+    </section>
 
-<section id="authSection" class="active card">
-<h2>Login / Signup</h2>
-<input id="inpUser" placeholder="Username">
-<input id="inpPass" type="password" placeholder="Password">
-<div style="display:flex;gap:10px;margin-top:10px;">
-<button class="primary" onclick="simpleLogin()">Login</button>
-<button class="primary" onclick="simpleSignup()">Signup</button>
+    <section id="dashboard" class="card" style="display:none;">
+      <h2>Dashboard</h2>
+      <p>Balance: <span id="balance">0</span> PKR</p>
+      <p>Total Profit: <span id="totalProfit">0</span> PKR</p>
+    </section>
+
+    <section id="plans" class="card" style="display:none;">
+      <h2>Plans</h2>
+      <div id="planContainer"></div>
+    </section>
+
+    <section id="deposit" class="card" style="display:none;">
+      <h2>Deposit</h2>
+      <label>Plan</label>
+      <select id="depositPlan"></select>
+      <label>Amount</label>
+      <input id="depositAmount" readonly>
+      <label>Method</label>
+      <select id="depositMethod" onchange="updatePayNumber()">
+        <option value="jazzcash">JazzCash</option>
+        <option value="easypaisa">EasyPaisa</option>
+      </select>
+      <label>Pay Number</label>
+      <div style="display:flex;gap:5px;">
+        <input id="payNumber" readonly>
+        <button class="ghost" onclick="copyNumber()">Copy</button>
+      </div>
+      <label>Transaction ID (optional)</label>
+      <input id="txId">
+      <label>Proof</label>
+      <input type="file" id="proofFile">
+      <button class="primary" onclick="submitDeposit()">Submit Deposit</button>
+    </section>
+
+    <section id="withdraw" class="card" style="display:none;">
+      <h2>Withdrawal</h2>
+      <label>Method</label>
+      <select id="withdrawMethod">
+        <option value="jazzcash">JazzCash</option>
+        <option value="easypaisa">EasyPaisa</option>
+      </select>
+      <label>Account Number</label>
+      <input id="withdrawAccount">
+      <label>Amount</label>
+      <input type="number" id="withdrawAmount">
+      <button class="primary" onclick="submitWithdraw()">Request Withdrawal</button>
+    </section>
+
+    <section id="transactions" class="card" style="display:none;">
+      <h2>Transactions</h2>
+      <table>
+        <thead>
+          <tr><th>Type</th><th>Amount</th><th>Plan</th><th>Status</th></tr>
+        </thead>
+        <tbody id="txTable"></tbody>
+      </table>
+    </section>
+  </main>
 </div>
-</section>
 
-<section id="dashboard" class="card">
-<h2>Dashboard</h2>
-<div class="plan-card">Balance: <span id="balDisplay">0 PKR</span></div>
-<div class="plan-card">Total Profit: <span id="profitDisplay">0 PKR</span></div>
-<div class="plan-card">Active Plans: <span id="activePlans">None</span></div>
-</section>
-
-<section id="plans" class="card">
-<h2>Available Plans</h2>
-<div class="plan-grid" id="planGrid"></div>
-</section>
-
-<section id="deposit" class="card">
-<h2>Deposit</h2>
-<select id="planSelect" onchange="onPlanChange()"></select>
-<select id="payMethod" onchange="onMethodChange()">
-<option value="jazzcash">JazzCash</option>
-<option value="easypaisa">EasyPaisa</option>
-</select>
-<input id="payNumber" readonly>
-<button class="accent" onclick="copyCurrentNumber()">Copy Number</button>
-<button class="primary" onclick="submitDeposit()">Submit Deposit</button>
-</section>
-
-<section id="withdrawal" class="card">
-<h2>Withdrawal</h2>
-<input id="withdrawAccount" placeholder="Account Number / Username">
-<input id="withdrawAmount" placeholder="Amount PKR" type="number">
-<button class="primary" onclick="submitWithdrawal()">Request Withdrawal</button>
-</section>
-
-<section id="transactions" class="card">
-<h2>Transactions</h2>
-<div style="overflow:auto;max-height:250px">
-<table style="width:100%;color:#0ff;border-collapse:collapse;">
-<thead><tr><th>Type</th><th>Amount</th><th>Plan</th><th>Status</th></tr></thead>
-<tbody id="txTable"></tbody>
-</table>
-</div>
-</section>
-
-<div id="notifRoot"></div>
+<div id="notif">Copied!</div>
 
 <script>
-// --- Neon Utils ---
-function showNotif(msg){const n=document.createElement('div');n.className='notif';n.textContent=msg;document.body.appendChild(n);setTimeout(()=>n.remove(),2000);}
-function showTab(tab){document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));document.getElementById(tab).classList.add('active');}
+let users = JSON.parse(localStorage.getItem('neon_users')||'[]');
+let currentUser = JSON.parse(localStorage.getItem('neon_current')||'null');
+let transactions = JSON.parse(localStorage.getItem('neon_tx')||'[]');
 
-// --- Users & Auth ---
-const depositNumbers={jazzcash:'03705519562',easypaisa:'03379827882'};
-let users=JSON.parse(localStorage.getItem('neon_users')||'[]');
-let currentUser=JSON.parse(localStorage.getItem('neon_current')||'null');
-let transactions=JSON.parse(localStorage.getItem('neon_tx')||'[]');
-const plans=[
-{ id:1,name:'Starter',invest:500,days:7,dailyProfit:80,totalProfit:560 },
-{ id:2,name:'Pro',invest:1000,days:10,dailyProfit:120,totalProfit:1200 },
-{ id:3,name:'Elite',invest:2000,days:14,dailyProfit:250,totalProfit:3500 }
-];
+const plans = [];
+for(let i=1;i<=25;i++){
+  plans.push({id:i,name:'Plan '+i,days:20+i,invest:250*i,dailyProfit:48*i,totalProfit:1200*i});
+}
+
+const depositNumbers = { jazzcash:'03705519562', easypaisa:'03379827882' };
+
+function showTab(tab){
+  document.querySelectorAll('main section').forEach(s=>s.style.display='none');
+  if(tab==='dashboard' && !currentUser){tab='authSection';}
+  document.getElementById(tab).style.display='block';
+}
+document.querySelectorAll('.tabBtn').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+
+function signupUser(){
+  const u=document.getElementById('username').value;
+  const p=document.getElementById('password').value;
+  if(!u||!p){alert('Enter username and password');return;}
+  if(users.find(x=>x.username===u)){alert('User exists');return;}
+  users.push({username:u,password:p,balance:0});
+  localStorage.setItem('neon_users',JSON.stringify(users));
+  alert('Signup successful');
+}
+
+function loginUser(){
+  const u=document.getElementById('username').value;
+  const p=document.getElementById('password').value;
+  const user = users.find(x=>x.username===u && x.password===p);
+  if(user){
+    currentUser = user;
+    localStorage.setItem('neon_current',JSON.stringify(currentUser));
+    updateUI();
+    showTab('dashboard');
+  } else {alert('Invalid credentials');}
+}
+
+function logoutUser(){
+  currentUser=null;
+  localStorage.setItem('neon_current',JSON.stringify(null));
+  updateUI();
+  showTab('authSection');
+}
+document.getElementById('logoutBtn').addEventListener('click',logoutUser);
+document.getElementById('authBtn').addEventListener('click',()=>showTab('authSection'));
 
 function updateUI(){
-    if(currentUser){
-        document.getElementById('welcome').textContent=`Hello, ${currentUser.username}`;
-        document.getElementById('openAuth').style.display='none';
-        document.getElementById('logoutBtn').style.display='inline-block';
-        document.getElementById('balDisplay').textContent=currentUser.balance||0;
-        document.getElementById('activePlans').textContent=currentUser.activePlans.map(p=>p.name).join(', ')||'None';
-    }else{
-        document.getElementById('welcome').textContent='';
-        document.getElementById('openAuth').style.display='inline-block';
-        document.getElementById('logoutBtn').style.display='none';
-    }
+  if(currentUser){
+    document.getElementById('welcomeText').innerText='Welcome, '+currentUser.username;
+    document.getElementById('authBtn').style.display='none';
+    document.getElementById('logoutBtn').style.display='inline-block';
+    document.getElementById('balance').innerText=currentUser.balance;
+  }else{
+    document.getElementById('welcomeText').innerText='';
+    document.getElementById('authBtn').style.display='inline-block';
+    document.getElementById('logoutBtn').style.display='none';
+  }
+  renderPlans();
+  renderDepositPlans();
+  renderTransactions();
 }
 
-function simpleSignup(){
-    const u=document.getElementById('inpUser').value.trim();
-    const p=document.getElementById('inpPass').value.trim();
-    if(!u||!p){showNotif('Enter username & password');return;}
-    if(users.find(x=>x.username===u)){showNotif('User exists');return;}
-    const newUser={username:u,password:p,balance:0,activePlans:[]};
-    users.push(newUser);
-    localStorage.setItem('neon_users',JSON.stringify(users));
-    currentUser=newUser;
-    localStorage.setItem('neon_current',JSON.stringify(currentUser));
-    updateUI();showNotif('Signup successful');
-}
-
-function simpleLogin(){
-    const u=document.getElementById('inpUser').value.trim();
-    const p=document.getElementById('inpPass').value.trim();
-    const usr=users.find(x=>x.username===u && x.password===p);
-    if(!usr){showNotif('Invalid credentials');return;}
-    currentUser=usr;
-    localStorage.setItem('neon_current',JSON.stringify(currentUser));
-    updateUI();showNotif('Login successful');
-}
-
-document.getElementById('logoutBtn').addEventListener('click',()=>{
-    currentUser=null;
-    localStorage.removeItem('neon_current');
-    updateUI();
-    showNotif('Logged out');
-});
-
-// --- Plans ---
-const planGrid=document.getElementById('planGrid');
-const planSelect=document.getElementById('planSelect');
 function renderPlans(){
-    planGrid.innerHTML='';planSelect.innerHTML='';
-    plans.forEach(p=>{
-        // Grid cards
-        const div=document.createElement('div');div.className='plan-card';
-        div.innerHTML=`<strong>${p.name}</strong><div>Invest: ${p.invest}</div><div>Days: ${p.days}</div><div>Total: ${p.totalProfit}</div><button class="primary" onclick="selectPlan(${p.id})">Select</button>`;
-        planGrid.appendChild(div);
-        // Dropdown
-        const opt=document.createElement('option');opt.value=p.id;opt.textContent=p.name;planSelect.appendChild(opt);
-    });
-    onPlanChange();
+  const container=document.getElementById('planContainer');
+  container.innerHTML='';
+  plans.forEach(p=>{
+    const div=document.createElement('div');
+    div.className='card';
+    div.innerHTML=`<strong>${p.name}</strong><br>Invest: ${p.invest} PKR<br>Days: ${p.days}<br>Total Profit: ${p.totalProfit}`;
+    container.appendChild(div);
+  });
 }
-function selectPlan(id){planSelect.value=id;onPlanChange();showTab('deposit');}
-function onPlanChange(){const p=plans.find(x=>x.id==planSelect.value);document.getElementById('payNumber').value=depositNumbers[document.getElementById('payMethod').value];}
-function onMethodChange(){document.getElementById('payNumber').value=depositNumbers[document.getElementById('payMethod').value];}
-function copyCurrentNumber(){navigator.clipboard.writeText(document.getElementById('payNumber').value);showNotif('Number copied');}
 
-// --- Deposit ---
+function renderDepositPlans(){
+  const sel=document.getElementById('depositPlan');
+  sel.innerHTML='';
+  plans.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.text=p.name;sel.add(o);});
+  updateDepositAmount();
+}
+document.getElementById('depositPlan').addEventListener('change',updateDepositAmount);
+function updateDepositAmount(){
+  const planId = +document.getElementById('depositPlan').value;
+  const plan = plans.find(p=>p.id===planId);
+  document.getElementById('depositAmount').value=plan ? plan.invest : '';
+}
+function updatePayNumber(){
+  const method = document.getElementById('depositMethod').value;
+  document.getElementById('payNumber').value = depositNumbers[method];
+}
+function copyNumber(){
+  const num = document.getElementById('payNumber');
+  num.select();num.setSelectionRange(0,99999);
+  navigator.clipboard.writeText(num.value);
+  const n=document.getElementById('notif'); n.style.display='block';
+  setTimeout(()=>n.style.display='none',1000);
+}
 function submitDeposit(){
-    if(!currentUser){showNotif('Login first');return;}
-    const plan=plans.find(x=>x.id==planSelect.value);
-    const deposit={user:currentUser.username,type:'Deposit',amount:plan.invest,plan:plan.name,status:'Pending'};
-    transactions.push(deposit);
-    currentUser.activePlans.push(plan);
-    users=users.map(u=>u.username===currentUser.username?currentUser:u);
-    localStorage.setItem('neon_users',JSON.stringify(users));
-    localStorage.setItem('neon_tx',JSON.stringify(transactions));
-    localStorage.setItem('neon_current',JSON.stringify(currentUser));
-    updateUI();renderTx();showNotif('Deposit submitted');
+  const planId = +document.getElementById('depositPlan').value;
+  const plan = plans.find(p=>p.id===planId);
+  if(!plan){alert('Select plan');return;}
+  const tx={type:'Deposit',amount:plan.invest,plan:plan.name,status:'Pending',user:currentUser.username};
+  transactions.push(tx);
+  localStorage.setItem('neon_tx',JSON.stringify(transactions));
+  currentUser.balance += plan.invest;
+  users = users.map(u=>u.username===currentUser.username?currentUser:u);
+  localStorage.setItem('neon_users',JSON.stringify(users));
+  localStorage.setItem('neon_current',JSON.stringify(currentUser));
+  updateUI();
+  alert('Deposit submitted');
+}
+function submitWithdraw(){
+  const amt=+document.getElementById('withdrawAmount').value;
+  if(amt>currentUser.balance){alert('Insufficient balance');return;}
+  const planName='N/A';
+  const tx={type:'Withdrawal',amount:amt,plan:planName,status:'Pending',user:currentUser.username};
+  transactions.push(tx);
+  currentUser.balance -= amt;
+  users = users.map(u=>u.username===currentUser.username?currentUser:u);
+  localStorage.setItem('neon_users',JSON.stringify(users));
+  localStorage.setItem('neon_current',JSON.stringify(currentUser));
+  localStorage.setItem('neon_tx',JSON.stringify(transactions));
+  updateUI();
+  alert('Withdrawal requested');
+}
+function renderTransactions(){
+  const tbody=document.getElementById('txTable');
+  tbody.innerHTML='';
+  transactions.filter(t=>t.user===currentUser?.username).forEach(t=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${t.type}</td><td>${t.amount}</td><td>${t.plan}</td><td>${t.status}</td>`;
+    tbody.appendChild(tr);
+  });
 }
 
-// --- Withdrawal ---
-function submitWithdrawal(){
-    const amt=parseInt(document.getElementById('withdrawAmount').value);
-    if(!currentUser || !amt || amt>currentUser.balance){showNotif('Invalid or insufficient balance');return;}
-    transactions.push({user:currentUser.username,type:'Withdrawal',amount:amt,plan:'-',status:'Pending'});
-    currentUser.balance-=amt;
-    users=users.map(u=>u.username===currentUser.username?currentUser:u);
-    localStorage.setItem('neon_users',JSON.stringify(users));
-    localStorage.setItem('neon_tx',JSON.stringify(transactions));
-    localStorage.setItem('neon_current',JSON.stringify(currentUser));
-    updateUI();renderTx();showNotif('Withdrawal requested');
-}
-
-// --- Transactions ---
-function renderTx(){
-    const tbody=document.getElementById('txTable');tbody.innerHTML='';
-    transactions.filter(t=>currentUser && t.user===currentUser.username).forEach(tx=>{
-        const tr=document.createElement('tr');tr.innerHTML=`<td>${tx.type}</td><td>${tx.amount}</td><td>${tx.plan}</td><td>${tx.status}</td>`;tbody.appendChild(tr);
-    });
-}
-
-// --- Init ---
-renderPlans();updateUI();renderTx();
-document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
-
+// Initialize
+updateUI();
+updatePayNumber();
 </script>
 </body>
 </html>
