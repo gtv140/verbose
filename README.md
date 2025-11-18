@@ -85,7 +85,6 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:left
 </aside>
 
 <main>
-<!-- AUTH -->
 <section id="authSection" class="card active">
 <h2 style="margin-top:0">Login / Signup</h2>
 <div class="field"><input id="inpUser" placeholder="Username" /></div>
@@ -97,7 +96,6 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:left
 <div class="small muted" style="margin-top:10px">Note: Signup saved locally. Refresh keeps you logged in.</div>
 </section>
 
-<!-- DASHBOARD -->
 <section id="dashboard" class="card">
 <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
 <div>
@@ -125,13 +123,11 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:left
 </div>
 </section>
 
-<!-- PLANS -->
 <section id="plans" class="card">
 <h2 style="margin-top:0">Plans</h2>
 <div class="plan-grid" id="planGrid"></div>
 </section>
 
-<!-- DEPOSIT -->
 <section id="deposit" class="card">
 <h2 style="margin-top:0">Deposit</h2>
 <div class="small muted">Select plan, send payment and upload proof.</div>
@@ -168,7 +164,6 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:left
 </div>
 </section>
 
-<!-- WITHDRAWAL -->
 <section id="withdrawal" class="card">
 <h2 style="margin-top:0">Withdrawal</h2>
 <div class="small muted">Request withdrawal (simulated).</div>
@@ -184,7 +179,6 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:left
 </div>
 </section>
 
-<!-- TRANSACTIONS -->
 <section id="transactions" class="card">
 <h2 style="margin-top:0">Transactions</h2>
 <div style="overflow:auto;max-height:320px">
@@ -195,7 +189,6 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:left
 </div>
 </section>
 
-<!-- ABOUT / Company -->
 <section id="about" class="card">
 <h2 style="margin-top:0">About VERBOSE</h2>
 <p class="small muted">
@@ -207,7 +200,6 @@ Mission: Financial freedom, transparent plans, aur easy UX.
 <button class="primary" onclick="backToDashboard()">Back</button>
 </div>
 </section>
-
 </main>
 </div>
 </div>
@@ -215,11 +207,8 @@ Mission: Financial freedom, transparent plans, aur easy UX.
 <div id="notifRoot"></div>
 
 <script>
-/* ------------------------------
-   Neon particle background
------------------------------- */
-const canvas = document.getElementById('bgCanvas');
-const ctx = canvas.getContext('2d');
+/* ------------------------------ Neon background ------------------------------ */
+const canvas=document.getElementById('bgCanvas'),ctx=canvas.getContext('2d');
 let W=canvas.width=innerWidth,H=canvas.height=innerHeight;
 window.addEventListener('resize',()=>{W=canvas.width=innerWidth;H=canvas.height=innerHeight;});
 const particles=[];
@@ -227,196 +216,196 @@ for(let i=0;i<140;i++){particles.push({x:Math.random()*W,y:Math.random()*H,r:Mat
 function drawBG(){ctx.clearRect(0,0,W,H);particles.forEach(p=>{ctx.beginPath();ctx.fillStyle=`hsla(${p.hue},100%,60%,0.12)`;ctx.shadowBlur=12;ctx.shadowColor='rgba(0,255,255,0.15)';ctx.fillRect(p.x,p.y,p.r*2,p.r*2);p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;});requestAnimationFrame(drawBG);}
 drawBG();
 
-/* ------------------------------
-   Admin + User system (localStorage)
------------------------------- */
-let realUser = JSON.parse(localStorage.getItem('verbose_users_single')||'null'); 
-let currentUser = JSON.parse(localStorage.getItem('verbose_current')||'null'); 
-let transactions = JSON.parse(localStorage.getItem('verbose_tx')||'[]'); 
+/* ------------------------------ App Data ------------------------------ */
+let realUser=JSON.parse(localStorage.getItem('verbose_users_single')||'null');
+let currentUser=JSON.parse(localStorage.getItem('verbose_current')||'null');
+let transactions=JSON.parse(localStorage.getItem('verbose_tx')||'[]');
 
 const navButtons=document.querySelectorAll('nav button[data-tab]');
 navButtons.forEach(btn=>btn.addEventListener('click',()=>showTab(btn.dataset.tab)));
 document.getElementById('openAuth').addEventListener('click',()=>showTab('authSection'));
 const logoutBtn=document.getElementById('logoutBtn');
-logoutBtn.addEventListener('click',()=>{ simpleLogout(); });
+logoutBtn.addEventListener('click',simpleLogout);
 
-const plans = [
-  {id:1,name:'Plan 1',invest:250,days:25,totalProfit:1200,offer:true},
-  {id:2,name:'Plan 2',invest:400,days:28,totalProfit:1600,offer:true},
-  {id:3,name:'Plan 3',invest:600,days:30,totalProfit:2400,offer:true},
-  {id:4,name:'Plan 4',invest:800,days:32,totalProfit:3200,offer:true},
-  {id:5,name:'Plan 5',invest:1000,days:35,totalProfit:4000,offer:true},
-  {id:6,name:'Plan 6',invest:1500,days:40,totalProfit:3750},
-  {id:7,name:'Plan 7',invest:2000,days:45,totalProfit:5000},
-  {id:8,name:'Plan 8',invest:3000,days:50,totalProfit:7500},
-  {id:9,name:'Plan 9',invest:5000,days:55,totalProfit:12500},
-  {id:10,name:'Plan 10',invest:7000,days:60,totalProfit:17500},
-  {id:11,name:'Plan 11',invest:10000,days:70,totalProfit:25000},
-  {id:12,name:'Plan 12',invest:15000,days:80,totalProfit:37500},
-  {id:13,name:'Plan 13',invest:20000,days:90,totalProfit:50000},
-  {id:14,name:'Plan 14',invest:25000,days:100,totalProfit:62500},
-  {id:15,name:'Plan 15',invest:30000,days:110,totalProfit:75000},
-  {id:16,name:'Plan 16',invest:35000,days:120,totalProfit:87500},
-  {id:17,name:'Plan 17',invest:38000,days:125,totalProfit:95000},
-  {id:18,name:'Plan 18',invest:40000,days:130,totalProfit:100000},
-  {id:19,name:'Plan 19',invest:42000,days:135,totalProfit:105000},
-  {id:20,name:'Plan 20',invest:45000,days:140,totalProfit:112500},
-  {id:21,name:'Plan 21',invest:48000,days:145,totalProfit:120000},
-  {id:22,name:'Plan 22',invest:50000,days:150,totalProfit:125000},
-  {id:23,name:'Plan 23',invest:52000,days:150,totalProfit:130000},
-  {id:24,name:'Plan 24',invest:54000,days:150,totalProfit:135000},
-  {id:25,name:'Plan 25',invest:55000,days:150,totalProfit:137500}
-];
+/* ------------------------------ Plans ------------------------------ */
+const plans=[{id:1,name:'Plan 1',invest:250,days:25,totalProfit:1200,offer:true},{id:2,name:'Plan 2',invest:400,days:28,totalProfit:1600,offer:true},{id:3,name:'Plan 3',invest:600,days:30,totalProfit:2400,offer:true},{id:4,name:'Plan 4',invest:800,days:32,totalProfit:3200,offer:true},{id:5,name:'Plan 5',invest:1000,days:35,totalProfit:4000,offer:true},{id:6,name:'Plan 6',invest:1500,days:40,totalProfit:3750},{id:7,name:'Plan 7',invest:2000,days:45,totalProfit:5000},{id:8,name:'Plan 8',invest:3000,days:50,totalProfit:7500},{id:9,name:'Plan 9',invest:5000,days:55,totalProfit:12500},{id:10,name:'Plan 10',invest:7000,days:60,totalProfit:17500},{id:11,name:'Plan 11',invest:10000,days:70,totalProfit:25000},{id:12,name:'Plan 12',invest:15000,days:80,totalProfit:37500},{id:13,name:'Plan 13',invest:20000,days:90,totalProfit:50000},{id:14,name:'Plan 14',invest:25000,days:100,totalProfit:62500},{id:15,name:'Plan 15',invest:30000,days:110,totalProfit:75000},{id:16,name:'Plan 16',invest:35000,days:120,totalProfit:87500},{id:17,name:'Plan 17',invest:38000,days:125,totalProfit:95000},{id:18,name:'Plan 18',invest:40000,days:130,totalProfit:100000},{id:19,name:'Plan 19',invest:42000,days:135,totalProfit:105000},{id:20,name:'Plan 20',invest:45000,days:140,totalProfit:112500},{id:21,name:'Plan 21',invest:48000,days:145,totalProfit:120000},{id:22,name:'Plan 22',invest:50000,days:150,totalProfit:125000},{id:23,name:'Plan 23',invest:52000,days:150,totalProfit:130000},{id:24,name:'Plan 24',invest:54000,days:150,totalProfit:135000},{id:25,name:'Plan 25',invest:55000,days:150,totalProfit:137500}];
 
-/* ------------------------------
-   UI Functions
------------------------------- */
-function showTab(tab){document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));document.getElementById(tab).classList.add('active');navButtons.forEach(b=>b.classList.remove('active'));document.querySelector(`nav button[data-tab="${tab}"]`)?.classList.add('active');}
-
-/* ------------------------------
-   User login/signup
------------------------------- */
-function simpleSignup(){
-  const u=document.getElementById('inpUser').value.trim();
-  const p=document.getElementById('inpPass').value.trim();
-  if(!u||!p){alert('Fill username and password');return;}
-  // Only 1 user allowed
-  realUser={user:u,pass:p,balance:0,activePlans:[],achv:[]};
-  currentUser=realUser;
-  saveUser();
-  updateUI();
-  showTab('dashboard');
-  showNotif('Signup successful!');
-}
-function simpleLogin(){
-  const u=document.getElementById('inpUser').value.trim();
-  const p=document.getElementById('inpPass').value.trim();
-  if(realUser&&u===realUser.user&&p===realUser.pass){
-    currentUser=realUser;
-    localStorage.setItem('verbose_current',JSON.stringify(currentUser));
-    updateUI();
-    showTab('dashboard');
-    showNotif('Login successful!');
-  }else{alert('Invalid credentials');}
-}
-function simpleLogout(){
-  currentUser=null;
-  localStorage.removeItem('verbose_current');
-  updateUI();
-  showTab('authSection');
-  showNotif('Logged out');
-}
-function saveUser(){
-  localStorage.setItem('verbose_users_single',JSON.stringify(realUser));
-  localStorage.setItem('verbose_current',JSON.stringify(currentUser));
-}
-
-/* ------------------------------
-   UI updates
------------------------------- */
+/* ------------------------------ UI & Storage ------------------------------ */
+function saveUser(){localStorage.setItem('verbose_users_single',JSON.stringify(realUser));localStorage.setItem('verbose_current',JSON.stringify(currentUser));}
+// continuation from your code
 function updateUI(){
-  if(currentUser){
-    document.getElementById('welcome').textContent=`Welcome, ${currentUser.user}`;
-    logoutBtn.style.display='block';
-    document.getElementById('balDisplay').textContent=currentUser.balance+' PKR';
-    document.getElementById('activePlans').textContent=currentUser.activePlans.length?currentUser.activePlans.map(p=>p.name).join(', '):'No active plans';
-    document.getElementById('achv').textContent=currentUser.achv.length?currentUser.achv.join(', '):'No badges yet';
-  }else{
-    document.getElementById('welcome').textContent='Not logged in';
-    logoutBtn.style.display='none';
-    document.getElementById('balDisplay').textContent='0 PKR';
-    document.getElementById('activePlans').textContent='No active plans';
-    document.getElementById('achv').textContent='No badges yet';
-  }
+    if(currentUser){
+        document.getElementById('welcome').innerText=`Hi, ${currentUser.user}`;
+        document.getElementById('logoutBtn').style.display='block';
+        document.getElementById('authSection').classList.remove('active');
+        showTab('dashboard');
+        document.getElementById('balDisplay').innerText = currentUser.balance + ' PKR';
+        populatePlans();
+        populatePlanSelect();
+        populateActivePlans();
+        populateTransactions();
+    } else {
+        document.getElementById('welcome').innerText = 'Not logged in';
+        document.getElementById('logoutBtn').style.display='none';
+        showTab('authSection');
+    }
 }
 
-/* ------------------------------
-   Plans rendering
------------------------------- */
-function renderPlans(){
-  const grid=document.getElementById('planGrid');
-  const sel=document.getElementById('planSelect');
-  grid.innerHTML=''; sel.innerHTML='';
-  plans.forEach(p=>{
-    // Grid cards
-    const div=document.createElement('div'); div.className='plan-card';
-    div.innerHTML=`<strong>${p.name}</strong>${p.offer?'<div class="badge">Offer</div>':''}
-      <div>Invest: ${p.invest} PKR</div>
-      <div>Days: ${p.days}</div>
-      <div>Total: ${p.totalProfit}</div>`;
-    div.onclick=()=>{alert(`Select this plan in deposit section: ${p.name}`);document.getElementById('planSelect').value=p.id;onPlanChange();};
-    grid.appendChild(div);
-    // Select options
-    const opt=document.createElement('option'); opt.value=p.id; opt.textContent=p.name; sel.appendChild(opt);
-  });
+function simpleSignup(){
+    const user=document.getElementById('inpUser').value.trim();
+    const pass=document.getElementById('inpPass').value.trim();
+    if(!user || !pass){alert('Enter username and password'); return;}
+    if(realUser && realUser.user===user){alert('User exists'); return;}
+    realUser={user:user,pass:pass,balance:0,activePlans:[]};
+    currentUser = realUser;
+    saveUser();
+    updateUI();
+    notify('Signup successful');
 }
-function onPlanChange(){const sel=document.getElementById('planSelect');const plan=plans.find(p=>p.id==sel.value);if(plan)document.getElementById('amountInput').value=plan.invest;onMethodChange();}
-function onMethodChange(){const method=document.getElementById('payMethod').value;const num=method==='jazzcash'?'03705519562':'03379827882';document.getElementById('payNumber').value=num;}
-function copyText(txt){navigator.clipboard.writeText(txt);showNotif('Copied!');}
+
+function simpleLogin(){
+    const user=document.getElementById('inpUser').value.trim();
+    const pass=document.getElementById('inpPass').value.trim();
+    if(!user || !pass){alert('Enter username and password'); return;}
+    if(!realUser || realUser.user!==user || realUser.pass!==pass){alert('Invalid credentials'); return;}
+    currentUser = realUser;
+    saveUser();
+    updateUI();
+    notify('Login successful');
+}
+
+function simpleLogout(){
+    currentUser=null;
+    localStorage.setItem('verbose_current',null);
+    updateUI();
+    notify('Logged out');
+}
+
+/* ------------------------------ Tabs ------------------------------ */
+function showTab(tab){
+    document.querySelectorAll('main section').forEach(sec=>sec.classList.remove('active'));
+    document.getElementById(tab).classList.add('active');
+    navButtons.forEach(btn=>btn.classList.remove('active'));
+    const activeBtn=[...navButtons].find(b=>b.dataset.tab===tab);
+    if(activeBtn) activeBtn.classList.add('active');
+}
+
+/* ------------------------------ Notifications ------------------------------ */
+function notify(msg){
+    const n=document.createElement('div');
+    n.className='notif';
+    n.innerText=msg;
+    document.getElementById('notifRoot').appendChild(n);
+    setTimeout(()=>n.remove(),3000);
+}
+
+/* ------------------------------ Plans ------------------------------ */
+function populatePlans(){
+    const container=document.getElementById('planGrid');
+    container.innerHTML='';
+    plans.forEach(p=>{
+        const div=document.createElement('div');
+        div.className='plan-card';
+        div.innerHTML=`<h3>${p.name}</h3>
+                       <div class="small muted">Invest: ${p.invest} PKR</div>
+                       <div class="small muted">Days: ${p.days}</div>
+                       <div class="small muted">Total Profit: ${p.totalProfit} PKR</div>
+                       ${p.offer?'<div class="badge">HOT</div>':''}
+                       <button class="primary" style="margin-top:8px" onclick="startPlan(${p.id})">Buy Now</button>`;
+        container.appendChild(div);
+    });
+}
+
+function populatePlanSelect(){
+    const sel=document.getElementById('planSelect');
+    sel.innerHTML='';
+    plans.forEach(p=>{
+        const opt=document.createElement('option');
+        opt.value=p.id;
+        opt.innerText=`${p.name} - ${p.invest} PKR`;
+        sel.appendChild(opt);
+    });
+    onPlanChange();
+}
+
+function onPlanChange(){
+    const id=parseInt(document.getElementById('planSelect').value);
+    const plan=plans.find(p=>p.id===id);
+    if(plan){
+        document.getElementById('amountInput').value=plan.invest;
+        onMethodChange();
+    }
+}
+
+function onMethodChange(){
+    const method=document.getElementById('payMethod').value;
+    if(method==='jazzcash') document.getElementById('payNumber').value='03705519562';
+    else document.getElementById('payNumber').value='03379827882';
+}
+
+function copyText(txt){navigator.clipboard.writeText(txt); notify('Copied!');}
 function copyCurrentNumber(){copyText(document.getElementById('payNumber').value);}
 
-/* ------------------------------
-   Deposit & Withdrawal
------------------------------- */
+/* ------------------------------ Deposit ------------------------------ */
 function submitDeposit(){
-  if(!currentUser){alert('Login first');return;}
-  const sel=document.getElementById('planSelect');const plan=plans.find(p=>p.id==sel.value);if(!plan){alert('Select plan');return;}
-  const amount=plan.invest;
-  const tx=document.getElementById('txId').value||'N/A';
-  const proof=document.getElementById('proof').files[0]?document.getElementById('proof').files[0].name:'N/A';
-  const d={type:'Deposit',amount,plan:plan.name,time:new Date().toLocaleString(),status:'Pending',tx,proof};
-  transactions.push(d);localStorage.setItem('verbose_tx',JSON.stringify(transactions));
-  currentUser.balance+=amount;currentUser.activePlans.push(plan);saveUser();updateUI();
-  showNotif('Deposit recorded!');
-  backToDashboard();
-  renderTransactions();
+    const planId=parseInt(document.getElementById('planSelect').value);
+    const plan=plans.find(p=>p.id===planId);
+    if(!plan){alert('Select plan'); return;}
+    const tx={type:'Deposit',amount:plan.invest,plan:plan.name,time:new Date().toLocaleString(),status:'Completed'};
+    transactions.push(tx);
+    currentUser.balance += plan.invest;
+    currentUser.activePlans.push(plan);
+    saveUser();
+    populateActivePlans();
+    populateTransactions();
+    document.getElementById('balDisplay').innerText = currentUser.balance + ' PKR';
+    notify('Deposit successful');
+    showTab('dashboard');
 }
 
+/* ------------------------------ Withdrawal ------------------------------ */
 function submitWithdrawal(){
-  if(!currentUser){alert('Login first');return;}
-  const method=document.getElementById('withdrawMethod').value;
-  const acc=document.getElementById('withdrawAccount').value.trim();
-  const amt=parseFloat(document.getElementById('withdrawAmount').value);
-  if(!amt||amt>currentUser.balance){alert('Invalid amount');return;}
-  currentUser.balance-=amt;
-  const w={type:'Withdrawal',amount:amt,plan:'-',time:new Date().toLocaleString(),status:'Processed',method,account:acc};
-  transactions.push(w);localStorage.setItem('verbose_tx',JSON.stringify(transactions));
-  saveUser();updateUI();renderTransactions();showNotif('Withdrawal successful!');backToDashboard();
+    const amt=parseFloat(document.getElementById('withdrawAmount').value);
+    const acc=document.getElementById('withdrawAccount').value.trim();
+    const method=document.getElementById('withdrawMethod').value;
+    if(!amt || amt<=0 || !acc){alert('Enter valid amount & account'); return;}
+    if(amt>currentUser.balance){alert('Insufficient balance'); return;}
+    const tx={type:'Withdrawal',amount:amt,plan:'-',time:new Date().toLocaleString(),status:'Requested'};
+    transactions.push(tx);
+    currentUser.balance -= amt;
+    saveUser();
+    populateTransactions();
+    document.getElementById('balDisplay').innerText = currentUser.balance + ' PKR';
+    notify('Withdrawal requested');
+    showTab('dashboard');
 }
 
-/* ------------------------------
-   Transactions
------------------------------- */
-function renderTransactions(){
-  const tbody=document.querySelector('#txTable tbody');tbody.innerHTML='';
-  transactions.forEach(t=>{
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${t.type}</td><td>${t.amount}</td><td>${t.plan||'-'}</td><td>${t.time}</td><td>${t.status}</td>`;
-    tbody.appendChild(tr);
-  });
+/* ------------------------------ Active Plans ------------------------------ */
+function populateActivePlans(){
+    const div=document.getElementById('activePlans');
+    if(currentUser.activePlans.length===0) div.innerText='No active plans';
+    else div.innerHTML=currentUser.activePlans.map(p=>`${p.name} (${p.invest} PKR)`).join(', ');
 }
 
-/* ------------------------------
-   Notifications
------------------------------- */
-function showNotif(txt){
-  const n=document.createElement('div'); n.className='notif'; n.textContent=txt;
-  document.getElementById('notifRoot').appendChild(n);
-  setTimeout(()=>n.remove(),2500);
+/* ------------------------------ Transactions ------------------------------ */
+function populateTransactions(){
+    const tbody=document.querySelector('#txTable tbody');
+    tbody.innerHTML='';
+    transactions.forEach(tx=>{
+        const tr=document.createElement('tr');
+        tr.innerHTML=`<td>${tx.type}</td><td>${tx.amount}</td><td>${tx.plan}</td><td>${tx.time}</td><td>${tx.status}</td>`;
+        tbody.appendChild(tr);
+    });
 }
 
-/* ------------------------------
-   Back to dashboard helper
------------------------------- */
+/* ------------------------------ Back to Dashboard ------------------------------ */
 function backToDashboard(){showTab('dashboard');}
 
-/* ------------------------------
-   Init
------------------------------- */
-renderPlans();
+/* ------------------------------ Init ------------------------------ */
 updateUI();
-renderTransactions();
-onPlanChange();
 </script>
 </body>
 </html>
+        document.getElementById('welcome').innerText=`Hi, ${currentUser.user}`;
+        document.getElementById('logoutBtn').style.display='block';
+        document.getElementById('
