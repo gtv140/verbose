@@ -66,7 +66,6 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:left
 <button data-tab="about">📑 Company</button>
 <button id="logoutBtn" style="margin-top:10px;background:linear-gradient(90deg,#ff4d4d,#ff1a1a);color:#fff;display:none">Logout</button>
 </nav>
-
 <hr style="border:none;border-top:1px solid rgba(255,255,255,0.04);margin:12px 0"/>
 <div class="small muted">Payment Numbers</div>
 <div class="row" style="margin-top:8px">
@@ -250,136 +249,102 @@ function saveAll(){localStorage.setItem('verbose_users',JSON.stringify(users));l
 function showNotif(msg){const n=document.createElement('div');n.className='notif';n.innerText=msg;document.getElementById('notifRoot').appendChild(n);setTimeout(()=>n.remove(),2500);}
 function showTab(tab){navButtons.forEach(b=>b.classList.remove('active'));document.querySelector(`nav button[data-tab="${tab}"]`)?.classList.add('active');document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));document.getElementById(tab)?.classList.add('active');}
 
-// Render Plans
-function renderPlans(){
-    const grid=document.getElementById('planGrid');
-    grid.innerHTML='';
-    plans.forEach(p=>{
-        const div=document.createElement('div'); div.className='plan-card';
-        div.innerHTML=`<h4>${p.name}</h4>
-        <div>Invest: ${p.invest} PKR</div>
-        <div>Days: ${p.days}</div>
-        <div>Total Profit: ${p.totalProfit} PKR</div>
-        ${p.offer?'<div class="badge">Offer</div>':''}`;
-        grid.appendChild(div);
-    });
-}
-function renderPlanDropdown(){
-    const sel=document.getElementById('planSelect');
-    sel.innerHTML='';
-    plans.forEach(p=>{ const opt=document.createElement('option'); opt.value=p.id; opt.innerText=`${p.name} — ${p.invest} PKR`; sel.appendChild(opt); });
-    onPlanChange();
-}
-function onPlanChange(){
-    const planId=parseInt(document.getElementById('planSelect').value);
-    const plan=plans.find(p=>p.id===planId);
-    if(plan) document.getElementById('amountInput').value=plan.invest;
-    onMethodChange();
-}
-// Continuing JS from onMethodChange
-function onMethodChange(){
-    const method = document.getElementById('payMethod').value;
-    if(method === 'jazzcash') document.getElementById('payNumber').value = '03705519562';
-    else document.getElementById('payNumber').value = '03379827882';
-}
+// Plans
+function renderPlans(){const grid=document.getElementById('planGrid');grid.innerHTML='';plans.forEach(p=>{const div=document.createElement('div');div.className='plan-card';div.innerHTML=`<h4>${p.name}</h4><div>Invest: ${p.invest} PKR</div><div>Days: ${p.days}</div><div>Total Profit: ${p.totalProfit} PKR</div>${p.offer?'<div class="badge">Offer</div>':''}`;grid.appendChild(div);});}
+function renderPlanDropdown(){const sel=document.getElementById('planSelect');sel.innerHTML='';plans.forEach(p=>{const opt=document.createElement('option');opt.value=p.id;opt.innerText=`${p.name} — ${p.invest} PKR`;sel.appendChild(opt);});onPlanChange();}
+function onPlanChange(){const planId=parseInt(document.getElementById('planSelect').value);const plan=plans.find(p=>p.id===planId);if(plan) document.getElementById('amountInput').value=plan.invest;onMethodChange();}
+function onMethodChange(){const method=document.getElementById('payMethod').value;document.getElementById('payNumber').value=(method==='jazzcash')?'03705519562'':'03379827882';}
 
-// Copy helpers
-function copyText(txt){navigator.clipboard.writeText(txt);showNotif('Copied!');}
+// Copy functions
+function copyText(txt){navigator.clipboard.writeText(txt);showNotif('Copied: '+txt);}
 function copyCurrentNumber(){copyText(document.getElementById('payNumber').value);}
 
 // Auth functions
 function simpleSignup(){
-    const u=document.getElementById('inpUser').value.trim();
-    const p=document.getElementById('inpPass').value.trim();
-    if(!u || !p){showNotif('Enter username & password'); return;}
-    if(users.find(x=>x.user===u)){showNotif('Username already exists'); return;}
-    users.push({user:u,pass:p,balance:0,activePlans:[]});
-    currentUser = users.find(x=>x.user===u);
-    saveAll(); showNotif('Signup successful!'); postLogin();
+  const u=document.getElementById('inpUser').value.trim();
+  const p=document.getElementById('inpPass').value.trim();
+  if(!u||!p){showNotif('Username & Password required');return;}
+  if(users.find(x=>x.user===u)){showNotif('Username exists');return;}
+  users.push({user:u,pass:p,balance:0,plans:[]});
+  currentUser={user:u,balance:0,plans:[]};
+  saveAll();
+  updateUIAfterLogin();
+  showNotif('Signup successful');
 }
 
 function simpleLogin(){
-    const u=document.getElementById('inpUser').value.trim();
-    const p=document.getElementById('inpPass').value.trim();
-    if(u===adminCreds.user && p===adminCreds.pass){
-        currentUser = {user:u,admin:true,balance:0,activePlans:[]};
-        saveAll(); showNotif('Admin logged in!'); postLogin(); return;
-    }
-    const found=users.find(x=>x.user===u && x.pass===p);
-    if(!found){showNotif('Invalid credentials'); return;}
-    currentUser = found;
-    saveAll(); showNotif('Login successful!'); postLogin();
+  const u=document.getElementById('inpUser').value.trim();
+  const p=document.getElementById('inpPass').value.trim();
+  if(u===adminCreds.user && p===adminCreds.pass){showNotif('Admin login');currentUser={user:u,admin:true,balance:0,plans:[]};updateUIAfterLogin();return;}
+  const found=users.find(x=>x.user===u && x.pass===p);
+  if(found){currentUser=found;saveAll();updateUIAfterLogin();showNotif('Login successful');}else{showNotif('Invalid credentials');}
 }
 
-function simpleLogout(){currentUser=null;saveAll();showNotif('Logged out');updateUI();showTab('authSection');}
+function simpleLogout(){currentUser=null;saveAll();document.getElementById('welcome').innerText='Not logged in';logoutBtn.style.display='none';showTab('authSection');}
 
-// Post login UI update
-function postLogin(){
-    updateUI();
-    showTab('dashboard');
+// UI Updates
+function updateUIAfterLogin(){
+  document.getElementById('welcome').innerText='Welcome, '+currentUser.user;
+  logoutBtn.style.display='block';
+  renderDashboard();
+  renderPlanDropdown();
+  showTab('dashboard');
 }
 
-// UI Update
-function updateUI(){
-    if(currentUser){
-        document.getElementById('welcome').innerText = `Welcome, ${currentUser.user}`;
-        logoutBtn.style.display='block';
-    } else {
-        document.getElementById('welcome').innerText='Not logged in';
-        logoutBtn.style.display='none';
-    }
-    document.getElementById('balDisplay').innerText = currentUser?.balance + ' PKR';
-    renderActivePlans();
-}
-
-// Active Plans
-function renderActivePlans(){
+// Dashboard
+function renderDashboard(){
+  document.getElementById('balDisplay').innerText=(currentUser.balance||0)+' PKR';
+  if(currentUser.plans.length>0){
     const ap=document.getElementById('activePlans');
-    if(currentUser?.activePlans?.length){
-        ap.innerHTML = currentUser.activePlans.map(p=>`${p.name} (${p.days} days)`).join('<br>');
-    } else ap.innerText='No active plans';
+    ap.innerHTML='';
+    currentUser.plans.forEach(pl=>{const div=document.createElement('div');div.innerText=`${pl.name} — Invest: ${pl.invest} PKR — Profit: ${pl.totalProfit} PKR`;ap.appendChild(div);});
+  }else{document.getElementById('activePlans').innerText='No active plans';}
+  renderTransactions();
 }
 
 // Deposit
 function submitDeposit(){
-    if(!currentUser){showNotif('Login first'); return;}
-    const planId=parseInt(document.getElementById('planSelect').value);
-    const plan=plans.find(p=>p.id===planId);
-    if(!plan){showNotif('Select a plan'); return;}
-    currentUser.balance += plan.invest; // simple simulation
-    currentUser.activePlans.push(plan);
-    transactions.push({type:'Deposit',amount:plan.invest,plan:plan.name,time:new Date().toLocaleString(),status:'Success'});
-    saveAll(); updateUI(); showNotif('Deposit successful!'); showTab('dashboard'); renderTransactions();
+  const planId=parseInt(document.getElementById('planSelect').value);
+  const plan=plans.find(p=>p.id===planId);
+  if(!plan){showNotif('Select a plan');return;}
+  currentUser.balance=(currentUser.balance||0)+plan.totalProfit;
+  currentUser.plans.push(plan);
+  transactions.push({type:'Deposit',amount:plan.invest,plan:plan.name,time:new Date().toLocaleString(),status:'Success'});
+  saveAll();
+  renderDashboard();
+  showNotif('Deposit successful');
 }
 
 // Withdrawal
 function submitWithdrawal(){
-    if(!currentUser){showNotif('Login first'); return;}
-    const amt=parseFloat(document.getElementById('withdrawAmount').value);
-    if(isNaN(amt) || amt<=0){showNotif('Enter valid amount'); return;}
-    if(amt>currentUser.balance){showNotif('Insufficient balance'); return;}
-    currentUser.balance -= amt;
-    transactions.push({type:'Withdrawal',amount:amt,plan:'-',time:new Date().toLocaleString(),status:'Success'});
-    saveAll(); updateUI(); showNotif('Withdrawal requested!'); renderTransactions();
+  const amt=parseFloat(document.getElementById('withdrawAmount').value);
+  const acc=document.getElementById('withdrawAccount').value.trim();
+  if(!amt||amt<=0||amt>currentUser.balance){showNotif('Invalid amount');return;}
+  currentUser.balance-=amt;
+  transactions.push({type:'Withdrawal',amount:amt,plan:'-',time:new Date().toLocaleString(),status:'Pending'});
+  saveAll();
+  renderDashboard();
+  showNotif('Withdrawal requested');
 }
 
 // Transactions
 function renderTransactions(){
-    const tbody=document.getElementById('txTable').querySelector('tbody');
-    tbody.innerHTML='';
-    transactions.forEach(tx=>{
-        const tr=document.createElement('tr');
-        tr.innerHTML=`<td>${tx.type}</td><td>${tx.amount}</td><td>${tx.plan}</td><td>${tx.time}</td><td class="${tx.status==='Success'?'success':''}">${tx.status}</td>`;
-        tbody.appendChild(tr);
-    });
+  const tbody=document.getElementById('txTable').querySelector('tbody');
+  tbody.innerHTML='';
+  transactions.filter(t=>t.user===currentUser.user || currentUser.admin).forEach(t=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${t.type}</td><td>${t.amount}</td><td>${t.plan}</td><td>${t.time}</td><td>${t.status}</td>`;
+    tbody.appendChild(tr);
+  });
 }
 
-// Navigation helper
+// Navigation helpers
 function backToDashboard(){showTab('dashboard');}
 
-// Init
+// Initial render
+if(currentUser){updateUIAfterLogin();}
 renderPlans();
 renderPlanDropdown();
-updateUI();
-renderTransactions();
 </script>
+</body>
+</html>
