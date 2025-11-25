@@ -44,9 +44,10 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px;
 
 <div class="app-header">
 <h1>VERBOSE</h1>
-<i class="fa fa-bars menu-btn" onclick="toggleMenu()"></i>
+<i class="fa fa-bars menu-btn"></i>
 </div>
 
+<!-- Auth -->
 <div id="authView" class="card auth-wrap">
 <h2>Login / Signup</h2>
 <input id="authUser" placeholder="Username"/>
@@ -58,6 +59,7 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px;
 <div class="muted small" style="margin-top:10px;">Admin: <strong>AdminKhan</strong> / <strong>SuperSecret123</strong></div>
 </div>
 
+<!-- App -->
 <div id="appView" class="hidden">
 <div class="icon-grid">
 <div class="icon-box" onclick="navigate('wallet')"><i class="fa fa-wallet"></i><p>Wallet</p></div>
@@ -142,11 +144,10 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px;
 
 <script>
 // ---------- Particles ----------
-const canvas=document.getElementById('particles');
-const ctx=canvas.getContext('2d');
+const canvas=document.getElementById('particles'); const ctx=canvas.getContext('2d');
 function resizeCanvas(){canvas.width=innerWidth;canvas.height=innerHeight;}
-resizeCanvas();addEventListener('resize',resizeCanvas);
-const particles=[];for(let i=0;i<140;i++){particles.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*1.6+0.6,vx:(Math.random()-0.5)*0.6,vy:(Math.random()-0.5)*0.6,h:180+Math.random()*80});}
+resizeCanvas(); addEventListener('resize',resizeCanvas);
+const particles=[]; for(let i=0;i<140;i++){particles.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*1.6+0.6,vx:(Math.random()-0.5)*0.6,vy:(Math.random()-0.5)*0.6,h:180+Math.random()*80});}
 function drawParticles(){ctx.clearRect(0,0,canvas.width,canvas.height);for(const p of particles){ctx.beginPath();ctx.fillStyle=`hsla(${p.h},100%,60%,0.12)`;ctx.shadowBlur=12;ctx.shadowColor=`hsla(${p.h},100%,60%,0.14)`;ctx.fillRect(p.x,p.y,p.r*2,p.r*2);p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;}requestAnimationFrame(drawParticles);}
 drawParticles();
 
@@ -164,7 +165,6 @@ const plans=[
 {id:8,name:'MegaProfit',days:42,invest:12000,totalProfit:18000,offer:true},
 {id:9,name:'UltraPlan',days:45,invest:15000,totalProfit:22000,offer:true},
 {id:10,name:'InfinityX',days:50,invest:20000,totalProfit:30000,offer:true},
-// Coming soon plans
 {id:11,name:'NextGen',days:55,invest:25000,totalProfit:40000,offer:true,comingSoon:true},
 {id:12,name:'AlphaPrime',days:60,invest:30000,totalProfit:45000,offer:true,comingSoon:true},
 {id:13,name:'BetaBoost',days:65,invest:35000,totalProfit:50000,offer:true,comingSoon:true},
@@ -190,163 +190,121 @@ function showToast(text){const n=document.createElement('div');n.className='noti
 (function initUsers(){let u=getUsers();if(!u.find(x=>x.user===ADMIN.user)){u.push({user:ADMIN.user,pass:ADMIN.pass,balance:0,active:[],profit:0,admin:true});setUsers(u);}})();
 
 // ---------- Auth ----------
-function afterLogin(){
-const cur=getCurrent();if(!cur)return;
-document.getElementById('authView').classList.add('hidden');
-document.getElementById('appView').classList.remove('hidden');
-renderPlans();
-renderDepositPlans();
-renderProfile();
-renderTransactions();
-}
+function afterLogin(){const cur=getCurrent();if(!cur)return;
+document.getElementById('authView').classList.add('hidden');document.getElementById('appView').classList.remove('hidden');
+renderPlans();renderDepositPlans();renderProfile();renderTransactions();}
 
-function doSignup(){
-const u=document.getElementById('authUser').value.trim();
-const p=document.getElementById('authPass').value;
+function doSignup(){const u=document.getElementById('authUser').value.trim();const p=document.getElementById('authPass').value;
 if(!u||!p){showToast('Enter username & password');return;}
-const users=getUsers();
-if(users.find(x=>x.user===u)){showToast('Username exists');return;}
-users.push({user:u,pass:p,balance:0,active:[],profit:0,admin:false});
-setUsers(users);
-setCurrent({user:u,admin:false});
-showToast('Signup successful — logged in');
-afterLogin();
-}
+const users=getUsers();if(users.find(x=>x.user===u)){showToast('Username exists');return;}
+users.push({user:u,pass:p,balance:0,active:[],profit:0,admin:false});setUsers(users);
+setCurrent({user:u,admin:false});showToast('Signup successful — logged in');afterLogin();}
 
-function doLogin(){
-const u=document.getElementById('authUser').value.trim();
-const p=document.getElementById('authPass').value;
+function doLogin(){const u=document.getElementById('authUser').value.trim();const p=document.getElementById('authPass').value;
 if(!u||!p){showToast('Enter username & password');return;}
 if(u===ADMIN.user&&p===ADMIN.pass){setCurrent({user:ADMIN.user,admin:true});showToast('Admin logged in');afterLogin();return;}
-const users=getUsers();
-const found=users.find(x=>x.user===u&&x.pass===p);
-if(!found){showToast('Invalid credentials');return;}
-setCurrent({user:found.user,admin:false});
-showToast('Login successful');
-afterLogin();
-}
+const users=getUsers();const found=users.find(x=>x.user===u&&x.pass===p);if(!found){showToast('Invalid credentials');return;}
+setCurrent({user:found.user,admin:false});showToast('Login successful');afterLogin();}
 
-function doLogout(){
-localStorage.removeItem('verbose_current');
-document.getElementById('appView').classList.add('hidden');
-document.getElementById('authView').classList.remove('hidden');
-showToast('Logged out');
-}
+function doLogout(){localStorage.removeItem('verbose_current');document.getElementById('appView').classList.add('hidden');document.getElementById('authView').classList.remove('hidden');showToast('Logged out');}
 
 // ---------- Navigation ----------
-function navigate(view){
-const views=['plansView','depositView','withdrawView','txView','aboutView','profileView'];
-views.forEach(v=>document.getElementById(v).classList.add('hidden'));
+function navigate(view){const views=['plansView','depositView','withdrawView','txView','aboutView','profileView'];views.forEach(v=>document.getElementById(v).classList.add('hidden'));
 if(view==='plans')document.getElementById('plansView').classList.remove('hidden');
 if(view==='deposit')document.getElementById('depositView').classList.remove('hidden');
 if(view==='withdraw')document.getElementById('withdrawView').classList.remove('hidden');
 if(view==='transactions')document.getElementById('txView').classList.remove('hidden');
 if(view==='about')document.getElementById('aboutView').classList.remove('hidden');
-if(view==='profile')document.getElementById('profileView').classList.remove('hidden');
-}
+if(view==='profile')document.getElementById('profileView').classList.remove('hidden');}
 
-// ---------- Render Plans ----------
-function renderPlans(){
-const grid=document.getElementById('planGrid');grid.innerHTML='';
-plans.forEach(p=>{
-let div=document.createElement('div');div.className='plan';
+// ---------- Plans ----------
+function renderPlans(){const grid=document.getElementById('planGrid');grid.innerHTML='';
+plans.forEach(p=>{let div=document.createElement('div');div.className='plan';
 div.innerHTML=`<h4>${p.name}</h4><p>Invest: ${p.invest} PKR</p><p>Days: ${p.days}</p><p>Total: ${p.totalProfit}</p>`;
-if(p.offer)div.innerHTML+=`<div class="badge">${p.comingSoon?'Coming Soon':'24H OFFER'}</div>`;
-grid.appendChild(div);
-});
-}
+if(p.offer)div.innerHTML+=`<div class="badge">${p.comingSoon?'Coming Soon':'24H OFFER'}</div>`;grid.appendChild(div);});}
 
-function renderDepositPlans(){
-const select=document.getElementById('depositPlan');select.innerHTML='';
-plans.forEach(p=>{if(p.comingSoon)return;const opt=document.createElement('option');opt.value=p.id;opt.innerText=`${p.name} - ${p.invest} PKR`;select.appendChild(opt);});
-updateDepositAmount();
-updateDepositNumber();
-}
+function renderDepositPlans(){const select=document.getElementById('depositPlan');select.innerHTML='';
+plans.forEach(p=>{if(p.comingSoon)return;const opt=document.createElement('option');opt.value=p.id;opt.innerText=`${p.name} - ${p.invest} PKR`;select.appendChild(opt);});updateDepositAmount();}
 
-// ---------- Deposit ----------
+// ---------- Deposit & Withdraw Continued ----------
 function updateDepositAmount(){
-const pid=document.getElementById('depositPlan').value;
-const plan=plans.find(p=>p.id==pid);
-document.getElementById('depositAmount').value=plan?plan.invest:'';
+    const planId=parseInt(document.getElementById('depositPlan').value);
+    const plan=plans.find(p=>p.id===planId);
+    if(plan) document.getElementById('depositAmount').value=plan.invest;
+    updateDepositNumber();
 }
 
 function updateDepositNumber(){
-const method=document.getElementById('depositMethod').value;
-document.getElementById('depositNumber').value=depositNumbers[method]||'';
+    const method=document.getElementById('depositMethod').value;
+    document.getElementById('depositNumber').value=depositNumbers[method]||'';
 }
 
 function copyText(val){
-navigator.clipboard.writeText(val);
-showToast('Copied!');
+    navigator.clipboard.writeText(val);
+    showToast('Copied to clipboard');
 }
 
 function submitDeposit(){
-const pid=document.getElementById('depositPlan').value;
-const txId=document.getElementById('depositTxId').value.trim();
-const cur=getCurrent();
-if(!cur){showToast('Login first');return;}
-if(!txId){showToast('Enter TX ID');return;}
-const plan=plans.find(p=>p.id==pid);
-const tx=getTx();
-tx.push({type:'Deposit',user:cur.user,amount:plan.invest,plan:plan.name,days:plan.days,totalProfit:plan.totalProfit,time:new Date().toLocaleString(),status:'Pending'});
-setTx(tx);
-showToast('Deposit submitted');
-document.getElementById('depositTxId').value='';
-renderTransactions();
+    const cur=getCurrent(); if(!cur)return;
+    const planId=parseInt(document.getElementById('depositPlan').value);
+    const plan=plans.find(p=>p.id===planId);
+    const txId=document.getElementById('depositTxId').value.trim();
+    if(!txId){showToast('Enter transaction ID'); return;}
+    const tx={type:'Deposit',user:cur.user,amount:plan.invest,plan:plan.name,days:plan.days,totalProfit:plan.totalProfit,time:new Date().toLocaleString(),status:'Pending'};
+    const txs=getTx(); txs.push(tx); setTx(txs);
+    showToast('Deposit submitted'); document.getElementById('depositTxId').value='';
+    renderTransactions();
 }
 
 // ---------- Withdraw ----------
 function submitWithdraw(){
-const amt=parseFloat(document.getElementById('withdrawAmount').value);
-const method=document.getElementById('withdrawMethod').value;
-const cur=getCurrent();
-if(!cur){showToast('Login first');return;}
-if(!amt || amt<=0){showToast('Enter valid amount');return;}
-const users=getUsers();
-const u=users.find(x=>x.user===cur.user);
-if(u.balance<amt){showToast('Insufficient balance');return;}
-u.balance-=amt;
-setUsers(users);
-const tx=getTx();
-tx.push({type:'Withdraw',user:cur.user,amount:amt,plan:'-',days:'-',totalProfit:'-',time:new Date().toLocaleString(),status:'Pending'});
-setTx(tx);
-showToast('Withdraw requested');
-renderTransactions();
-document.getElementById('withdrawAmount').value='';
+    const cur=getCurrent(); if(!cur)return;
+    const amt=parseFloat(document.getElementById('withdrawAmount').value);
+    if(isNaN(amt)||amt<=0){showToast('Enter valid amount'); return;}
+    const users=getUsers(); const user=users.find(u=>u.user===cur.user);
+    if(!user||user.balance<amt){showToast('Insufficient balance'); return;}
+    user.balance-=amt; setUsers(users);
+    const method=document.getElementById('withdrawMethod').value;
+    const tx={type:'Withdraw',user:cur.user,amount:amt,plan:'-',days:'-',totalProfit:'-',time:new Date().toLocaleString(),status:'Requested',method};
+    const txs=getTx(); txs.push(tx); setTx(txs);
+    showToast('Withdraw requested'); renderTransactions();
 }
 
 // ---------- Transactions ----------
 function renderTransactions(){
-const tbody=document.getElementById('txTableBody');tbody.innerHTML='';
-const tx=getTx();const cur=getCurrent();if(!cur)return;
-tx.filter(t=>t.user===cur.user).forEach(t=>{
-const tr=document.createElement('tr');
-tr.innerHTML=`<td>${t.type}</td><td>${t.amount}</td><td>${t.plan}</td><td>${t.days}</td><td>${t.totalProfit}</td><td>${t.time}</td><td>${t.status}</td>`;
-tbody.appendChild(tr);
-});
+    const tbody=document.getElementById('txTableBody'); tbody.innerHTML='';
+    const txs=getTx(); const cur=getCurrent(); if(!cur)return;
+    txs.filter(t=>t.user===cur.user).forEach(tx=>{
+        const tr=document.createElement('tr');
+        tr.innerHTML=`<td>${tx.type}</td><td>${tx.amount}</td><td>${tx.plan}</td><td>${tx.days}</td><td>${tx.totalProfit}</td><td>${tx.time}</td><td>${tx.status}</td>`;
+        tbody.appendChild(tr);
+    });
 }
 
 // ---------- Profile ----------
 function renderProfile(){
-const cur=getCurrent();if(!cur)return;
-const users=getUsers();const u=users.find(x=>x.user===cur.user);
-document.getElementById('profileName').value=u.user;
-document.getElementById('profileStats').innerText=`Balance: ${u.balance} PKR | Total Profit: ${u.profit} PKR`;
+    const cur=getCurrent(); if(!cur)return;
+    const users=getUsers(); const user=users.find(u=>u.user===cur.user);
+    if(!user)return;
+    document.getElementById('profileName').value=user.user;
+    const stats=`Balance: ${user.balance} PKR | Total Profit: ${user.profit} PKR | Active Plans: ${user.active.length}`;
+    document.getElementById('profileStats').innerText=stats;
 }
 
 function updateProfile(){
-const name=document.getElementById('profileName').value.trim();
-const users=getUsers();const cur=getCurrent();if(!cur)return;
-const u=users.find(x=>x.user===cur.user);
-if(name)u.user=name;
-setUsers(users);
-setCurrent({user:u.user,admin:u.admin||false});
-showToast('Profile updated');
-renderProfile();
+    const cur=getCurrent(); if(!cur)return;
+    const users=getUsers(); const user=users.find(u=>u.user===cur.user);
+    if(!user)return;
+    const newName=document.getElementById('profileName').value.trim();
+    if(newName){user.user=newName; setUsers(users); setCurrent({user:newName,admin:cur.admin}); showToast('Profile updated'); renderProfile();}
 }
 
 // ---------- Init ----------
-afterLogin();
+document.addEventListener('DOMContentLoaded',()=>{
+    if(getCurrent()) afterLogin();
+    else navigate('');
+});
 </script>
+
 </body>
 </html>
