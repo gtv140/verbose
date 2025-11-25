@@ -118,6 +118,9 @@ const iconList=[
 {icon:'fa-credit-card',label:'Withdraw',action:showWithdraw},
 {icon:'fa-file-invoice',label:'Transactions',action:showTransactions},
 {icon:'fa-user',label:'Profile',action:showProfile},
+{icon:'fa-gear',label:'Settings',action:showSettings},
+{icon:'fa-bell',label:'Notifications',action:showNotifications},
+{icon:'fa-circle-question',label:'Help',action:showHelp},
 {icon:'fa-right-from-bracket',label:'Logout',action:doLogout},
 ];
 
@@ -136,6 +139,9 @@ let div=document.createElement('div'); div.innerHTML=`<i class="fa ${i.icon}"></
 footer.appendChild(div);
 });
 }
+
+// ---------- After Login ----------
+function afterLogin(){document.getElementById('authView').classList.add('hidden');document.getElementById('appView').classList.remove('hidden');generateIcons();generateFooter();showWallet();}
 
 // ---------- Main Views ----------
 function showView(html){const mv=document.getElementById('mainView'); mv.innerHTML=html; mv.classList.remove('hidden');}
@@ -186,6 +192,9 @@ txs.forEach(t=>{html+=`<tr><td>${t.type}</td><td>${t.amount}</td><td>${t.plan}</
 
 // ---------- Profile ----------
 function showProfile(){let cur=getCurrent(); showView(`<h2>Profile</h2><p>Username: ${cur.user}</p><p>Balance: ${cur.balance||0} PKR</p>`);}
+function showSettings(){showView('<h2>Settings</h2><p>Settings section coming soon...</p>');}
+function showNotifications(){showView('<h2>Notifications</h2><p>No new notifications</p>');}
+function showHelp(){showView('<h2>Help</h2><p>Help & FAQ section coming soon...</p>');}
 </script>
 </body>
 </html>
