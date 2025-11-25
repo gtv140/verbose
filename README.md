@@ -3,632 +3,582 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Login - Premium App</title>
-<style>
-body {
-    margin:0;
-    padding:0;
-    background:#050505;
-    font-family: Arial, sans-serif;
-    color:#fff;
-}
-
-/* Center Box */
-.container {
-    width: 90%;
-    max-width: 350px;
-    margin: 80px auto 0;
-    padding: 25px;
-    background: rgba(20,20,20,0.9);
-    border-radius: 18px;
-    box-shadow: 0 0 25px #00f2ff;
-    text-align:center;
-}
-
-/* Heading */
-h2 {
-    margin: 0 0 15px 0;
-    font-size: 26px;
-    text-shadow: 0 0 10px #00eaff;
-}
-
-/* Inputs */
-input {
-    width: 90%;
-    padding: 12px;
-    border-radius:10px;
-    border:none;
-    margin:10px 0;
-    background:#111;
-    color:white;
-    box-shadow: inset 0 0 10px #0ff;
-}
-
-/* Buttons */
-button {
-    width: 95%;
-    padding: 12px;
-    border: none;
-    margin-top:10px;
-    border-radius: 10px;
-    background:#00eaff;
-    color:#000;
-    font-weight:bold;
-    font-size:16px;
-    box-shadow: 0 0 15px #00eaff;
-}
-button:hover {
-    background:#00bcd4;
-    cursor:pointer;
-}
-
-/* Switch text */
-.switch {
-    margin-top:12px;
-    font-size:14px;
-    color:#bbb;
-}
-.switch span {
-    color:#00eaff;
-    text-decoration:underline;
-    cursor:pointer;
-}
-</style>
-</head>
-
-<body>
-
-<!-- LOGIN PAGE -->
-<div class="container" id="loginBox">
-    <h2>Login</h2>
-    <input type="text" id="loginUser" placeholder="Enter Username" />
-    <input type="password" id="loginPass" placeholder="Enter Password" />
-    <button onclick="doLogin()">Login</button>
-
-    <p class="switch">
-        Don't have an account? <span onclick="showSignup()">Signup</span>
-    </p>
-</div>
-
-
-<!-- SIGNUP PAGE -->
-<div class="container" id="signupBox" style="display:none;">
-    <h2>Signup</h2>
-    <input type="text" id="newUser" placeholder="Create Username" />
-    <input type="password" id="newPass" placeholder="Create Password" />
-    <button onclick="doSignup()">Create Account</button>
-
-    <p class="switch">
-        Already have an account? <span onclick="showLogin()">Login</span>
-    </p>
-</div>
-
-
-<script>
-/* Switch Pages */
-function showSignup(){
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("signupBox").style.display = "block";
-}
-
-function showLogin(){
-    document.getElementById("signupBox").style.display = "none";
-    document.getElementById("loginBox").style.display = "block";
-}
-
-/* Signup Save */
-function doSignup(){
-    let u = document.getElementById("newUser").value;
-    let p = document.getElementById("newPass").value;
-
-    if(u=="" || p==""){ alert("Fill all fields"); return; }
-
-    let user = {username:u, password:p, balance:0};
-    localStorage.setItem("appUser", JSON.stringify(user));
-
-    alert("Account Created Successfully");
-    showLogin();
-}
-
-/* Login Check */
-function doLogin(){
-    let u = document.getElementById("loginUser").value;
-    let p = document.getElementById("loginPass").value;
-
-    let saved = localStorage.getItem("appUser");
-    if(!saved){ alert("No account found"); return; }
-
-    let user = JSON.parse(saved);
-
-    if(u === user.username && p === user.password){
-        alert("Login Successful");
-        window.location.href = "dashboard.html";
-    } else {
-        alert("Invalid Credentials");
-    }
-}
-</script>
-
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Dashboard - Premium App</title>
+<title>VERBOSE App Style Premium Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
+:root{
+    --neon:#00fff0;
+    --accent:#ffea00;
+    --bg:#0d0d0d;
+    --card:#1a1a1a;
+    --glass: rgba(255,255,255,0.05);
+    --glass-border: rgba(0,255,240,0.08);
+}
 body{
     margin:0;
-    font-family:Arial,sans-serif;
-    background:#0d0d0d;
+    font-family:'Orbitron',sans-serif;
+    background: linear-gradient(120deg,#050012,#0d0626);
     color:#fff;
 }
-
-/* Header */
+.hidden{display:none;}
 .app-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:15px;
-    background:#111;
-    box-shadow:0 2px 10px rgba(0,0,0,0.5);
+    display:flex;justify-content:space-between;align-items:center;
+    padding:15px;background:#111;box-shadow:0 2px 10px rgba(0,0,0,0.5);
 }
-.app-header h1{
-    font-size:20px;
-    margin:0;
-    color:#0af;
-}
-
-/* Balance Card */
-.balance-card{
-    background:#111;
-    padding:15px;
-    margin:15px;
-    border-radius:15px;
-    box-shadow:0 0 20px #0af;
-    display:flex;
-    justify-content:space-between;
-}
-.balance-card div{ text-align:center;}
-.balance-card h3{ margin:5px 0; color:#0ff; }
-.balance-card p{ margin:0; color:#aaa; }
-
-/* Icon Grid */
+.app-header h1{font-size:20px;margin:0;}
+.menu-btn{font-size:22px;cursor:pointer;}
 .icon-grid{
     display:grid;
     grid-template-columns:repeat(3,1fr);
-    gap:12px;
-    padding:15px;
+    gap:15px;
+    padding:20px;
 }
 .icon-box{
-    background:#1a1a1a;
-    padding:18px;
+    background: var(--card);
+    padding:20px;
     text-align:center;
     border-radius:15px;
-    box-shadow:0 0 15px #00f2ff;
+    box-shadow:0 0 10px #000;
     transition:0.3s;
 }
 .icon-box:hover{
     transform:scale(1.05);
     background:#222;
 }
-.icon-box i{
-    font-size:28px;
-    margin-bottom:10px;
-    color:#0af;
-}
-.icon-box p{
-    margin:0;
-    font-size:14px;
-}
-
-/* Plans Section */
-.plan-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-    gap:12px;
-    padding:15px;
-}
-.plan-box{
-    background:#111;
-    border-radius:12px;
-    padding:12px;
-    box-shadow:0 0 15px #0ff;
-    text-align:center;
-    transition:0.3s;
-}
-.plan-box:hover{
-    transform:translateY(-5px);
-    box-shadow:0 0 25px #0ff;
-}
-.plan-box h4{
-    margin:5px 0;
-    color:#0af;
-}
-.plan-box p{
-    font-size:12px;
-    margin:2px 0;
-    color:#ccc;
-}
-.plan-box .badge{
-    display:inline-block;
-    background:#ffea00;
-    color:#000;
-    font-size:10px;
-    padding:3px 5px;
-    border-radius:6px;
-    margin-top:5px;
-}
-
-/* Footer Menu */
+.icon-box i{font-size:30px;margin-bottom:10px;color:var(--neon);}
+.icon-box p{margin:0;font-size:14px;}
 .footer-menu{
-    position:fixed;
-    bottom:0;
-    left:0;
-    width:100%;
-    background:#111;
-    display:flex;
-    justify-content:space-around;
-    padding:10px 0;
-    box-shadow:0 -2px 10px rgba(0,0,0,0.5);
+    position:fixed;bottom:0;left:0;width:100%;
+    background:#111;display:flex;justify-content:space-around;
+    padding:10px 0;box-shadow:0 -2px 10px rgba(0,0,0,0.5);
 }
-.footer-menu div{
-    text-align:center;
-    color:#fff;
-    font-size:12px;
-}
-.footer-menu i{
-    display:block;
-    font-size:22px;
-    margin-bottom:5px;
-    color:#0af;
-}
-
-/* Responsive Scroll */
-body, html{overflow-x:hidden;}
+.footer-menu div{text-align:center;font-size:12px;color:#fff;}
+.footer-menu i{display:block;font-size:22px;margin-bottom:5px;}
+.card{background:var(--glass);border:1px solid var(--glass-border);padding:14px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.6);backdrop-filter: blur(6px);margin-bottom:15px;}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.primary{background:var(--neon);color:#000;border:none;padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:700;}
+.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px;border-radius:8px;color:#fff;cursor:pointer;}
+.plan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:12px;}
+.plan{border-radius:12px;padding:12px;border:1px solid rgba(0,255,240,0.06);background:linear-gradient(180deg,rgba(0,255,240,0.02),transparent);position:relative;transition:transform .18s;}
+.plan:hover{transform:translateY(-8px);box-shadow:0 16px 40px rgba(0,255,240,0.04);}
+.badge{position:absolute;top:10px;right:10px;background:var(--accent);color:#000;padding:6px 8px;border-radius:8px;font-weight:800;}
+.muted{color:#bfe;opacity:.9;}
+table{width:100%;border-collapse:collapse;}
+th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px;}
+.notif{position:fixed;right:18px;bottom:18px;background:var(--neon);color:#000;padding:12px 16px;border-radius:12px;font-weight:700;box-shadow:0 10px 30px rgba(0,255,240,0.12);}
+.admin-badge{background:#ff4d4d;color:#000;padding:6px 8px;border-radius:8px;font-weight:800;}
 </style>
 </head>
 <body>
 
-<!-- Header -->
 <div class="app-header">
-    <h1>Dashboard</h1>
-    <i class="fa fa-user" style="font-size:22px"></i>
+    <h1>VERBOSE</h1>
+    <i class="fa fa-bars menu-btn"></i>
 </div>
 
-<!-- Balance Cards -->
-<div class="balance-card">
-    <div>
-        <h3 id="walletBalance">0 PKR</h3>
-        <p>Wallet</p>
-    </div>
-    <div>
-        <h3 id="profitBalance">0 PKR</h3>
-        <p>Profit</p>
-    </div>
+<div id="welcomeText" class="muted small" style="margin-left:15px;">Not logged in</div>
+<div class="row" style="padding:15px;">
+    <button id="openAuthBtn" class="primary">Login / Signup</button>
+    <div id="balanceTop" style="font-weight:800;color:var(--neon);margin-left:8px"></div>
+    <button id="logoutBtn" class="primary hidden" style="background:linear-gradient(90deg,#ff4d4d,#ff1a1a)">Logout</button>
 </div>
 
-<!-- Icon Grid -->
 <div class="icon-grid">
-    <div class="icon-box" onclick="alert('Wallet Clicked')">
-        <i class="fa fa-wallet"></i>
-        <p>Wallet</p>
+    <div class="icon-box" onclick="navigate('dashboard')">
+        <i class="fa fa-chart-line"></i>
+        <p>Dashboard</p>
     </div>
-    <div class="icon-box" onclick="alert('Plans Clicked')">
+    <div class="icon-box" onclick="navigate('plans')">
         <i class="fa fa-briefcase"></i>
         <p>Plans</p>
     </div>
-    <div class="icon-box" onclick="alert('Deposit Clicked')">
-        <i class="fa fa-money-bill"></i>
+    <div class="icon-box" onclick="navigate('deposit')">
+        <i class="fa fa-wallet"></i>
         <p>Deposit</p>
     </div>
-    <div class="icon-box" onclick="alert('Withdraw Clicked')">
-        <i class="fa fa-hand-holding-dollar"></i>
-        <p>Withdraw</p>
+    <div class="icon-box" onclick="navigate('withdrawal')">
+        <i class="fa fa-money-bill"></i>
+        <p>Withdrawal</p>
     </div>
-    <div class="icon-box" onclick="alert('Transactions Clicked')">
-        <i class="fa fa-receipt"></i>
+    <div class="icon-box" onclick="navigate('transactions')">
+        <i class="fa fa-list"></i>
         <p>Transactions</p>
     </div>
-    <div class="icon-box" onclick="alert('Referral Clicked')">
-        <i class="fa fa-user-plus"></i>
-        <p>Referral</p>
+    <div class="icon-box" onclick="navigate('about')">
+        <i class="fa fa-info-circle"></i>
+        <p>About</p>
+    </div>
+    <div class="icon-box" id="adminNavBtn" onclick="navigate('admin')" class="hidden">
+        <i class="fa fa-user-shield"></i>
+        <p>Admin</p>
     </div>
 </div>
 
-<!-- Plans Section -->
-<h3 style="padding-left:15px;">Available Plans</h3>
-<div class="plan-grid">
-    <div class="plan-box">
-        <h4>Plan 1</h4>
-        <p>Invest: 500 PKR</p>
-        <p>Days: 7</p>
-        <p>Profit: 1200 PKR</p>
-        <span class="badge">Special</span>
+<!-- AUTH VIEW -->
+<div id="authView" class="card">
+    <h2>Login / Signup</h2>
+    <input id="authUser" placeholder="Username" />
+    <input id="authPass" type="password" placeholder="Password" style="margin-top:8px;"/>
+    <div class="row" style="margin-top:10px;">
+        <button class="primary" onclick="doLogin()">Login</button>
+        <button class="ghost" onclick="doSignup()">Signup</button>
     </div>
-    <div class="plan-box">
-        <h4>Plan 2</h4>
-        <p>Invest: 1000 PKR</p>
-        <p>Days: 14</p>
-        <p>Profit: 2500 PKR</p>
+    <div class="muted small" style="margin-top:10px;">Signup saved locally. Admin: <strong>AdminKhan</strong> / <strong>SuperSecret123</strong></div>
+</div>
+
+<!-- APP VIEW -->
+<div id="appView" class="hidden">
+
+<!-- Dashboard -->
+<div id="dashboard" class="card hidden">
+    <h2>Dashboard</h2>
+    <div class="row">
+        <div class="card" style="flex:1;">
+            <div class="muted small">Balance</div>
+            <div id="balDisplay" style="font-weight:800;color:var(--neon);font-size:18px;">0 PKR</div>
+        </div>
+        <div class="card" style="flex:1;">
+            <div class="muted small">Profit</div>
+            <div id="profitDisplay" style="font-weight:800;color:var(--neon);font-size:18px;">0 PKR</div>
+        </div>
     </div>
-    <div class="plan-box">
-        <h4>Plan 3</h4>
-        <p>Invest: 2000 PKR</p>
-        <p>Days: 21</p>
-        <p>Profit: 5000 PKR</p>
+    <div class="card" style="margin-top:10px;">
+        <h4>Active Plans</h4>
+        <div id="activePlans" class="muted small">No active plans</div>
     </div>
-    <div class="plan-box">
-        <h4>Plan 4</h4>
-        <p>Invest: 5000 PKR</p>
-        <p>Days: 28</p>
-        <p>Profit: 12000 PKR</p>
-        <span class="badge">Special</span>
+    <div class="card" style="margin-top:10px;">
+        <h4>Referral Bonus</h4>
+        <div id="refBonus" class="muted small">0 PKR</div>
     </div>
 </div>
 
-<!-- Footer Menu -->
-<div class="footer-menu">
-    <div onclick="alert('Home')"><i class="fa fa-home"></i>Home</div>
-    <div onclick="alert('Plans')"><i class="fa fa-layer-group"></i>Plans</div>
-    <div onclick="alert('Account')"><i class="fa fa-user"></i>Account</div>
+<!-- Plans -->
+<div id="plansView" class="card hidden">
+    <h2>Plans</h2>
+    <div class="plan-grid" id="planGrid"></div>
+</div>
+
+<!-- Deposit -->
+<div id="depositView" class="card hidden">
+    <h2>Deposit</h2>
+    <div class="muted small">Choose a plan, send payment, upload proof (simulation)</div>
+    <div style="margin-top:12px;">
+        <label class="muted small">Choose Plan</label>
+        <select id="depositPlan"></select>
+    </div>
+    <div class="row" style="margin-top:8px;">
+        <div style="flex:1;">
+            <label class="muted small">Amount</label>
+            <input id="depositAmount" readonly/>
+        </div>
+        <div style="width:160px;">
+            <label class="muted small">Method</label>
+            <select id="depositMethod" onchange="updateDepositNumber()">
+                <option value="jazzcash">JazzCash</option>
+                <option value="easypaisa">EasyPaisa</option>
+            </select>
+        </div>
+    </div>
+    <div class="row" style="margin-top:10px;">
+        <input id="depositNumber" readonly style="flex:1;"/>
+        <button class="ghost" onclick="copyText(document.getElementById('depositNumber').value)">Copy</button>
+    </div>
+    <div style="margin-top:8px;">
+        <input id="depositTx" placeholder="Transaction ID (optional)"/>
+    </div>
+    <div style="margin-top:8px;">
+        <input id="depositProof" type="file"/>
+    </div>
+    <div class="row" style="margin-top:10px;">
+        <button class="primary" onclick="submitDeposit()">Submit Deposit</button>
+        <button class="ghost" onclick="navigate('dashboard')">Back</button>
+    </div>
 </div>
 
 <script>
-/* Load wallet data */
-let user = JSON.parse(localStorage.getItem("appUser"));
-if(user){
-    document.getElementById("walletBalance").innerText = user.balance + " PKR";
-    document.getElementById("profitBalance").innerText = user.profit ? user.profit + " PKR" : "0 PKR";
-}
-</script>
+// ---------- DATA ----------
+const ADMIN = {user:'AdminKhan',pass:'SuperSecret123'};
+const depositNumbers = {jazzcash:'03705519562',easypaisa:'03379827882'};
+const plans=[
+    {id:1,name:'Plan 1',days:25,invest:250,totalProfit:1200,offer:true},
+    {id:2,name:'Plan 2',days:28,invest:500,totalProfit:2500,offer:true},
+    {id:3,name:'Plan 3',days:30,invest:750,totalProfit:3750,offer:true},
+    {id:4,name:'Plan 4',days:33,invest:1000,totalProfit:4000,offer:true},
+    {id:5,name:'Plan 5',days:35,invest:1500,totalProfit:7700,offer:true},
+    {id:6,name:'Plan 6',days:38,invest:2000,totalProfit:5700,offer:false},
+    {id:7,name:'Plan 7',days:40,invest:2500,totalProfit:7200,offer:false}
+];
+for(const p of plans) p.dailyProfit=Math.round(p.totalProfit/p.days);
 
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Transactions & Referral - Premium App</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-body{
-    margin:0;
-    font-family:Arial,sans-serif;
-    background:#0d0d0d;
-    color:#fff;
-}
+// ---------- STORAGE ----------
+function getUsers(){ return JSON.parse(localStorage.getItem('verbose_users')||'[]'); }
+function setUsers(u){ localStorage.setItem('verbose_users',JSON.stringify(u)); }
+function getTx(){ return JSON.parse(localStorage.getItem('verbose_tx')||'[]'); }
+function setTx(t){ localStorage.setItem('verbose_tx',JSON.stringify(t)); }
+function getCurrent(){ return JSON.parse(localStorage.getItem('verbose_current')||'null'); }
+function setCurrent(u){ localStorage.setItem('verbose_current',JSON.stringify(u)); }
 
-/* Header */
-.app-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:15px;
-    background:#111;
-    box-shadow:0 2px 10px rgba(0,0,0,0.5);
-}
-.app-header h1{
-    font-size:20px;
-    margin:0;
-    color:#0af;
-}
+// ---------- INIT ADMIN ----------
+(function initUsers(){
+    let u=getUsers();
+    if(!u.find(x=>x.user===ADMIN.user)){
+        u.push({user:ADMIN.user,pass:ADMIN.pass,balance:0,active:[],profit:0,admin:true,refBonus:0});
+        setUsers(u);
+    }
+})();
 
-/* Form Cards */
-.card{
-    background:#111;
-    margin:15px;
-    padding:15px;
-    border-radius:15px;
-    box-shadow:0 0 20px #0ff;
-}
-.card h3{
-    margin-top:0;
-    color:#0af;
-}
-.card input, .card select{
-    width:100%;
-    padding:10px;
-    margin-top:8px;
-    border-radius:10px;
-    border:none;
-    background:#1a1a1a;
-    color:#fff;
-}
-.card button{
-    margin-top:10px;
-    padding:10px;
-    width:48%;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:700;
-}
-.card button.primary{
-    background:#0af;
-    color:#000;
-}
-.card button.ghost{
-    background:transparent;
-    color:#0af;
-    border:1px solid #0af;
+// ---------- TOAST ----------
+function showToast(text){
+    const n=document.createElement('div');
+    n.className='notif';
+    n.innerText=text;
+    document.body.appendChild(n);
+    setTimeout(()=>n.remove(),2200);
 }
 
-/* Transactions Table */
-.tx-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:10px;
-}
-.tx-table th, .tx-table td{
-    padding:8px;
-    border-bottom:1px solid rgba(0,255,255,0.1);
-    font-size:12px;
-    text-align:center;
-}
-
-/* Referral */
-.referral{
-    background:#111;
-    margin:15px;
-    padding:15px;
-    border-radius:15px;
-    box-shadow:0 0 20px #0ff;
-}
-.referral input{
-    width:100%;
-    padding:10px;
-    border-radius:10px;
-    border:none;
-    background:#1a1a1a;
-    color:#0af;
-    font-weight:700;
+// ---------- NAV ----------
+function navigate(tab){
+    const views={
+        dashboard:$('dashboard'),
+        plans:$('plansView'),
+        deposit:$('depositView')
+    };
+    for(const v of Object.values(views)) v?.classList.add('hidden');
+    if(views[tab]) views[tab].classList.remove('hidden');
+    renderCommon();
 }
 
-/* Footer Menu */
-.footer-menu{
-    position:fixed;
-    bottom:0;
-    left:0;
-    width:100%;
-    background:#111;
-    display:flex;
-    justify-content:space-around;
-    padding:10px 0;
-    box-shadow:0 -2px 10px rgba(0,0,0,0.5);
+// ---------- AUTH ----------
+function afterLogin(){
+    const cur=getCurrent();
+    if(!cur) return;
+    $('welcomeText').innerText=`Welcome, ${cur.user}`;
+    $('balanceTop').innerText=`${cur.balance||0} PKR`;
+    $('logoutBtn').classList.remove('hidden');
+    // admin button only visible to admin
+    if(cur.admin) $('adminNavBtn').classList.remove('hidden');
+    else $('adminNavBtn').classList.add('hidden');
+    $('authView').classList.add('hidden');
+    $('appView').classList.remove('hidden');
+    navigate('dashboard');
 }
-.footer-menu div{
-    text-align:center;
-    color:#fff;
-    font-size:12px;
+
+function doSignup(){
+    const u=$('authUser').value.trim();
+    const p=$('authPass').value;
+    if(!u||!p){ showToast('Enter username & password'); return;}
+    const users=getUsers();
+    if(users.find(x=>x.user===u)){ showToast('Username exists'); return; }
+    users.push({user:u,pass:p,balance:0,active:[],profit:0,admin:false,refBonus:0});
+    setUsers(users);
+    setCurrent({user:u,admin:false});
+    showToast('Signup success & logged in');
+    afterLogin();
 }
-.footer-menu i{
-    display:block;
-    font-size:22px;
-    margin-bottom:5px;
-    color:#0af;
+
+function doLogin(){
+    const u=$('authUser').value.trim();
+    const p=$('authPass').value;
+    if(!u||!p){ showToast('Enter username & password'); return;}
+    if(u===ADMIN.user && p===ADMIN.pass){ setCurrent({user:ADMIN.user,admin:true}); showToast('Admin logged in'); afterLogin(); return;}
+    const users=getUsers();
+    const found=users.find(x=>x.user===u && x.pass===p);
+    if(!found){ showToast('Invalid credentials'); return;}
+    setCurrent({user:found.user,admin:false});
+    showToast('Login success');
+    afterLogin();
 }
-</style>
-</head>
-<body>
 
-<!-- Header -->
-<div class="app-header">
-    <h1>Transactions & Referral</h1>
-    <i class="fa fa-user"></i>
-</div>
+// ---------- COMMON RENDER ----------
+function renderCommon(){
+    const cur=getCurrent();
+    if(!cur) return;
+    $('balDisplay').innerText=cur.balance||0;
+    $('profitDisplay').innerText=cur.profit||0;
+    $('refBonus').innerText=cur.refBonus||0;
+    const users=getUsers();
+    const u=users.find(x=>x.user===cur.user);
+    if(u && u.active.length>0) $('activePlans').innerText=u.active.map(p=>p.name).join(', ');
+    else $('activePlans').innerText='No active plans';
+}
 
-<!-- Deposit Form -->
-<div class="card">
-    <h3>Deposit</h3>
-    <select id="depositPlan">
-        <option value="1">Plan 1 - 500 PKR</option>
-        <option value="2">Plan 2 - 1000 PKR</option>
-        <option value="3">Plan 3 - 2000 PKR</option>
-    </select>
-    <input type="text" id="depositMethod" placeholder="Payment Method">
-    <input type="text" id="depositTx" placeholder="Transaction ID">
-    <div style="display:flex;gap:10px;">
-        <button class="primary" onclick="submitDeposit()">Deposit</button>
-        <button class="ghost" onclick="alert('Cancel Deposit')">Cancel</button>
-    </div>
-</div>
-
-<!-- Withdraw Form -->
-<div class="card">
-    <h3>Withdraw</h3>
-    <select id="withdrawMethod">
-        <option value="jazzcash">JazzCash</option>
-        <option value="easypaisa">EasyPaisa</option>
-    </select>
-    <input type="text" id="withdrawAccount" placeholder="Account Number">
-    <input type="number" id="withdrawAmount" placeholder="Amount PKR">
-    <div style="display:flex;gap:10px;">
-        <button class="primary" onclick="submitWithdraw()">Withdraw</button>
-        <button class="ghost" onclick="alert('Cancel Withdraw')">Cancel</button>
-    </div>
-</div>
-
-<!-- Transactions Table -->
-<div class="card">
-    <h3>Transactions</h3>
-    <table class="tx-table" id="txTable">
-        <thead>
-            <tr>
-                <th>Type</th>
-                <th>Amount</th>
-                <th>Plan</th>
-                <th>Status</th>
-                <th>Time</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-</div>
-
-<!-- Referral Section -->
-<div class="referral">
-    <h3>Referral</h3>
-    <input type="text" id="refLink" readonly value="https://app.com/?ref=YourUserID">
-    <p style="color:#aaa; font-size:12px; margin-top:5px;">Share your referral link to earn bonus!</p>
-</div>
-
-<!-- Footer Menu -->
-<div class="footer-menu">
-    <div onclick="alert('Home')"><i class="fa fa-home"></i>Home</div>
-    <div onclick="alert('Plans')"><i class="fa fa-layer-group"></i>Plans</div>
-    <div onclick="alert('Account')"><i class="fa fa-user"></i>Account</div>
-</div>
-
+// ---------- UTILS ----------
+function $(id){return document.getElementById(id);}
+function copyText(txt){navigator.clipboard.writeText(txt); showToast('Copied');}
+</script><!-- Part 2: App Functionality & JS -->
 <script>
-/* Sample Storage */
-let user = JSON.parse(localStorage.getItem("appUser")) || {balance:0,profit:0,transactions:[],referrals:0};
+/* ---------- Storage & data ---------- */
+const ADMIN = {user:'AdminKhan',pass:'SuperSecret123'};
+const depositNumbers = {jazzcash:'03705519562',easypaisa:'03379827882'};
 
-/* Submit Deposit */
+/* Plans array */
+const plans = [
+{ id:1, name:'Plan 1', days:25, invest:250, totalProfit:1200, offer:true },
+{ id:2, name:'Plan 2', days:28, invest:500, totalProfit:2500, offer:true },
+{ id:3, name:'Plan 3', days:30, invest:750, totalProfit:3750, offer:true },
+{ id:4, name:'Plan 4', days:33, invest:1000, totalProfit:4000, offer:true },
+{ id:5, name:'Plan 5', days:35, invest:1500, totalProfit:7700, offer:true },
+{ id:6, name:'Plan 6', days:38, invest:2000, totalProfit:5700, offer:false },
+{ id:7, name:'Plan 7', days:40, invest:2500, totalProfit:7200, offer:false }
+];
+
+/* dailyProfit computation */
+plans.forEach(p => p.dailyProfit=Math.round(p.totalProfit/p.days));
+
+/* ---------- Storage Helpers ---------- */
+function getUsers(){ return JSON.parse(localStorage.getItem('verbose_users')||'[]'); }
+function setUsers(u){ localStorage.setItem('verbose_users', JSON.stringify(u)); }
+function getTx(){ return JSON.parse(localStorage.getItem('verbose_tx')||'[]'); }
+function setTx(t){ localStorage.setItem('verbose_tx', JSON.stringify(t)); }
+function getCurrent(){ return JSON.parse(localStorage.getItem('verbose_current')||'null'); }
+function setCurrent(u){ localStorage.setItem('verbose_current', JSON.stringify(u)); }
+
+/* Init admin if not exists */
+(function initUsers(){
+  let u = getUsers();
+  if(!u.find(x=>x.user===ADMIN.user)){
+    u.push({user:ADMIN.user,pass:ADMIN.pass,balance:0,active:[],profit:0,admin:true});
+    setUsers(u);
+  }
+})();
+
+/* ---------- UI & Toast ---------- */
+function showToast(text){
+  const n=document.createElement('div');
+  n.className='notif';
+  n.innerText=text;
+  document.body.appendChild(n);
+  setTimeout(()=>n.remove(),2000);
+}
+
+/* Copy helper */
+function copyText(txt){
+  navigator.clipboard.writeText(txt);
+  showToast('Copied!');
+}
+
+/* ---------- Auth ---------- */
+function doSignup(){
+  const u = document.getElementById('authUser').value.trim();
+  const p = document.getElementById('authPass').value;
+  if(!u||!p){ showToast('Enter username & password'); return; }
+  const users = getUsers();
+  if(users.find(x=>x.user===u)){ showToast('Username exists'); return; }
+  users.push({user:u,pass:p,balance:0,active:[],profit:0,admin:false,refBonus:0});
+  setUsers(users);
+  setCurrent({user:u,admin:false});
+  showToast('Signup successful — logged in');
+  afterLogin();
+}
+
+function doLogin(){
+  const u = document.getElementById('authUser').value.trim();
+  const p = document.getElementById('authPass').value;
+  if(!u||!p){ showToast('Enter username & password'); return; }
+  if(u===ADMIN.user && p===ADMIN.pass){
+    setCurrent({user:ADMIN.user,admin:true});
+    showToast('Admin logged in');
+    afterLogin();
+    return;
+  }
+  const users = getUsers();
+  const found = users.find(x=>x.user===u && x.pass===p);
+  if(!found){ showToast('Invalid credentials'); return; }
+  setCurrent({user:found.user,admin:false});
+  showToast('Login successful');
+  afterLogin();
+}
+
+function doLogout(){
+  localStorage.removeItem('verbose_current');
+  location.reload();
+}
+
+/* ---------- After Login ---------- */
+function afterLogin(){
+  const cur = getCurrent();
+  if(!cur) return;
+  document.getElementById('authView').style.display='none';
+  document.getElementById('appView').style.display='block';
+  renderCommon();
+  if(cur.admin) document.getElementById('adminNavBtn').style.display='block';
+  else document.getElementById('adminNavBtn').style.display='none';
+}
+
+/* ---------- Render Common UI ---------- */
+function renderCommon(){
+  const cur = getCurrent();
+  if(!cur) return;
+  document.getElementById('welcomeText').innerText=`Hello, ${cur.user}`;
+  const users = getUsers();
+  const me = users.find(x=>x.user===cur.user);
+  if(me){
+    document.getElementById('balDisplay').innerText = me.balance + ' PKR';
+    document.getElementById('profitDisplay').innerText = me.profit + ' PKR';
+    const activePlans = me.active.length ? me.active.map(p=>p.name).join(', ') : 'No active plans';
+    document.getElementById('activePlans').innerText = activePlans;
+  }
+}
+
+/* ---------- Deposit Logic ---------- */
+function updateDepositNumber(){
+  const method = document.getElementById('depositMethod').value;
+  document.getElementById('depositNumber').value = depositNumbers[method];
+}
+
 function submitDeposit(){
-    const plan = document.getElementById("depositPlan").value;
-    const method = document.getElementById("depositMethod").value;
-    const tx = document.getElementById("depositTx").value;
-    if(!method || !tx){ alert('Fill all deposit fields'); return; }
-    const amount = plan==1?500:plan==2?1000:2000;
-    user.balance += amount;
-    user.transactions.push({type:'Deposit',amount,plan:'Plan '+plan,status:'Success',time:new Date().toLocaleString()});
-    localStorage.setItem("appUser", JSON.stringify(user));
-    alert('Deposit Successful');
-    loadTx();
+  const planId = parseInt(document.getElementById('depositPlan').value);
+  const plan = plans.find(p=>p.id===planId);
+  if(!plan){ showToast('Select a plan'); return; }
+  const cur = getCurrent();
+  const users = getUsers();
+  const me = users.find(x=>x.user===cur.user);
+  me.active.push(plan);
+  me.balance -= plan.invest; // simulate deduction
+  setUsers(users);
+  showToast(`Deposit for ${plan.name} submitted!`);
+  renderCommon();
 }
 
-/* Submit Withdraw */
+/* ---------- Withdraw Logic ---------- */
 function submitWithdraw(){
-    const method = document.getElementById("withdrawMethod").value;
-    const acc = document.getElementById("withdrawAccount").value;
-    const amount = parseInt(document.getElementById("withdrawAmount").value);
-    if(!method || !acc || !amount){ alert('Fill all withdraw fields'); return; }
-    if(amount>user.balance){ alert('Insufficient balance'); return; }
-    user.balance -= amount;
-    user.transactions.push({type:'Withdraw',amount,plan:'-',status:'Pending',time:new Date().toLocaleString()});
-    localStorage.setItem("appUser", JSON.stringify(user));
-    alert('Withdraw Requested');
-    loadTx();
+  const method = document.getElementById('withdrawMethod').value;
+  const acc = document.getElementById('withdrawAccount').value;
+  const amt = parseInt(document.getElementById('withdrawAmount').value);
+  if(!amt || amt<=0){ showToast('Enter valid amount'); return; }
+  showToast(`Withdrawal of ${amt} PKR requested via ${method}`);
 }
 
-/* Load Transactions */
-function loadTx(){
-    const tbody = document.getElementById("txTable").querySelector('tbody');
-    tbody.innerHTML = '';
-    user.transactions.forEach(tx=>{
-        const tr = document.createElement('tr');
-        tr.innerHTML=`<td>${tx.type}</td><td>${tx.amount}</td><td>${tx.plan}</td><td>${tx.status}</td><td>${tx.time}</td>`;
-        tbody.appendChild(tr);
-    });
+/* ---------- Plans render ---------- */
+function renderPlans(){
+  const planGrid = document.getElementById('planGrid');
+  if(!planGrid) return;
+  planGrid.innerHTML='';
+  plans.forEach(p=>{
+    const div = document.createElement('div');
+    div.className='plan';
+    div.innerHTML=`<h4>${p.name}</h4>
+                   <p>Invest: ${p.invest} PKR</p>
+                   <p>Days: ${p.days}</p>
+                   <p>Profit: ${p.totalProfit} PKR</p>`;
+    planGrid.appendChild(div);
+  });
 }
-loadTx();
 
-/* Referral Link Auto Fill */
-document.getElementById("refLink").value = `https://app.com/?ref=YourUserID&bonus=${user.referrals}`;
+/* ---------- Navigation ---------- */
+const navButtons = document.querySelectorAll('nav button[data-tab]');
+navButtons.forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.tab)));
+
+function navigate(tab){
+  const views = {
+    dashboard: document.getElementById('dashboard'),
+    plans: document.getElementById('plansView'),
+    deposit: document.getElementById('depositView'),
+    withdrawal: document.getElementById('withdrawView'),
+    transactions: document.getElementById('txView'),
+    admin: document.getElementById('adminView'),
+    about: document.getElementById('aboutView')
+  };
+  Object.values(views).forEach(v=>v.style.display='none');
+  if(views[tab]) views[tab].style.display='block';
+  renderCommon();
+}
+
+/* ---------- Init ---------- */
+window.onload = function(){
+  renderPlans();
+  updateDepositNumber();
+  afterLogin();
+};
+</script><!-- Part 3: Referral + Mobile App Enhancements -->
+<script>
+/* ---------- Referral System ---------- */
+function generateReferral(){
+  const cur = getCurrent();
+  if(!cur) return '';
+  return cur.user + '_ref';
+}
+
+function applyReferral(refCode){
+  if(!refCode) return;
+  const users = getUsers();
+  const refUser = users.find(u => (u.user+'_ref') === refCode);
+  if(refUser){
+    refUser.refBonus = (refUser.refBonus||0) + 100; // 100 PKR bonus per referral
+    setUsers(users);
+    showToast(`Referral bonus added to ${refUser.user}`);
+  }
+}
+
+/* ---------- Dashboard Referral Display ---------- */
+function renderReferral(){
+  const cur = getCurrent();
+  if(!cur) return;
+  const users = getUsers();
+  const me = users.find(u=>u.user===cur.user);
+  let refText = 'No referrals yet';
+  if(me && me.refBonus) refText = `Referral Bonus: ${me.refBonus} PKR`;
+  const elem = document.getElementById('achv');
+  if(elem) elem.innerText = refText;
+}
+
+/* ---------- Mobile App Style Enhancements ---------- */
+const iconBoxes = document.querySelectorAll('.icon-box');
+iconBoxes.forEach(box=>{
+  box.addEventListener('click', ()=>{
+    const text = box.querySelector('p').innerText.toLowerCase();
+    if(text==='wallet') navigate('deposit');
+    if(text==='stats') navigate('dashboard');
+    if(text==='profile') navigate('about');
+    if(text==='rewards') alert('Rewards page coming soon!');
+    if(text==='boost') alert('Boost feature coming soon!');
+    if(text==='settings') alert('Settings page coming soon!');
+  });
+});
+
+/* ---------- Footer Menu Navigation ---------- */
+const footerMenu = document.querySelectorAll('.footer-menu div');
+footerMenu.forEach(div=>{
+  div.addEventListener('click', ()=>{
+    const txt = div.innerText.toLowerCase();
+    if(txt.includes('home')) navigate('dashboard');
+    if(txt.includes('menu')) navigate('plans');
+    if(txt.includes('account')) navigate('about');
+  });
+});
+
+/* ---------- Animate Icons ---------- */
+function animateIcons(){
+  iconBoxes.forEach((box, i)=>{
+    box.style.transition = `transform 0.3s ease ${i*0.05}s`;
+    box.style.transform='translateY(0)';
+  });
+}
+window.onload = function(){
+  renderPlans();
+  updateDepositNumber();
+  afterLogin();
+  renderReferral();
+  animateIcons();
+};
+
+/* ---------- Show Deposit Copy Feature Already Added ---------- */
+document.getElementById('depositNumber')?.addEventListener('click', ()=>{
+  copyText(document.getElementById('depositNumber').value);
+});
+
+/* ---------- Optional: Daily Profit Update Simulation ---------- */
+setInterval(()=>{
+  const users = getUsers();
+  const cur = getCurrent();
+  if(!cur) return;
+  const me = users.find(u=>u.user===cur.user);
+  if(me && me.active.length){
+    me.active.forEach(p=> me.profit += p.dailyProfit);
+    setUsers(users);
+    renderCommon();
+    renderReferral();
+  }
+}, 24*60*60*1000); // simulate daily profit once per day (can reduce for testing)
 </script>
-
-</body>
-</html>
