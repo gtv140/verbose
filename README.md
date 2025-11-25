@@ -1,157 +1,132 @@
 <VERBOSE>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Verbose Premium Panel</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VERBOSE Premium App Panel</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-:root{
-  --neon:#00fff0;
-  --accent:#ffea00;
-  --bg:#0d0d0d;
-  --glass: rgba(255,255,255,0.04);
-  --glass-border: rgba(0,255,240,0.08);
-}
-body {
-  margin:0; font-family:'Orbitron',sans-serif; background:var(--bg); color:#fff;
-}
-.app-header{
-  display:flex; justify-content:space-between; align-items:center;
-  padding:15px; background:#111; box-shadow:0 2px 10px rgba(0,0,0,0.5);
-}
-.app-header h1{margin:0; font-size:20px;}
-.menu-btn{font-size:22px; cursor:pointer;}
-.icon-grid{
-  display:grid; grid-template-columns:repeat(3,1fr); gap:15px; padding:20px;
-}
-.icon-box{
-  background:#1a1a1a; padding:20px; text-align:center; border-radius:15px; box-shadow:0 0 10px #000; transition:.3s;
-}
-.icon-box:hover{transform:scale(1.05); background:#222;}
-.icon-box i{font-size:30px; margin-bottom:10px; color:var(--neon);}
-.icon-box p{margin:0; font-size:14px;}
-.footer-menu{
-  position:fixed; bottom:0; left:0; width:100%;
-  background:#111; display:flex; justify-content:space-around; padding:10px 0;
-  box-shadow:0 -2px 10px rgba(0,0,0,0.5);
-}
-.footer-menu div{text-align:center; color:#fff; font-size:12px;}
-.footer-menu i{display:block; font-size:22px; margin-bottom:5px; color:var(--neon);}
-
-/* Cards, modals, forms */
-.card{
-  background:var(--glass); border:1px solid var(--glass-border);
-  border-radius:12px; padding:14px; margin-bottom:12px;
-  backdrop-filter:blur(6px);
-}
-input, select{width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); background:rgba(0,0,0,0.35); color:#fff; outline:none; margin-top:8px;}
-button.primary{background:var(--neon); color:#000; border:none; padding:10px 12px; border-radius:10px; cursor:pointer; font-weight:700;}
-button.ghost{background:transparent; border:1px solid rgba(255,255,255,0.06); padding:10px; border-radius:8px; color:#fff; cursor:pointer;}
-
-/* Transactions table readable */
-table{width:100%; border-collapse:collapse; color:#cfe;}
-th, td{padding:8px; border-bottom:1px solid rgba(255,255,255,0.08); font-size:13px;}
-th{background: rgba(0,255,240,0.08); color: var(--neon); text-align:left;}
-td{color:#bfe;}
-#txView{overflow-x:auto; background:rgba(0,0,0,0.3); border-radius:12px; padding:12px;}
+  :root{
+    --primary:#00fff0;
+    --accent:#ffea00;
+    --bg:#0d0d0d;
+    --card-bg:#1a1a1a;
+    --glass: rgba(255,255,255,0.04);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Orbitron',sans-serif;background:var(--bg);color:#fff;overflow-x:hidden;}
+  .app-header{display:flex;justify-content:space-between;align-items:center;padding:15px;background:#111;box-shadow:0 2px 10px rgba(0,0,0,0.5);}
+  .app-header h1{font-size:20px;margin:0;color:var(--primary);}
+  .menu-btn{font-size:22px;color:var(--primary);cursor:pointer;}
+  .icon-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;padding:15px;}
+  .icon-box{background:var(--card-bg);padding:20px;text-align:center;border-radius:15px;transition:0.3s;cursor:pointer;}
+  .icon-box:hover{transform:scale(1.05);background:#222;}
+  .icon-box i{font-size:28px;color:var(--primary);margin-bottom:8px;}
+  .icon-box p{margin:0;font-size:14px;color:#fff;}
+  .footer-menu{position:fixed;bottom:0;left:0;width:100%;background:#111;display:flex;justify-content:space-around;padding:10px 0;box-shadow:0 -2px 10px rgba(0,0,0,0.5);}
+  .footer-menu div{text-align:center;font-size:12px;color:#fff;cursor:pointer;}
+  .footer-menu i{display:block;font-size:22px;margin-bottom:4px;color:var(--primary);}
+  .hidden{display:none;}
+  input,select,textarea,button{outline:none;}
+  input,select,textarea{padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:#111;color:#fff;width:100%;}
+  button{cursor:pointer;}
+  .primary{background:var(--primary);color:#000;border:none;padding:10px 12px;border-radius:10px;font-weight:700;}
+  .ghost{background:transparent;border:1px solid rgba(255,255,255,0.1);padding:10px;border-radius:8px;color:#fff;}
+  .card{background:var(--glass);border-radius:12px;padding:15px;margin-bottom:12px;}
+  table{width:100%;border-collapse:collapse;}
+  th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.05);font-size:13px;color:#eee;}
+  .muted{color:#aaa;}
 </style>
 </head>
 <body>
-
 <div class="app-header">
-    <h1>VERBOSE Panel</h1>
-    <i class="fa fa-bars menu-btn"></i>
+  <h1>VERBOSE</h1>
+  <i class="fa fa-bars menu-btn" onclick="toggleMenu()"></i>
 </div>
 
-<div class="icon-grid">
-    <div class="icon-box" onclick="navigate('dashboard')"><i class="fa fa-wallet"></i><p>Dashboard</p></div>
-    <div class="icon-box" onclick="navigate('plans')"><i class="fa fa-bolt"></i><p>Plans</p></div>
-    <div class="icon-box" onclick="navigate('deposit')"><i class="fa fa-money-bill"></i><p>Deposit</p></div>
-    <div class="icon-box" onclick="navigate('withdrawal')"><i class="fa fa-hand-holding-dollar"></i><p>Withdraw</p></div>
-    <div class="icon-box" onclick="navigate('transactions')"><i class="fa fa-receipt"></i><p>Transactions</p></div>
-    <div class="icon-box" onclick="navigate('about')"><i class="fa fa-info-circle"></i><p>About</p></div>
+<div class="icon-grid" id="mainIcons">
+  <div class="icon-box" onclick="navigate('dashboard')"><i class="fa fa-chart-line"></i><p>Dashboard</p></div>
+  <div class="icon-box" onclick="navigate('plans')"><i class="fa fa-briefcase"></i><p>Plans</p></div>
+  <div class="icon-box" onclick="navigate('deposit')"><i class="fa fa-wallet"></i><p>Deposit</p></div>
+  <div class="icon-box" onclick="navigate('withdrawal')"><i class="fa fa-credit-card"></i><p>Withdrawal</p></div>
+  <div class="icon-box" onclick="navigate('transactions')"><i class="fa fa-receipt"></i><p>Transactions</p></div>
+  <div class="icon-box" onclick="navigate('referral')"><i class="fa fa-users"></i><p>Referral</p></div>
+  <div class="icon-box" onclick="navigate('about')"><i class="fa fa-info-circle"></i><p>About</p></div>
 </div>
 
 <div class="footer-menu">
-    <div onclick="navigate('dashboard')"><i class="fa fa-home"></i>Home</div>
-    <div onclick="navigate('plans')"><i class="fa fa-layer-group"></i>Plans</div>
-    <div onclick="navigate('transactions')"><i class="fa fa-user"></i>Account</div>
-</div>
-
-<div id="appView"><!-- Dashboard / Plans / Deposit / Withdraw / Transactions / About / Admin -->
-<div id="dashboard" class="card">
-  <h2>Dashboard</h2>
-  <div>Balance: <span id="balDisplay">0 PKR</span></div>
-  <div>Profit: <span id="profitDisplay">0 PKR</span></div>
-  <div>Active Plans: <span id="activePlans">No active plans</span></div>
-  <div>Achievements: <span id="achv">No badges yet</span></div>
-</div>
-
-<div id="plansView" class="card hidden">
-  <h2>Plans</h2>
-  <div id="planGrid" class="icon-grid"></div>
-</div>
-
-<div id="depositView" class="card hidden">
-  <h2>Deposit</h2>
-  <label>Choose Plan</label>
-  <select id="depositPlan"></select>
-  <label>Amount (auto)</label>
-  <input id="depositAmount" readonly>
-  <label>Method</label>
-  <select id="depositMethod" onchange="updateDepositNumber()">
-    <option value="jazzcash">JazzCash</option>
-    <option value="easypaisa">EasyPaisa</option>
-  </select>
-  <label>Number</label>
-  <div style="display:flex;gap:8px;align-items:center">
-    <input id="depositNumber" readonly style="flex:1">
-    <button class="ghost" onclick="copyText(document.getElementById('depositNumber').value)">Copy</button>
+  <div onclick="navigate('dashboard')"><i class="fa fa-home"></i>Home</div>
+  <div onclick="navigate('plans')"><i class="fa fa-briefcase"></i>Plans</div>
+  <div onclick="navigate('account')"><i class="fa fa-user"></i>Account</div>
+</div><div id="authView" class="card">
+  <h2>Login / Signup</h2>
+  <input id="authUser" placeholder="Username" />
+  <input id="authPass" type="password" placeholder="Password" style="margin-top:8px;" />
+  <div style="margin-top:10px;">
+    <button class="primary" onclick="doLogin()">Login</button>
+    <button class="ghost" onclick="doSignup()">Signup</button>
   </div>
-  <label>Transaction ID (optional)</label>
-  <input id="depositTx">
-  <label>Upload Proof</label>
-  <input type="file" id="depositProof">
-  <button class="primary" onclick="submitDeposit()">Submit Deposit</button>
+  <p class="muted" style="margin-top:10px;">Admin: <strong>AdminKhan</strong> / <strong>SuperSecret123</strong></p>
 </div>
 
-<div id="withdrawView" class="card hidden">
-  <h2>Withdrawal</h2>
-  <label>Method</label>
-  <select id="withdrawMethod">
-    <option value="jazzcash">JazzCash</option>
-    <option value="easypaisa">EasyPaisa</option>
-  </select>
-  <label>Account Number / Username</label>
-  <input id="withdrawAccount">
-  <label>Amount PKR</label>
-  <input type="number" id="withdrawAmount">
-  <button class="primary" onclick="submitWithdraw()">Request Withdrawal</button>
-</div>
+<div id="appView" class="hidden">
+  <div id="dashboardView" class="card hidden">
+    <h2>Dashboard</h2>
+    <div class="card"><p>Balance: <span id="balDisplay">0 PKR</span></p></div>
+    <div class="card"><p>Profit: <span id="profitDisplay">0 PKR</span></p></div>
+    <div class="card"><p>Active Plans: <span id="activePlans">None</span></p></div>
+  </div>
 
-<div id="txView" class="card hidden">
+  <div id="plansView" class="card hidden">
+    <h2>Plans</h2>
+    <div id="planGrid"></div>
+  </div>
+
+  <div id="depositView" class="card hidden">
+    <h2>Deposit</h2>
+    <select id="depositPlan" onchange="updateDepositAmount()"></select>
+    <input id="depositAmount" readonly style="margin-top:8px;"/>
+    <select id="depositMethod" onchange="updateDepositNumber()">
+      <option value="jazzcash">JazzCash</option>
+      <option value="easypaisa">EasyPaisa</option>
+    </select>
+    <input id="depositNumber" readonly style="margin-top:8px;" />
+    <button class="ghost" onclick="copyText(document.getElementById('depositNumber').value)">Copy</button>
+    <input id="depositTx" placeholder="Transaction ID" style="margin-top:8px;" />
+    <button class="primary" onclick="submitDeposit()" style="margin-top:10px;">Submit Deposit</button>
+  </div>
+
+  <div id="withdrawView" class="card hidden">
+    <h2>Withdrawal</h2>
+    <select id="withdrawMethod">
+      <option value="jazzcash">JazzCash</option>
+      <option value="easypaisa">EasyPaisa</option>
+    </select>
+    <input id="withdrawAccount" placeholder="Account Number / Username" style="margin-top:8px;" />
+    <input id="withdrawAmount" placeholder="Amount PKR" style="margin-top:8px;" />
+    <button class="primary" onclick="submitWithdraw()" style="margin-top:10px;">Request Withdrawal</button>
+  </div><div id="txView" class="card hidden">
   <h2>Transactions</h2>
   <table>
-    <thead>
-      <tr>
-        <th>Type</th><th>Amount</th><th>Plan</th><th>Days</th><th>Total Profit</th><th>Time</th><th>Status</th>
-      </tr>
-    </thead>
+    <thead><tr><th>Type</th><th>Amount</th><th>Plan</th><th>Days</th><th>Total Profit</th><th>Status</th></tr></thead>
     <tbody id="txTableBody"></tbody>
   </table>
 </div>
 
+<div id="referralView" class="card hidden">
+  <h2>Referral</h2>
+  <p class="muted">Invite friends & earn 5% bonus.</p>
+  <input id="referralCode" placeholder="Your referral code" readonly />
+</div>
+
 <div id="aboutView" class="card hidden">
   <h2>About VERBOSE</h2>
-  <p>VERBOSE ek premium earning platform hai, modern digital finance ke liye app style panel. Owner: John Wilson. Launch Date: 17 Nov 2025.</p>
-  <button class="primary" onclick="doLogout()">Logout</button>
+  <p class="muted">VERBOSE ek premium earning platform hai jo modern finance aur neon app-style UI me present hota hai. Owner: John Wilson. Launch: 17 Nov 2025.</p>
 </div>
 
 <script>
-/* ---------- Users & Storage ---------- */
-const ADMIN={user:'AdminKhan',pass:'SuperSecret123'};
-const depositNumbers={jazzcash:'03705519562',easypaisa:'03379827882'};
+const ADMIN = {user:'AdminKhan',pass:'SuperSecret123'};
+const depositNumbers = {jazzcash:'03705519562',easypaisa:'03379827882'};
 const plans=[
   {id:1,name:'Plan 1',days:25,invest:250,totalProfit:1200,offer:true},
   {id:2,name:'Plan 2',days:28,invest:500,totalProfit:2500,offer:true},
@@ -164,100 +139,110 @@ const plans=[
   {id:9,name:'Plan 9',days:45,invest:3500,totalProfit:10800,offer:false},
   {id:10,name:'Plan 10',days:48,invest:4000,totalProfit:13200,offer:false}
 ];
-for(const p of plans)p.dailyProfit=Math.round(p.totalProfit/p.days);
 
-function getUsers(){return JSON.parse(localStorage.getItem('verbose_users')||'[]');}
-function setUsers(u){localStorage.setItem('verbose_users',JSON.stringify(u));}
-function getTx(){return JSON.parse(localStorage.getItem('verbose_tx')||'[]');}
-function setTx(t){localStorage.setItem('verbose_tx',JSON.stringify(t));}
-function getCurrent(){return JSON.parse(localStorage.getItem('verbose_current')||'null');}
-function setCurrent(u){localStorage.setItem('verbose_current',JSON.stringify(u));}
+for(const p of plans){ p.dailyProfit=Math.round(p.totalProfit/p.days); }
 
-/* ---------- Initialize admin ---------- */
-(function(){
-  let u=getUsers();
-  if(!u.find(x=>x.user===ADMIN.user))u.push({user:ADMIN.user,pass:ADMIN.pass,balance:0,active:[],profit:0,admin:true});
-  setUsers(u);
-})();
+function getUsers(){ return JSON.parse(localStorage.getItem('verbose_users')||'[]'); }
+function setUsers(u){ localStorage.setItem('verbose_users',JSON.stringify(u)); }
+function getTx(){ return JSON.parse(localStorage.getItem('verbose_tx')||'[]'); }
+function setTx(t){ localStorage.setItem('verbose_tx',JSON.stringify(t)); }
+function getCurrent(){ return JSON.parse(localStorage.getItem('verbose_current')||'null'); }
+function setCurrent(u){ localStorage.setItem('verbose_current',JSON.stringify(u)); }
 
-/* ---------- Navigation ---------- */
-function navigate(view){
-  const allViews=['dashboard','plansView','depositView','withdrawView','txView','aboutView'];
-  allViews.forEach(v=>document.getElementById(v).classList.add('hidden'));
-  if(view==='plans')view='plansView';
-  if(view==='deposit')view='depositView';
-  if(view==='withdrawal')view='withdrawView';
-  if(view==='transactions')view='txView';
-  if(view==='about')view='aboutView';
-  document.getElementById(view).classList.remove('hidden');
+function showToast(text){ alert(text); }
+
+function doSignup(){
+  const u=document.getElementById('authUser').value.trim();
+  const p=document.getElementById('authPass').value;
+  if(!u||!p){showToast('Enter username & password'); return;}
+  const users=getUsers();
+  if(users.find(x=>x.user===u)){showToast('Username exists'); return;}
+  users.push({user:u,pass:p,balance:0,profit:0,active:[],admin:false});
+  setUsers(users);
+  setCurrent({user:u,admin:false});
+  showToast('Signup successful — logged in');
+  afterLogin();
+}
+
+function doLogin(){
+  const u=document.getElementById('authUser').value.trim();
+  const p=document.getElementById('authPass').value;
+  if(!u||!p){showToast('Enter username & password'); return;}
+  if(u===ADMIN.user && p===ADMIN.pass){setCurrent({user:ADMIN.user,admin:true});showToast('Admin logged in'); afterLogin(); return;}
+  const users=getUsers();
+  const found=users.find(x=>x.user===u && x.pass===p);
+  if(!found){showToast('Invalid credentials'); return;}
+  setCurrent({user:found.user,admin:false});
+  showToast('Login successful');
+  afterLogin();
+}
+
+function afterLogin(){
+  document.getElementById('authView').classList.add('hidden');
+  document.getElementById('appView').classList.remove('hidden');
   renderCommon();
 }
 
-/* ---------- Render Plans ---------- */
-function renderPlans(){
-  const grid=document.getElementById('planGrid');
-  const sel=document.getElementById('depositPlan');
-  grid.innerHTML=''; sel.innerHTML='';
-  plans.forEach(p=>{
-    const div=document.createElement('div'); div.className='icon-box';
-    div.innerHTML=`<i class="fa fa-layer-group"></i><p>${p.name}<br>${p.invest} PKR / ${p.days} days</p>`;
-    div.onclick=()=>{document.getElementById('depositPlan').value=p.id; updateDepositNumber();}
-    grid.appendChild(div);
-    const opt=document.createElement('option'); opt.value=p.id; opt.innerText=p.name; sel.appendChild(opt);
-  });
+function navigate(tab){
+  const views={
+    dashboard:'dashboardView',
+    plans:'plansView',
+    deposit:'depositView',
+    withdrawal:'withdrawView',
+    transactions:'txView',
+    referral:'referralView',
+    about:'aboutView'
+  };
+  for(const v of Object.values(views)) document.getElementById(v).classList.add('hidden');
+  if(views[tab]) document.getElementById(views[tab]).classList.remove('hidden');
 }
 
-/* ---------- Deposit Number ---------- */
+function renderCommon(){
+  const cur=getCurrent();
+  if(!cur) return;
+  document.getElementById('balDisplay').innerText=cur.balance||0+' PKR';
+  document.getElementById('profitDisplay').innerText=cur.profit||0+' PKR';
+  document.getElementById('activePlans').innerText=(cur.active?.length||0);
+  document.getElementById('referralCode').value=cur.user+'_REF';
+  const planSelect=document.getElementById('depositPlan');
+  planSelect.innerHTML='';
+  plans.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.innerText=p.name+' ('+p.invest+' PKR)';planSelect.appendChild(o);});
+  updateDepositAmount();
+  updateDepositNumber();
+}
+
+function updateDepositAmount(){
+  const planId=document.getElementById('depositPlan').value;
+  const plan=plans.find(p=>p.id==planId);
+  if(plan) document.getElementById('depositAmount').value=plan.invest+' PKR';
+}
+
 function updateDepositNumber(){
   const method=document.getElementById('depositMethod').value;
-  document.getElementById('depositNumber').value=depositNumbers[method];
+  document.getElementById('depositNumber').value=depositNumbers[method]||'';
 }
 
-/* ---------- Copy ---------- */
-function copyText(t){navigator.clipboard.writeText(t); alert('Copied: '+t);}
+function copyText(txt){navigator.clipboard.writeText(txt);showToast('Copied!');}
 
-/* ---------- Deposit ---------- */
 function submitDeposit(){
-  const cur=getCurrent(); if(!cur)return alert('Login first');
-  const planId=parseInt(document.getElementById('depositPlan').value);
-  const plan=plans.find(p=>p.id===planId);
-  const amt=plan.invest;
-  const txId=document.getElementById('depositTx').value;
-  const tx=getTx();
-  tx.push({user:cur.user,type:'Deposit',amount:amt,plan:plan.name,days:plan.days,totalProfit:plan.totalProfit,time:Date.now(),status:'Pending',txId});
-  setTx(tx);
-  alert('Deposit submitted!');
+  const cur=getCurrent(); if(!cur) return;
+  const planId=document.getElementById('depositPlan').value;
+  const plan=plans.find(p=>p.id==planId); if(!plan) return;
+  const tx={user:cur.user,type:'Deposit',amount:plan.invest,plan:plan.name,days:plan.days,totalProfit:plan.totalProfit,status:'Pending',time:new Date().toLocaleString()};
+  const txs=getTx(); txs.push(tx); setTx(txs);
+  showToast('Deposit submitted');
 }
 
-/* ---------- Withdraw ---------- */
 function submitWithdraw(){
-  const cur=getCurrent(); if(!cur)return alert('Login first');
-  const amt=parseInt(document.getElementById('withdrawAmount').value);
-  const method=document.getElementById('withdrawMethod').value;
-  const acc=document.getElementById('withdrawAccount').value;
-  const tx=getTx();
-  tx.push({user:cur.user,type:'Withdrawal',amount:amt,plan:'-',days:'-',totalProfit:'-',time:Date.now(),status:'Pending',method,acc});
-  setTx(tx);
-  alert('Withdrawal requested!');
+  const cur=getCurrent(); if(!cur) return;
+  const amt=parseInt(document.getElementById('withdrawAmount').value)||0;
+  if(amt<=0){showToast('Enter valid amount'); return;}
+  const tx={user:cur.user,type:'Withdrawal',amount:amt,plan:'-',days:'-',totalProfit:'-',status:'Pending',time:new Date().toLocaleString()};
+  const txs=getTx(); txs.push(tx); setTx(txs);
+  showToast('Withdrawal requested');
 }
 
-/* ---------- Render Transactions ---------- */
-function renderCommon(){
-  const tx=getTx();
-  const tbody=document.getElementById('txTableBody');
-  tbody.innerHTML='';
-  tx.forEach(t=>{
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${t.type}</td><td>${t.amount}</td><td>${t.plan}</td><td>${t.days}</td><td>${t.totalProfit}</td><td>${new Date(t.time).toLocaleString()}</td><td>${t.status}</td>`;
-    tbody.appendChild(tr);
-  });
-}
-
-/* ---------- Logout ---------- */
-function doLogout(){localStorage.removeItem('verbose_current');alert('Logged out');location.reload();}
-
-/* ---------- Initialize ---------- */
-renderPlans(); updateDepositNumber(); navigate('dashboard');
+function toggleMenu(){alert('Menu toggle for app style');}
 </script>
 </body>
 </html>
