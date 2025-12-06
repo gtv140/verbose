@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VERBOSE Premium App</title>
+<title>VERBOSE Earning System</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',sans-serif;}
@@ -46,12 +46,8 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px;
 <div class="bg-gradient"></div>
 <canvas id="particles"></canvas>
 
-<div class="app-header">
-<h1>VERBOSE</h1>
-<i class="fa fa-bars menu-btn"></i>
-</div>
-
-<div id="authView" class="card auth-wrap">
+<!-- Login Page -->
+<div id="loginPage" class="card auth-wrap">
 <h2>Login / Signup</h2>
 <input id="authUser" placeholder="Username">
 <input id="authPass" placeholder="Password" type="password">
@@ -62,7 +58,13 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px;
 <div class="muted small" style="margin-top:10px;">Admin: <strong>AdminKhan</strong> / <strong>SuperSecret123</strong></div>
 </div>
 
-<div id="appView" class="hidden">
+<!-- Dashboard -->
+<div id="dashboardPage" class="hidden">
+<div class="app-header">
+<h1>VERBOSE</h1>
+<i class="fa fa-bars menu-btn"></i>
+</div>
+
 <div class="icon-grid" id="dashboardIcons"></div>
 
 <div id="plansView" class="card hidden">
@@ -118,11 +120,6 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px;
 <button class="primary" onclick="updateProfile()">Update Profile</button>
 </div>
 
-<div id="aboutView" class="card hidden">
-<h2>About VERBOSE</h2>
-<p class="muted small">VERBOSE ek modern premium earning platform hai neon style dashboard ke sath. Launch: 25 Nov 2025.</p>
-</div>
-
 <div class="footer-menu">
 <div onclick="navigate('wallet')"><i class="fa fa-wallet"></i>Wallet</div>
 <div onclick="navigate('plans')"><i class="fa fa-briefcase"></i>Plans</div>
@@ -154,24 +151,19 @@ const dashboardIcons=[
 {icon:'fa-file-invoice',name:'Transactions',view:'transactions'},
 {icon:'fa-user',name:'Profile',view:'profile'},
 {icon:'fa-info-circle',name:'About',view:'about'},
-{icon:'fa-cog',name:'Settings',view:'settings'},
-{icon:'fa-bell',name:'Notifications',view:'notifications'},
-{icon:'fa-question-circle',name:'Help',view:'help'},
-{icon:'fa-right-from-bracket',name:'Logout',view:'logout'},
 {icon:'fa-gift',name:'Rewards',view:'rewards'},
 {icon:'fa-chart-line',name:'Stats',view:'stats'},
-{icon:'fa-headset',name:'Support',view:'support'},
 {icon:'fa-star',name:'VIP',view:'vip'},
-{icon:'fa-bolt',name:'Bonus',view:'bonus'},
-{icon:'fa-coins',name:'Earnings',view:'earnings'},
+{icon:'fa-headset',name:'Support',view:'support'},
 {icon:'fa-envelope',name:'Messages',view:'messages'},
+{icon:'fa-bell',name:'Notifications',view:'notifications'},
+{icon:'fa-shield-alt',name:'Security',view:'security'},
+{icon:'fa-cogs',name:'Tools',view:'tools'},
 {icon:'fa-heart',name:'Favorites',view:'favorites'},
 {icon:'fa-globe',name:'Global',view:'global'},
 {icon:'fa-calendar',name:'Events',view:'events'},
-{icon:'fa-shield-alt',name:'Security',view:'security'},
 {icon:'fa-user-shield',name:'Account',view:'account'},
-{icon:'fa-cogs',name:'Tools',view:'tools'},
-{icon:'fa-layer-group',name:'Modules',view:'modules'}
+{icon:'fa-bolt',name:'Bonus',view:'bonus'}
 ];
 
 // ---------- Storage & Toast ----------
@@ -185,19 +177,18 @@ function showToast(txt){const n=document.createElement('div');n.className='notif
 (function(){let u=getUsers();if(!u.find(x=>x.user===ADMIN.user)){u.push({user:ADMIN.user,pass:ADMIN.pass,balance:0,active:[],profit:0,admin:true});setUsers(u);}})();
 
 // ---------- Auth ----------
-function afterLogin(){const cur=getCurrent();if(!cur)return;document.getElementById('authView').classList.add('hidden');document.getElementById('appView').classList.remove('hidden');renderDashboard();renderPlans();renderDepositPlans();renderTransactions();renderProfile();}
+function afterLogin(){const cur=getCurrent();if(!cur)return;document.getElementById('loginPage').classList.add('hidden');document.getElementById('dashboardPage').classList.remove('hidden');renderDashboard();renderPlans();renderDepositPlans();renderTransactions();renderProfile();}
 function doSignup(){const u=document.getElementById('authUser').value.trim();const p=document.getElementById('authPass').value;if(!u||!p){showToast('Enter username & password');return;}const users=getUsers();if(users.find(x=>x.user===u)){showToast('Username exists');return;}users.push({user:u,pass:p,balance:0,active:[],profit:0,admin:false});setUsers(users);setCurrent({user:u,admin:false});showToast('Signup successful');afterLogin();}
 function doLogin(){const u=document.getElementById('authUser').value.trim();const p=document.getElementById('authPass').value;if(!u||!p){showToast('Enter username & password');return;}if(u===ADMIN.user&&p===ADMIN.pass){setCurrent({user:ADMIN.user,admin:true});showToast('Admin logged in');afterLogin();return;}const users=getUsers();const found=users.find(x=>x.user===u&&x.pass===p);if(!found){showToast('Invalid credentials');return;}setCurrent({user:found.user,admin:false});showToast('Login successful');afterLogin();}
-function doLogout(){localStorage.removeItem('verbose_current');document.getElementById('appView').classList.add('hidden');document.getElementById('authView').classList.remove('hidden');showToast('Logged out');}
+function doLogout(){localStorage.removeItem('verbose_current');document.getElementById('dashboardPage').classList.add('hidden');document.getElementById('loginPage').classList.remove('hidden');showToast('Logged out');}
 
 // ---------- Navigation ----------
 function navigate(view){
-const views=['plansView','depositView','withdrawView','txView','aboutView','profileView','settingsView','notificationsView','helpView'];views.forEach(v=>{let el=document.getElementById(v);if(el) el.classList.add('hidden');});
+const views=['plansView','depositView','withdrawView','txView','profileView'];views.forEach(v=>{let el=document.getElementById(v);if(el) el.classList.add('hidden');});
 if(view==='plans') document.getElementById('plansView').classList.remove('hidden');
 if(view==='deposit') document.getElementById('depositView').classList.remove('hidden');
 if(view==='withdraw') document.getElementById('withdrawView').classList.remove('hidden');
 if(view==='transactions'){document.getElementById('txView').classList.remove('hidden');renderTransactions();}
-if(view==='about') document.getElementById('aboutView').classList.remove('hidden');
 if(view==='profile'){document.getElementById('profileView').classList.remove('hidden');renderProfile();}
 if(view==='logout'){doLogout();}
 showToast(`Navigated to ${view}`);
@@ -225,73 +216,80 @@ function submitDeposit(){
     const users=getUsers();
     const user=users.find(u=>u.user===cur.user);
     if(!user.active) user.active=[];
-    user.active.push({type:'deposit',plan:planId,amount:amount,method,tx,proofName:proof.name,time:new Date().toLocaleString(),status:'Pending'});
-    setUsers(users);
-    showToast('Deposit submitted'); document.getElementById('depositTxId').value=''; document.getElementById('depositProof').value='';
-    renderTransactions();
+    user.active.push({type:'deposit',plan:planId,amount:amount,totalProfit:plans.find(p=>p.id===planId).totalProfit,status:'Pending',time:new Date().toLocaleString()});
+setUsers(users);
+showToast('Deposit request submitted');
+document.getElementById('depositTxId').value='';
+document.getElementById('depositProof').value='';
+renderTransactions();
 }
 
 // ---------- Withdraw ----------
 function submitWithdraw(){
-    const amt=parseInt(document.getElementById('withdrawAmount').value);
-    const method=document.getElementById('withdrawMethod').value;
-    if(!amt || amt<=0){showToast('Enter valid amount'); return;}
-    const cur=getCurrent();
-    const users=getUsers();
-    const user=users.find(u=>u.user===cur.user);
-    if(user.balance<amt){showToast('Insufficient balance'); return;}
-    user.balance-=amt;
-    if(!user.active) user.active=[];
-    user.active.push({type:'withdraw',amount:amt,method,time:new Date().toLocaleString(),status:'Pending'});
-    setUsers(users);
-    showToast('Withdraw request sent'); document.getElementById('withdrawAmount').value='';
-    renderTransactions(); renderProfile();
+const amt=parseInt(document.getElementById('withdrawAmount').value);
+const method=document.getElementById('withdrawMethod').value;
+if(!amt || amt<=0){showToast('Enter valid amount');return;}
+const cur=getCurrent();
+const users=getUsers();
+const user=users.find(u=>u.user===cur.user);
+if(user.balance<amt){showToast('Insufficient balance');return;}
+user.balance-=amt;
+if(!user.active) user.active=[];
+user.active.push({type:'withdraw',amount:amt,method:method,time:new Date().toLocaleString(),status:'Requested'});
+setUsers(users);
+showToast('Withdraw request submitted');
+document.getElementById('withdrawAmount').value='';
+renderTransactions();
 }
 
 // ---------- Transactions ----------
 function renderTransactions(){
-    const cur=getCurrent();
-    const users=getUsers();
-    const user=users.find(u=>u.user===cur.user);
-    const tbody=document.getElementById('txTableBody');
-    tbody.innerHTML='';
-    if(user.active && user.active.length>0){
-        user.active.forEach(tx=>{
-            let tr=document.createElement('tr');
-            tr.innerHTML=`<td>${tx.type}</td>
-                          <td>${tx.amount || tx.amount}</td>
-                          <td>${tx.plan || '-'}</td>
-                          <td>${tx.days || '-'}</td>
-                          <td>${tx.totalProfit || '-'}</td>
-                          <td>${tx.time}</td>
-                          <td>${tx.status}</td>`;
-            tbody.appendChild(tr);
-        });
-    }
+const cur=getCurrent();
+if(!cur) return;
+const users=getUsers();
+const user=users.find(u=>u.user===cur.user);
+const tbody=document.getElementById('txTableBody');
+tbody.innerHTML='';
+if(user.active){
+user.active.forEach(tx=>{
+const planName=tx.plan?plans.find(p=>p.id===tx.plan).name:'-';
+tbody.innerHTML+=`<tr>
+<td>${tx.type}</td>
+<td>${tx.amount||'-'}</td>
+<td>${planName}</td>
+<td>${tx.days||'-'}</td>
+<td>${tx.totalProfit||'-'}</td>
+<td>${tx.time}</td>
+<td>${tx.status}</td>
+</tr>`;
+});
+}
 }
 
 // ---------- Profile ----------
 function renderProfile(){
-    const cur=getCurrent();
-    const users=getUsers();
-    const user=users.find(u=>u.user===cur.user);
-    document.getElementById('profileName').value=user.user;
-    document.getElementById('profileStats').innerHTML=`Balance: ${user.balance || 0} PKR | Total Profit: ${user.profit || 0} PKR | Active Transactions: ${(user.active && user.active.length)||0}`;
+const cur=getCurrent();
+if(!cur) return;
+const users=getUsers();
+const user=users.find(u=>u.user===cur.user);
+document.getElementById('profileName').value=user.user;
+document.getElementById('profileStats').innerText=`Balance: ${user.balance||0} PKR | Profit: ${user.profit||0} PKR`;
 }
 
 function updateProfile(){
-    const name=document.getElementById('profileName').value.trim();
-    if(!name){showToast('Name cannot be empty'); return;}
-    const cur=getCurrent();
-    const users=getUsers();
-    const user=users.find(u=>u.user===cur.user);
-    user.user=name;
-    setUsers(users);
-    setCurrent({user:name,admin:cur.admin});
-    showToast('Profile updated'); renderProfile(); renderDashboard();
+const cur=getCurrent();
+if(!cur) return;
+const users=getUsers();
+const user=users.find(u=>u.user===cur.user);
+const newName=document.getElementById('profileName').value.trim();
+if(newName) user.user=newName;
+setUsers(users);
+setCurrent({user:user.user,admin:user.admin});
+showToast('Profile updated');
+renderProfile();
 }
 
-// ---------- Init ----------
+// ---------- Initialize ----------
 afterLogin();
 </script>
 </body>
