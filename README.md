@@ -1,42 +1,33 @@
-<!DOCTYPE html>
+<VERBOSE>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VERBOSE Earning System</title>
+<title>VERBOSE Modern Earning</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',sans-serif;}
-body,html{height:100%;background:#050012;color:#fff;overflow-x:hidden;transition:all 0.3s;}
-.hidden{display:none;}
-.muted{opacity:0.7;font-size:13px;}
-.bg-gradient{position:fixed;inset:0;z-index:-2;background:linear-gradient(270deg,#0f0530,#1b0a4a,#061022);background-size:800% 800%;animation:grad 20s ease infinite;filter:blur(28px) saturate(120%);}
+body,html{height:100%;background:#0b0c1a;color:#fff;overflow-x:hidden;}
+.bg-gradient{position:fixed;inset:0;z-index:-1;background:linear-gradient(120deg,#0f0530,#1b0a4a,#061022);background-size:600% 600%;animation:grad 25s ease infinite;}
 @keyframes grad{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-.app-header{display:flex;justify-content:space-between;align-items:center;padding:15px;background:#111;box-shadow:0 2px 12px rgba(0,255,240,0.3);}
-.app-header h1{color:#0ff;font-size:22px;text-shadow:0 0 12px #0ff;}
-.menu-btn{font-size:22px;color:#0ff;cursor:pointer;}
+.card{background:rgba(255,255,255,0.05);border:1px solid rgba(0,255,255,0.1);padding:20px;border-radius:15px;margin:15px;transition:0.3s;backdrop-filter:blur(6px);}
+.card:hover{transform:translateY(-5px);box-shadow:0 12px 30px rgba(0,255,240,0.2);}
+input,select{width:100%;padding:10px;margin-top:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.4);color:#fff;outline:none;transition:0.2s;}
+input:focus,select:focus{border-color:#0ff;}
+button.primary{background:#0ff;color:#000;padding:10px 15px;border-radius:10px;border:none;cursor:pointer;font-weight:700;margin-top:10px;transition:0.2s;}
+button.primary:hover{background:#0ae;}
+button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.1);padding:10px;border-radius:8px;color:#fff;cursor:pointer;margin-left:8px;transition:0.2s;}
+button.ghost:hover{background:rgba(0,255,240,0.1);}
 .icon-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:15px;padding:20px;}
-.icon-box{background:#111;padding:20px;text-align:center;border-radius:15px;box-shadow:0 0 12px #0ff;transition:0.3s;cursor:pointer;}
-.icon-box:hover{transform:scale(1.05);box-shadow:0 0 24px #0ff;}
+.icon-box{text-align:center;padding:15px;background:rgba(0,255,255,0.05);border-radius:15px;cursor:pointer;transition:0.3s;}
+.icon-box:hover{transform:scale(1.05);box-shadow:0 0 20px #0ff;}
 .icon-box i{font-size:28px;margin-bottom:8px;color:#0ff;}
 .icon-box p{font-size:14px;color:#cfe;}
-.card{background:rgba(255,255,255,0.03);border:1px solid rgba(0,255,255,0.06);padding:18px;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,0.6);backdrop-filter:blur(6px);margin:15px;transition:0.3s;}
-.card:hover{transform:translateY(-4px);box-shadow:0 12px 36px rgba(0,255,240,0.15);}
-input,select{width:100%;padding:10px;margin-top:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(0,0,0,0.35);color:#fff;outline:none;transition:0.2s;}
-input:focus,select:focus{border-color:#0ff;}
-button.primary{background:#0ff;color:#000;padding:10px 12px;border-radius:10px;border:none;cursor:pointer;font-weight:700;margin-top:10px;transition:0.2s;}
-button.primary:hover{background:#0ae;}
-button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px;border-radius:8px;color:#fff;cursor:pointer;margin-left:8px;transition:0.2s;}
-button.ghost:hover{background:rgba(0,255,240,0.1);}
-.footer-menu{position:fixed;bottom:0;left:0;width:100%;background:#111;display:flex;justify-content:space-around;padding:10px 0;box-shadow:0 -2px 12px rgba(0,255,240,0.3);}
+.footer-menu{position:fixed;bottom:0;width:100%;display:flex;justify-content:space-around;background:#111;padding:10px 0;}
 .footer-menu div{text-align:center;color:#fff;font-size:12px;cursor:pointer;}
 .footer-menu i{display:block;font-size:22px;margin-bottom:4px;color:#0ff;}
-.plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:12px;}
-.plan{border-radius:12px;padding:12px;border:1px solid rgba(0,255,240,0.06);background:linear-gradient(180deg,rgba(0,255,240,0.02),transparent);position:relative;transition:transform .18s;cursor:pointer;}
-.plan:hover{transform:translateY(-6px);box-shadow:0 12px 36px rgba(0,255,240,0.1);}
-.badge{position:absolute;top:10px;right:10px;background:#ffea00;color:#000;padding:4px 6px;border-radius:8px;font-weight:800;font-size:11px;}
 table{width:100%;border-collapse:collapse;margin-top:10px;}
-th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px;color:#0ff;}
+th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.1);font-size:13px;color:#0ff;}
 .notif{position:fixed;right:18px;bottom:18px;background:#0ff;color:#000;padding:12px 16px;border-radius:12px;font-weight:700;box-shadow:0 10px 30px rgba(0,255,240,0.2);z-index:99;}
 .auth-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;border-radius:14px;box-shadow:0 8px 30px rgba(0,255,240,0.2);}
 .auth-wrap h2{text-align:center;margin-bottom:15px;}
@@ -44,7 +35,6 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px;
 </head>
 <body>
 <div class="bg-gradient"></div>
-<canvas id="particles"></canvas>
 
 <!-- Login Page -->
 <div id="loginPage" class="card auth-wrap">
@@ -60,17 +50,7 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px;
 
 <!-- Dashboard -->
 <div id="dashboardPage" class="hidden">
-<div class="app-header">
-<h1>VERBOSE</h1>
-<i class="fa fa-bars menu-btn"></i>
-</div>
-
 <div class="icon-grid" id="dashboardIcons"></div>
-
-<div id="plansView" class="card hidden">
-<h2>Plans</h2>
-<div class="plan-grid" id="planGrid"></div>
-</div>
 
 <div id="depositView" class="card hidden">
 <h2>Deposit</h2>
@@ -94,6 +74,10 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px;
 
 <div id="withdrawView" class="card hidden">
 <h2>Withdraw</h2>
+<label>Username</label>
+<input id="withdrawUser" placeholder="Your Username">
+<label>Account Number</label>
+<input id="withdrawAccount" placeholder="Account Number">
 <label>Amount PKR</label>
 <input id="withdrawAmount" type="number">
 <label>Method</label>
@@ -107,7 +91,7 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px;
 <div id="txView" class="card hidden">
 <h2>Transactions</h2>
 <table>
-<thead><tr><th>Type</th><th>Amount</th><th>Plan</th><th>Days</th><th>Total Profit</th><th>Time</th><th>Status</th></tr></thead>
+<thead><tr><th>Type</th><th>User</th><th>Account</th><th>Amount</th><th>Plan</th><th>Time</th><th>Status</th></tr></thead>
 <tbody id="txTableBody"></tbody>
 </table>
 </div>
@@ -131,165 +115,56 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px;
 <div id="toastRoot"></div>
 
 <script>
-// ---------- Particles ----------
-const canvas=document.getElementById('particles'); const ctx=canvas.getContext('2d');
-function resizeCanvas(){canvas.width=innerWidth;canvas.height=innerHeight;}
-resizeCanvas(); addEventListener('resize',resizeCanvas);
-const particles=[]; for(let i=0;i<150;i++){particles.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*1.6+0.6,vx:(Math.random()-0.5)*0.6,vy:(Math.random()-0.5)*0.6,h:180+Math.random()*80});}
-function drawParticles(){ctx.clearRect(0,0,canvas.width,canvas.height);for(const p of particles){ctx.beginPath();ctx.fillStyle=`hsla(${p.h},100%,60%,0.12)`;ctx.shadowBlur=12;ctx.shadowColor=`hsla(${p.h},100%,60%,0.14)`;ctx.fillRect(p.x,p.y,p.r*2,p.r*2);p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;}requestAnimationFrame(drawParticles);}
-drawParticles();
-
-// ---------- Admin, Users, Plans ----------
+// ---------- Storage ----------
 const ADMIN={user:'AdminKhan',pass:'SuperSecret123'};
 const depositNumbers={jazzcash:'03705519562',easypaisa:'03379827882'};
-const plans=[]; for(let i=1;i<=25;i++){plans.push({id:i,name:`Plan ${i}`,days:20+i,invest:100*i,totalProfit:100*i*(1+i*0.5),dailyProfit:Math.round((100*i*(1+i*0.5))/(20+i))});}
+const plans=[]; for(let i=1;i<=20;i++){plans.push({id:i,name:`Plan ${i}`,days:10+i,invest:100*i});}
 const dashboardIcons=[
 {icon:'fa-wallet',name:'Wallet',view:'wallet'},
 {icon:'fa-briefcase',name:'Plans',view:'plans'},
 {icon:'fa-money-bill-wave',name:'Deposit',view:'deposit'},
 {icon:'fa-credit-card',name:'Withdraw',view:'withdraw'},
 {icon:'fa-file-invoice',name:'Transactions',view:'transactions'},
-{icon:'fa-user',name:'Profile',view:'profile'},
-{icon:'fa-info-circle',name:'About',view:'about'},
-{icon:'fa-gift',name:'Rewards',view:'rewards'},
-{icon:'fa-chart-line',name:'Stats',view:'stats'},
-{icon:'fa-star',name:'VIP',view:'vip'},
-{icon:'fa-headset',name:'Support',view:'support'},
-{icon:'fa-envelope',name:'Messages',view:'messages'},
-{icon:'fa-bell',name:'Notifications',view:'notifications'},
-{icon:'fa-shield-alt',name:'Security',view:'security'},
-{icon:'fa-cogs',name:'Tools',view:'tools'},
-{icon:'fa-heart',name:'Favorites',view:'favorites'},
-{icon:'fa-globe',name:'Global',view:'global'},
-{icon:'fa-calendar',name:'Events',view:'events'},
-{icon:'fa-user-shield',name:'Account',view:'account'},
-{icon:'fa-bolt',name:'Bonus',view:'bonus'}
+{icon:'fa-user',name:'Profile',view:'profile'}
 ];
 
-// ---------- Storage & Toast ----------
 function getUsers(){return JSON.parse(localStorage.getItem('verbose_users')||'[]');}
 function setUsers(u){localStorage.setItem('verbose_users',JSON.stringify(u));}
 function getCurrent(){return JSON.parse(localStorage.getItem('verbose_current')||'null');}
 function setCurrent(u){localStorage.setItem('verbose_current',JSON.stringify(u));}
 function showToast(txt){const n=document.createElement('div');n.className='notif';n.innerText=txt;document.body.appendChild(n);setTimeout(()=>n.remove(),2000);}
-
-// ---------- Init Admin ----------
-(function(){let u=getUsers();if(!u.find(x=>x.user===ADMIN.user)){u.push({user:ADMIN.user,pass:ADMIN.pass,balance:0,active:[],profit:0,admin:true});setUsers(u);}})();
+(function(){let u=getUsers();if(!u.find(x=>x.user===ADMIN.user)){u.push({user:ADMIN.user,pass:ADMIN.pass,balance:0,active:[],admin:true});setUsers(u);}})();
 
 // ---------- Auth ----------
-function afterLogin(){const cur=getCurrent();if(!cur)return;document.getElementById('loginPage').classList.add('hidden');document.getElementById('dashboardPage').classList.remove('hidden');renderDashboard();renderPlans();renderDepositPlans();renderTransactions();renderProfile();}
-function doSignup(){const u=document.getElementById('authUser').value.trim();const p=document.getElementById('authPass').value;if(!u||!p){showToast('Enter username & password');return;}const users=getUsers();if(users.find(x=>x.user===u)){showToast('Username exists');return;}users.push({user:u,pass:p,balance:0,active:[],profit:0,admin:false});setUsers(users);setCurrent({user:u,admin:false});showToast('Signup successful');afterLogin();}
+function afterLogin(){const cur=getCurrent();if(!cur)return;document.getElementById('loginPage').classList.add('hidden');document.getElementById('dashboardPage').classList.remove('hidden');renderDashboard();renderDepositPlans();renderTransactions();}
+function doSignup(){const u=document.getElementById('authUser').value.trim();const p=document.getElementById('authPass').value;if(!u||!p){showToast('Enter username & password');return;}const users=getUsers();if(users.find(x=>x.user===u)){showToast('Username exists');return;}users.push({user:u,pass:p,balance:0,active:[],admin:false});setUsers(users);setCurrent({user:u,admin:false});showToast('Signup successful');afterLogin();}
 function doLogin(){const u=document.getElementById('authUser').value.trim();const p=document.getElementById('authPass').value;if(!u||!p){showToast('Enter username & password');return;}if(u===ADMIN.user&&p===ADMIN.pass){setCurrent({user:ADMIN.user,admin:true});showToast('Admin logged in');afterLogin();return;}const users=getUsers();const found=users.find(x=>x.user===u&&x.pass===p);if(!found){showToast('Invalid credentials');return;}setCurrent({user:found.user,admin:false});showToast('Login successful');afterLogin();}
 function doLogout(){localStorage.removeItem('verbose_current');document.getElementById('dashboardPage').classList.add('hidden');document.getElementById('loginPage').classList.remove('hidden');showToast('Logged out');}
 
 // ---------- Navigation ----------
-function navigate(view){
-const views=['plansView','depositView','withdrawView','txView','profileView'];views.forEach(v=>{let el=document.getElementById(v);if(el) el.classList.add('hidden');});
-if(view==='plans') document.getElementById('plansView').classList.remove('hidden');
-if(view==='deposit') document.getElementById('depositView').classList.remove('hidden');
-if(view==='withdraw') document.getElementById('withdrawView').classList.remove('hidden');
-if(view==='transactions'){document.getElementById('txView').classList.remove('hidden');renderTransactions();}
-if(view==='profile'){document.getElementById('profileView').classList.remove('hidden');renderProfile();}
-if(view==='logout'){doLogout();}
-showToast(`Navigated to ${view}`);
-}
+function navigate(view){const views=['depositView','withdrawView','txView','profileView'];views.forEach(v=>{let el=document.getElementById(v);if(el) el.classList.add('hidden');});if(view==='deposit') document.getElementById('depositView').classList.remove('hidden');if(view==='withdraw') document.getElementById('withdrawView').classList.remove('hidden');if(view==='transactions'){document.getElementById('txView').classList.remove('hidden');renderTransactions();}if(view==='profile'){document.getElementById('profileView').classList.remove('hidden');renderProfile();}}
 
 // ---------- Dashboard ----------
 function renderDashboard(){const grid=document.getElementById('dashboardIcons');grid.innerHTML='';dashboardIcons.forEach(d=>{const div=document.createElement('div');div.className='icon-box';div.innerHTML=`<i class="fa ${d.icon}"></i><p>${d.name}</p>`;div.onclick=()=>navigate(d.view);grid.appendChild(div);});}
 
-// ---------- Plans ----------
-function renderPlans(){const grid=document.getElementById('planGrid');grid.innerHTML='';plans.forEach(p=>{let div=document.createElement('div');div.className='plan';div.innerHTML=`<h4>${p.name}</h4><p>Invest: ${p.invest} PKR</p><p>Days: ${p.days}</p><p>Total: ${p.totalProfit}</p><div class="badge">24H OFFER</div>`;grid.appendChild(div);});}
+// ---------- Deposit ----------
 function renderDepositPlans(){const select=document.getElementById('depositPlan');select.innerHTML='';plans.forEach(p=>{const opt=document.createElement('option');opt.value=p.id;opt.text=`${p.name} - ${p.invest} PKR`;select.appendChild(opt);});updateDepositAmount();updateDepositNumber();}
 function updateDepositAmount(){const planId=parseInt(document.getElementById('depositPlan').value);const plan=plans.find(p=>p.id===planId);if(plan) document.getElementById('depositAmount').value=plan.invest;}
 function updateDepositNumber(){const method=document.getElementById('depositMethod').value;document.getElementById('depositNumber').value=depositNumbers[method];}
 function copyText(txt){navigator.clipboard.writeText(txt).then(()=>showToast('Copied!'));}
-
-// ---------- Deposit ----------
-function submitDeposit(){
-    const planId=parseInt(document.getElementById('depositPlan').value);
-    const amount=parseInt(document.getElementById('depositAmount').value);
-    const method=document.getElementById('depositMethod').value;
-    const tx=document.getElementById('depositTxId').value.trim();
-    const proof=document.getElementById('depositProof').files[0];
-    if(!tx || !proof){showToast('Fill TX ID and upload proof'); return;}
-    const cur=getCurrent();
-    const users=getUsers();
-    const user=users.find(u=>u.user===cur.user);
-    if(!user.active) user.active=[];
-    user.active.push({type:'deposit',plan:planId,amount:amount,totalProfit:plans.find(p=>p.id===planId).totalProfit,status:'Pending',time:new Date().toLocaleString()});
-setUsers(users);
-showToast('Deposit request submitted');
-document.getElementById('depositTxId').value='';
-document.getElementById('depositProof').value='';
-renderTransactions();
-}
+function submitDeposit(){const planId=parseInt(document.getElementById('depositPlan').value);const amount=parseInt(document.getElementById('depositAmount').value);const method=document.getElementById('depositMethod').value;const tx=document.getElementById('depositTxId').value.trim();const proof=document.getElementById('depositProof').files[0];if(!tx||!proof){showToast('Fill TX ID & upload proof');return;}const cur=getCurrent();const users=getUsers();const user=users.find(u=>u.user===cur.user);if(!user.active) user.active=[];user.active.push({type:'deposit',amount:amount,plan:planId,method,tx,proof:proof.name,time:new Date().toLocaleString(),status:'Pending'});setUsers(users);showToast('Deposit submitted');document.getElementById('depositTxId').value='';document.getElementById('depositProof').value='';renderTransactions();}
 
 // ---------- Withdraw ----------
-function submitWithdraw(){
-const amt=parseInt(document.getElementById('withdrawAmount').value);
-const method=document.getElementById('withdrawMethod').value;
-if(!amt || amt<=0){showToast('Enter valid amount');return;}
-const cur=getCurrent();
-const users=getUsers();
-const user=users.find(u=>u.user===cur.user);
-if(user.balance<amt){showToast('Insufficient balance');return;}
-user.balance-=amt;
-if(!user.active) user.active=[];
-user.active.push({type:'withdraw',amount:amt,method:method,time:new Date().toLocaleString(),status:'Requested'});
-setUsers(users);
-showToast('Withdraw request submitted');
-document.getElementById('withdrawAmount').value='';
-renderTransactions();
-}
+function submitWithdraw(){const u=document.getElementById('withdrawUser').value.trim();const acc=document.getElementById('withdrawAccount').value.trim();const amt=parseInt(document.getElementById('withdrawAmount').value);const method=document.getElementById('withdrawMethod').value;if(!u||!acc||!amt||amt<=0){showToast('Fill all withdrawal details');return;}const cur=getCurrent();const users=getUsers();const user=users.find(x=>x.user===cur.user);if(user.balance<amt){showToast('Insufficient balance');return;}user.balance-=amt;if(!user.active) user.active=[];user.active.push({type:'withdraw',user:u,account:acc,amount:amt,method,time:new Date().toLocaleString(),status:'Pending'});setUsers(users);showToast('Withdraw request sent');document.getElementById('withdrawUser').value='';document.getElementById('withdrawAccount').value='';document.getElementById('withdrawAmount').value='';renderTransactions();}
 
 // ---------- Transactions ----------
-function renderTransactions(){
-const cur=getCurrent();
-if(!cur) return;
-const users=getUsers();
-const user=users.find(u=>u.user===cur.user);
-const tbody=document.getElementById('txTableBody');
-tbody.innerHTML='';
-if(user.active){
-user.active.forEach(tx=>{
-const planName=tx.plan?plans.find(p=>p.id===tx.plan).name:'-';
-tbody.innerHTML+=`<tr>
-<td>${tx.type}</td>
-<td>${tx.amount||'-'}</td>
-<td>${planName}</td>
-<td>${tx.days||'-'}</td>
-<td>${tx.totalProfit||'-'}</td>
-<td>${tx.time}</td>
-<td>${tx.status}</td>
-</tr>`;
-});
-}
-}
+function renderTransactions(){const cur=getCurrent();const users=getUsers();const user=users.find(u=>u.user===cur.user);const tbody=document.getElementById('txTableBody');tbody.innerHTML='';if(user.active&&user.active.length>0){user.active.forEach(tx=>{let tr=document.createElement('tr');tr.innerHTML=`<td>${tx.type}</td><td>${tx.user||user.user}</td><td>${tx.account||'-'}</td><td>${tx.amount||'-'}</td><td>${tx.plan||'-'}</td><td>${tx.time}</td><td>${tx.status}</td>`;tbody.appendChild(tr);});}}
 
 // ---------- Profile ----------
-function renderProfile(){
-const cur=getCurrent();
-if(!cur) return;
-const users=getUsers();
-const user=users.find(u=>u.user===cur.user);
-document.getElementById('profileName').value=user.user;
-document.getElementById('profileStats').innerText=`Balance: ${user.balance||0} PKR | Profit: ${user.profit||0} PKR`;
-}
+function renderProfile(){const cur=getCurrent();const users=getUsers();const user=users.find(u=>u.user===cur.user);document.getElementById('profileName').value=user.user;document.getElementById('profileStats').innerHTML=`Balance: ${user.balance||0} PKR | Active Tx: ${(user.active&&user.active.length)||0}`;}
+function updateProfile(){const name=document.getElementById('profileName').value.trim();if(!name){showToast('Name cannot be empty');return;}const cur=getCurrent();const users=getUsers();const user=users.find(u=>u.user===cur.user);user.user=name;setUsers(users);setCurrent({user:name,admin:cur.admin});showToast('Profile updated');renderProfile();renderDashboard();}
 
-function updateProfile(){
-const cur=getCurrent();
-if(!cur) return;
-const users=getUsers();
-const user=users.find(u=>u.user===cur.user);
-const newName=document.getElementById('profileName').value.trim();
-if(newName) user.user=newName;
-setUsers(users);
-setCurrent({user:user.user,admin:user.admin});
-showToast('Profile updated');
-renderProfile();
-}
-
-// ---------- Initialize ----------
+// ---------- Init ----------
 afterLogin();
 </script>
 </body>
