@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VERBOSE Modern Earning</title>
+<title>VERBOSE Earning System v2</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',sans-serif;}
-body,html{height:100%;background:#0b0c1a;color:#fff;overflow-x:hidden;}
+body,html{height:100%;background:#0a0a1f;color:#fff;overflow-x:hidden;}
 .bg-gradient{position:fixed;inset:0;z-index:-1;background:linear-gradient(120deg,#0f0530,#1b0a4a,#061022);background-size:600% 600%;animation:grad 25s ease infinite;}
 @keyframes grad{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 .card{background:rgba(255,255,255,0.05);border:1px solid rgba(0,255,255,0.1);padding:20px;border-radius:15px;margin:15px;transition:0.3s;backdrop-filter:blur(6px);}
@@ -31,12 +31,13 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.1);font-size:13px;c
 .notif{position:fixed;right:18px;bottom:18px;background:#0ff;color:#000;padding:12px 16px;border-radius:12px;font-weight:700;box-shadow:0 10px 30px rgba(0,255,240,0.2);z-index:99;}
 .auth-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;border-radius:14px;box-shadow:0 8px 30px rgba(0,255,240,0.2);}
 .auth-wrap h2{text-align:center;margin-bottom:15px;}
+canvas#chart{width:100%;height:200px;margin-top:15px;}
 </style>
 </head>
 <body>
 <div class="bg-gradient"></div>
 
-<!-- Login Page -->
+<!-- Login -->
 <div id="loginPage" class="card auth-wrap">
 <h2>Login / Signup</h2>
 <input id="authUser" placeholder="Username">
@@ -52,6 +53,7 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.1);font-size:13px;c
 <div id="dashboardPage" class="hidden">
 <div class="icon-grid" id="dashboardIcons"></div>
 
+<!-- Deposit -->
 <div id="depositView" class="card hidden">
 <h2>Deposit</h2>
 <label>Choose Plan</label>
@@ -72,6 +74,7 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.1);font-size:13px;c
 <button class="primary" onclick="submitDeposit()">Submit Deposit</button>
 </div>
 
+<!-- Withdraw -->
 <div id="withdrawView" class="card hidden">
 <h2>Withdraw</h2>
 <label>Username</label>
@@ -88,6 +91,7 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.1);font-size:13px;c
 <button class="primary" onclick="submitWithdraw()">Request Withdraw</button>
 </div>
 
+<!-- Transactions -->
 <div id="txView" class="card hidden">
 <h2>Transactions</h2>
 <table>
@@ -96,48 +100,51 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.1);font-size:13px;c
 </table>
 </div>
 
+<!-- Profile & Bonus -->
 <div id="profileView" class="card hidden">
 <h2>Profile</h2>
 <label>Display Name</label>
 <input id="profileName">
 <div id="profileStats" class="muted small"></div>
 <button class="primary" onclick="updateProfile()">Update Profile</button>
+<button class="primary" onclick="claimDailyBonus()">Claim Daily Bonus</button>
+<div id="achievements" class="card" style="margin-top:15px;">
+<h3>Achievements</h3>
+<ul id="achievementList"></ul>
+</div>
 </div>
 
 <div class="footer-menu">
-<div onclick="navigate('wallet')"><i class="fa fa-wallet"></i>Wallet</div>
-<div onclick="navigate('plans')"><i class="fa fa-briefcase"></i>Plans</div>
 <div onclick="navigate('deposit')"><i class="fa fa-money-bill-wave"></i>Deposit</div>
 <div onclick="navigate('withdraw')"><i class="fa fa-credit-card"></i>Withdraw</div>
 <div onclick="navigate('transactions')"><i class="fa fa-file-invoice"></i>Transactions</div>
+<div onclick="navigate('profile')"><i class="fa fa-user"></i>Profile</div>
 </div>
 
 <div id="toastRoot"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 // ---------- Storage ----------
 const ADMIN={user:'AdminKhan',pass:'SuperSecret123'};
 const depositNumbers={jazzcash:'03705519562',easypaisa:'03379827882'};
 const plans=[]; for(let i=1;i<=20;i++){plans.push({id:i,name:`Plan ${i}`,days:10+i,invest:100*i});}
 const dashboardIcons=[
-{icon:'fa-wallet',name:'Wallet',view:'wallet'},
-{icon:'fa-briefcase',name:'Plans',view:'plans'},
 {icon:'fa-money-bill-wave',name:'Deposit',view:'deposit'},
 {icon:'fa-credit-card',name:'Withdraw',view:'withdraw'},
 {icon:'fa-file-invoice',name:'Transactions',view:'transactions'},
 {icon:'fa-user',name:'Profile',view:'profile'}
 ];
-
 function getUsers(){return JSON.parse(localStorage.getItem('verbose_users')||'[]');}
 function setUsers(u){localStorage.setItem('verbose_users',JSON.stringify(u));}
 function getCurrent(){return JSON.parse(localStorage.getItem('verbose_current')||'null');}
 function setCurrent(u){localStorage.setItem('verbose_current',JSON.stringify(u));}
 function showToast(txt){const n=document.createElement('div');n.className='notif';n.innerText=txt;document.body.appendChild(n);setTimeout(()=>n.remove(),2000);}
-(function(){let u=getUsers();if(!u.find(x=>x.user===ADMIN.user)){u.push({user:ADMIN.user,pass:ADMIN.pass,balance:0,active:[],admin:true});setUsers(u);}})();
+(function(){let u=getUsers();if(!u.find(x=>x.user===ADMIN.user)){u.push({user:ADMIN.user,pass:ADMIN.pass,balance:0,active:[],admin:true,achievements:[],lastBonus:null});setUsers(u);}})();
 
 // ---------- Auth ----------
-function afterLogin(){const cur=getCurrent();if(!cur)return;document.getElementById('loginPage').classList.add('hidden');document.getElementById('dashboardPage').classList.remove('hidden');renderDashboard();renderDepositPlans();renderTransactions();}
-function doSignup(){const u=document.getElementById('authUser').value.trim();const p=document.getElementById('authPass').value;if(!u||!p){showToast('Enter username & password');return;}const users=getUsers();if(users.find(x=>x.user===u)){showToast('Username exists');return;}users.push({user:u,pass:p,balance:0,active:[],admin:false});setUsers(users);setCurrent({user:u,admin:false});showToast('Signup successful');afterLogin();}
+function afterLogin(){const cur=getCurrent();if(!cur)return;document.getElementById('loginPage').classList.add('hidden');document.getElementById('dashboardPage').classList.remove('hidden');renderDashboard();renderDepositPlans();renderTransactions();renderProfile();}
+function doSignup(){const u=document.getElementById('authUser').value.trim();const p=document.getElementById('authPass').value;if(!u||!p){showToast('Enter username & password');return;}const users=getUsers();if(users.find(x=>x.user===u)){showToast('Username exists');return;}users.push({user:u,pass:p,balance:0,active:[],admin:false,achievements:[],lastBonus:null});setUsers(users);setCurrent({user:u,admin:false});showToast('Signup successful');afterLogin();}
 function doLogin(){const u=document.getElementById('authUser').value.trim();const p=document.getElementById('authPass').value;if(!u||!p){showToast('Enter username & password');return;}if(u===ADMIN.user&&p===ADMIN.pass){setCurrent({user:ADMIN.user,admin:true});showToast('Admin logged in');afterLogin();return;}const users=getUsers();const found=users.find(x=>x.user===u&&x.pass===p);if(!found){showToast('Invalid credentials');return;}setCurrent({user:found.user,admin:false});showToast('Login successful');afterLogin();}
 function doLogout(){localStorage.removeItem('verbose_current');document.getElementById('dashboardPage').classList.add('hidden');document.getElementById('loginPage').classList.remove('hidden');showToast('Logged out');}
 
@@ -160,11 +167,11 @@ function submitWithdraw(){const u=document.getElementById('withdrawUser').value.
 // ---------- Transactions ----------
 function renderTransactions(){const cur=getCurrent();const users=getUsers();const user=users.find(u=>u.user===cur.user);const tbody=document.getElementById('txTableBody');tbody.innerHTML='';if(user.active&&user.active.length>0){user.active.forEach(tx=>{let tr=document.createElement('tr');tr.innerHTML=`<td>${tx.type}</td><td>${tx.user||user.user}</td><td>${tx.account||'-'}</td><td>${tx.amount||'-'}</td><td>${tx.plan||'-'}</td><td>${tx.time}</td><td>${tx.status}</td>`;tbody.appendChild(tr);});}}
 
-// ---------- Profile ----------
-function renderProfile(){const cur=getCurrent();const users=getUsers();const user=users.find(u=>u.user===cur.user);document.getElementById('profileName').value=user.user;document.getElementById('profileStats').innerHTML=`Balance: ${user.balance||0} PKR | Active Tx: ${(user.active&&user.active.length)||0}`;}
-function updateProfile(){const name=document.getElementById('profileName').value.trim();if(!name){showToast('Name cannot be empty');return;}const cur=getCurrent();const users=getUsers();const user=users.find(u=>u.user===cur.user);user.user=name;setUsers(users);setCurrent({user:name,admin:cur.admin});showToast('Profile updated');renderProfile();renderDashboard();}
-
-// ---------- Init ----------
+// ---------- Profile & Bonus ----------
+function renderProfile(){const cur=getCurrent();const users=getUsers();const user=users.find(u=>u.user===cur.user);document.getElementById('profileName').value=user.user;document.getElementById('profileStats').innerHTML=`Balance: ${user.balance||0} PKR | Active Tx: ${(user.active&&user.active.length)||0}`;renderAchievements();}
+function updateProfile(){const name=document.getElementById('profileName').value.trim();if(!name){showToast('Name cannot be empty');return;}const cur=getCurrent();const users=getUsers();const user=users.find(u=>u.user===cur.user);user.user=name;setUsers(users);setCurrent({user:name,admin:cur.admin});showToast('Profile updated');renderProfile();}
+function claimDailyBonus(){const cur=getCurrent();const users=getUsers();const user=users.find(u=>u.user===cur.user);const today=new Date().toDateString();if(user.lastBonus===today){showToast('Daily bonus already claimed');return;}user.balance+=50;user.lastBonus=today;if(!user.achievements) user.achievements=[];user.achievements.push(`Daily Bonus Claimed +50 PKR (${today})`);setUsers(users);showToast('Daily bonus +50 PKR');renderProfile();}
+function renderAchievements(){const cur=getCurrent();const users=getUsers();const user=users.find(u=>u.user===cur.user);const ul=document.getElementById('achievementList');ul.innerHTML='';if(user.achievements&&user.achievements.length>0){user.achievements.forEach(a=>{let li=document.createElement('li');li.innerText=a;ul.appendChild(li);});}}
 afterLogin();
 </script>
 </body>
