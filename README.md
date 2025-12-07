@@ -17,7 +17,8 @@ button:hover{background:#0056b3;}
 .user-box{background:#e0f7ff;padding:10px;border-radius:8px;margin-bottom:10px;font-weight:bold;}
 .alert-box{background:#ffe0e0;padding:8px;border-radius:5px;margin-bottom:10px;color:#900;font-weight:bold;}
 .logout-btn{position:fixed;bottom:60px;right:15px;background:red;color:#fff;padding:8px 12px;border-radius:5px;cursor:pointer;}
-.plan-box{border:1px solid #ccc;padding:10px;margin:10px 0;border-radius:8px;}
+.plan-box{border:1px solid #ccc;padding:10px;margin:10px 0;border-radius:8px;background:#f9f9f9;}
+.offer{color:red;font-weight:bold;}
 </style>
 </head>
 <body>
@@ -56,6 +57,8 @@ button:hover{background:#0056b3;}
 <option value="easypaisa">EasyPaisa</option>
 </select>
 <input id="depositNumber" readonly>
+<label>Amount</label>
+<input id="depositAmount" readonly>
 <label>Transaction ID</label>
 <input id="depositTxId" placeholder="TX ID">
 <label>Upload Proof</label>
@@ -101,12 +104,12 @@ let balance = parseFloat(localStorage.getItem('verbose_balance')) || 0;
 let plansData = [];
 let userPlans = JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');
 
-// CREATE 25 PLANS 200-30000, days 20-70
+// CREATE 25 PLANS 200-30000, days 20-70, 7 special 24h offer
 for(let i=1;i<=25;i++){
     let invest = Math.round(200 + (i-1)*(30000-200)/24);
     let days = 20 + Math.floor((i-1)*(70-20)/24);
     let multiplier = i<=7 ? 3 : 2.5;
-    plansData.push({id:i,name:`Plan ${i}`,invest:invest,days:days,total:Math.round(invest*multiplier),multiplier:multiplier});
+    plansData.push({id:i,name:`Plan ${i}`,invest:invest,days:days,total:Math.round(invest*multiplier),multiplier:multiplier,offer:i<=7});
 }
 
 // LOGIN
@@ -153,7 +156,11 @@ function renderPlans(){
     plansData.forEach(p=>{
         let div=document.createElement('div');
         div.className='plan-box';
-        div.innerHTML=`<b>${p.name}</b><br>Invest: Rs ${p.invest}<br>Days: ${p.days}<br>Total Profit: Rs ${p.total}<br>
+        div.innerHTML=`<b>${p.name}</b> ${p.offer?'<span class="offer">🔥 24h Offer</span>':''}<br>
+        Invest: Rs ${p.invest}<br>
+        Days: ${p.days}<br>
+        Total Profit: Rs ${p.total}<br>
+        Daily Profit: Rs ${Math.round(p.total/p.days)}<br>
         <button onclick="buyPlan(${p.id})">Buy Now</button>`;
         list.appendChild(div);
     });
@@ -161,12 +168,16 @@ function renderPlans(){
 
 function buyPlan(id){
     let plan=plansData.find(p=>p.id===id);
-    alert(`You selected ${plan.name}. Deposit Rs ${plan.invest} now.`);
-    showPage('deposit');
+    // Auto-fill deposit
+    document.getElementById('depositAmount').value=plan.invest;
     document.getElementById('depositMethod').value='jazzcash';
     updateDepositNumber();
-    userPlans.push({planId:id,lastUpdate:Date.now(),dailyProfit:Math.round(plan.total/plan.days)});
-    localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));
+    showPage('deposit');
+    // Add plan to userPlans for daily profit
+    if(!userPlans.find(p=>p.planId===id)){
+        userPlans.push({planId:id,lastUpdate:Date.now(),dailyProfit:Math.round(plan.total/plan.days)});
+        localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));
+    }
 }
 
 // DEPOSIT
@@ -175,12 +186,12 @@ function updateDepositNumber(){
     let method=document.getElementById('depositMethod').value;
     document.getElementById('depositNumber').value=depositNumbers[method];
 }
-
 function submitDeposit(){
     let tx=document.getElementById('depositTxId').value.trim();
     let proof=document.getElementById('depositProof').files[0];
+    let amount=parseFloat(document.getElementById('depositAmount').value);
     if(!tx||!proof){alert("Fill TX ID & upload proof");return;}
-    balance+=1000; // simulate deposit
+    balance+=amount;
     localStorage.setItem('verbose_balance',balance);
     document.getElementById('dashBalance').innerText=balance;
     alert("Deposit submitted! Admin will check.");
@@ -221,6 +232,7 @@ function addDailyProfit(){
     localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));
 }
 
+// ONLOAD
 window.onload=function(){
     if(currentUser){
         document.getElementById("dashUser").innerText=currentUser;
