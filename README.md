@@ -277,6 +277,7 @@ let plansData = [];
 let userPlans = JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');
 let referralCode = localStorage.getItem('verbose_referral') || '';
 
+// **25 normal + 5 coming soon plans**
 for(let i=1;i<=30;i++){
     const invest = Math.round(200 + (i-1)*(30000-200)/29);
     const days = 20 + Math.floor((i-1)*(70-20)/29);
@@ -345,79 +346,86 @@ function copyDepositNumber(){
     document.execCommand('copy');
     alert("Deposit number copied!");
 }
+
 function copyReferral(){
     const ref = document.getElementById('refLink');
     ref.select();
-    ref.setSelectionRange(0,99999);
     document.execCommand('copy');
     alert("Referral link copied!");
 }
 
 function updateDepositNumber(){
     const method = document.getElementById('depositMethod').value;
-    const number = method==='jazzcash' ? '03001234567' : '03101234567';
+    const number = method==='jazzcash' ? '03001234567' : '03121234567';
     document.getElementById('depositNumber').value = number;
-    document.getElementById('depositAmount').value = 'Rs 5000';
+    document.getElementById('depositAmount').value = 'Enter Amount';
 }
 
 function submitDeposit(){
-    const tx = document.getElementById('depositTxId').value.trim();
-    const proof = document.getElementById('depositProof').files[0];
-    if(!tx || !proof){ alert("Enter TX ID and upload proof!"); return; }
-    alert("Deposit submitted! Admin will verify shortly.");
-    document.getElementById('depositTxId').value='';
-    document.getElementById('depositProof').value='';
+    const amt = document.getElementById('depositAmount').value;
+    const tx = document.getElementById('depositTxId').value;
+    const file = document.getElementById('depositProof').files[0];
+    if(!amt || !tx || !file){ alert("Fill all deposit details"); return; }
+    alert("Deposit submitted! Wait for admin verification.");
 }
 
 function submitWithdraw(){
-    const amt = parseFloat(document.getElementById('withdrawAmount').value);
-    const acc = document.getElementById('withdrawAccount').value.trim();
-    if(!amt || !acc){ alert("Enter amount and account number!"); return; }
-    if(amt>balance){ alert("Insufficient balance!"); return; }
-    balance -= amt;
-    localStorage.setItem('verbose_balance', balance);
-    document.getElementById('dashBalance').innerText = balance;
-    alert("Withdrawal request submitted! Admin will process it.");
-    document.getElementById('withdrawAmount').value='';
-    document.getElementById('withdrawAccount').value='';
+    const username = document.getElementById('withdrawUsername').value;
+    const account = document.getElementById('withdrawAccount').value;
+    const amt = document.getElementById('withdrawAmount').value;
+    if(!account || !amt){ alert("Enter account & amount"); return; }
+    alert(`Withdrawal request submitted for Rs ${amt}`);
 }
 
 function renderPlans(){
     const container = document.getElementById('plansList');
     container.innerHTML='';
-    plansData.forEach(p=>{
+    plansData.forEach(plan=>{
         const div = document.createElement('div');
         div.className='plan-box';
         div.innerHTML=`
         <div class="meta">
-          <b>${p.name} ${p.offer?'<span class="offer">HOT</span>':''}</b>
-          <div>Invest: Rs ${p.invest}</div>
-          <div>Days: ${p.days}</div>
-          <div>Total Return: Rs ${p.total}</div>
-          ${p.coming?'<div class="small">Coming Soon</div>':''}
+            <b>${plan.name} ${plan.coming ? '(Coming Soon)' : ''}</b>
+            <div class="small">Invest: Rs ${plan.invest}</div>
+            <div class="small">Duration: ${plan.days} days</div>
+            <div class="small">Return: Rs ${plan.total} ${plan.offer ? '<span class="offer">Hot Offer!</span>' : ''}</div>
         </div>
         <div class="actions">
-          ${!p.coming?'<button onclick="buyPlan('+p.id+')">Buy</button>':'<span class="small">Wait</span>'}
-        </div>`;
+            ${plan.coming ? '<button disabled>Coming Soon</button>' : '<button onclick="buyPlan('+plan.id+')">Buy</button>'}
+        </div>
+        `;
         container.appendChild(div);
     });
 }
 
 function buyPlan(id){
     const plan = plansData.find(p=>p.id===id);
-    if(balance<plan.invest){ alert("Insufficient balance!"); return; }
+    if(!plan) return;
+    if(balance < plan.invest){ alert("Insufficient balance"); return; }
     balance -= plan.invest;
-    dailyProfit += Math.round((plan.total-plan.invest)/plan.days);
+    dailyProfit += Math.round((plan.total - plan.invest)/plan.days);
     userPlans.push(plan);
     localStorage.setItem('verbose_balance', balance);
     localStorage.setItem('verbose_daily', dailyProfit);
     localStorage.setItem('verbose_userPlans', JSON.stringify(userPlans));
     document.getElementById('dashBalance').innerText = balance;
     document.getElementById('dashDaily').innerText = dailyProfit;
-    alert(`Plan ${plan.name} purchased!`);
+    alert(`${plan.name} purchased successfully!`);
 }
 
-if(currentUser){ login(); }
+document.addEventListener('DOMContentLoaded',()=>{
+    if(currentUser){
+        document.getElementById('loginPage').classList.add('hidden');
+        document.getElementById('dashboard').classList.remove('hidden');
+        document.getElementById('bottomNav').classList.remove('hidden');
+        document.getElementById('dashUser').innerText = currentUser;
+        document.getElementById('dashBalance').innerText = balance;
+        document.getElementById('dashDaily').innerText = dailyProfit;
+        document.getElementById('dashSince').innerText = new Date().toLocaleDateString();
+        document.getElementById('refLink').value = `https://gtv140.github.io/verbose/?ref=${referralCode}`;
+        renderPlans();
+    }
+});
 </script>
 </body>
 </html>
