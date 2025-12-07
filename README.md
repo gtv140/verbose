@@ -1,4 +1,4 @@
-<VERBOSE>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -103,8 +103,9 @@ const KEY_DAILY='verbose_daily_';
 const KEY_USER_PLANS='verbose_plans_';
 const KEY_DEPOSITS='verbose_deposits';
 const KEY_WITHDRAWS='verbose_withdraws';
+const KEY_OFFERS='verbose_offer_';
 let currentUser=localStorage.getItem(KEY_USER)||null;
-let plans=[];
+let plans=[],offerIntervals={};
 
 // Initialize Plans
 for(let i=1;i<=7;i++){
@@ -148,6 +149,7 @@ function afterLogin(){
 nav('dashboardCard');
 renderDashboard();
 renderPlans();
+startOffers();
 }
 
 function doLogout(){
@@ -183,9 +185,33 @@ div.className='plan';
 div.innerHTML=`<div class="info">
 <strong>${plan.name}</strong><br>
 Invest: Rs ${fmt(plan.invest)} · Total: Rs ${fmt(plan.total)} · Days: ${plan.days} · Daily: Rs ${fmt(daily)}
+${plan.special?`<div class="countdown" id="countdown_${plan.id}"></div>`:''}
 </div>
 <div class="actions">${plan.name!=='Coming Soon'?'<button onclick="buyPlan('+plan.id+')">Buy</button>':'Coming Soon'}</div>`;
 container.appendChild(div);
+});
+}
+
+// Special Offer Countdown
+function startOffers(){
+plans.forEach(plan=>{
+if(!plan.special) return;
+const key=KEY_OFFERS+plan.id;
+let endTs=Number(localStorage.getItem(key)||0);
+if(!endTs||endTs<Date.now()){
+endTs=Date.now()+24*3600*1000;
+localStorage.setItem(key,endTs);
+}
+const el=document.getElementById('countdown_'+plan.id);
+if(!el) return;
+function tick(){
+const diff=Math.floor((endTs-Date.now())/1000);
+if(diff<=0){el.innerText='Offer ended';clearInterval(offerIntervals[plan.id]);return;}
+const h=Math.floor(diff/3600), m=Math.floor((diff%3600)/60), s=diff%60;
+el.innerText=`Time Left: ${String(h).padStart(2,'0')}h:${String(m).padStart(2,'0')}m:${String(s).padStart(2,'0')}s`;
+}
+tick();
+offerIntervals[plan.id]=setInterval(tick,1000);
 });
 }
 
