@@ -14,23 +14,34 @@ body{
     overflow-x:hidden;
     position:relative;
 }
+/* NEON HEADER */
 header{
     text-align:center;
     padding:20px;
-    font-size:26px;
+    font-size:32px;
     font-weight:bold;
-    letter-spacing:2px;
-    background:linear-gradient(90deg,#00f,#0ff);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
+    letter-spacing:3px;
+    color:#0ff;
+    text-shadow:
+        0 0 5px #0ff,
+        0 0 10px #0ff,
+        0 0 20px #0ff,
+        0 0 40px #00f,
+        0 0 80px #00f;
+    animation: neonGlow 2s ease-in-out infinite alternate;
 }
+@keyframes neonGlow{
+    0%{text-shadow: 0 0 5px #0ff,0 0 10px #0ff,0 0 20px #0ff,0 0 40px #00f,0 0 80px #00f;}
+    100%{text-shadow: 0 0 10px #0ff,0 0 20px #0ff,0 0 40px #0ff,0 0 60px #00f,0 0 100px #00f;}
+}
+
 .login-box,.page{
     max-width:400px;
     margin:20px auto;
     background:#111;
     padding:20px;
     border-radius:10px;
-    box-shadow:0 0 15px #00f;
+    box-shadow:0 0 15px #0ff;
 }
 input,button,select{
     width:100%;
@@ -104,7 +115,6 @@ button:hover{
     color:#0ff;
     margin-top:5px;
 }
-
 /* NEON ANIMATION BACKGROUND */
 @keyframes neonbg{
     0%{background-position:0 0;}
@@ -132,10 +142,10 @@ body{
 
 <!-- DASHBOARD -->
 <div id="dashboard" class="page hidden">
-<div class="alert-box">For any deposit, withdrawal, or account issues, contact support immediately.</div>
+<div class="alert-box">Contact administration for deposits/withdrawals.</div>
 <div class="user-box">Username: <span id="dashUser"></span> | Balance: Rs <span id="dashBalance">0</span> | Daily Profit: Rs <span id="dashProfit">0</span></div>
 <h2>Dashboard</h2>
-<p>Welcome to VERBOSE! Trusted platform, millions of users, daily profits, secure & reliable.</p>
+<p>VERBOSE - Secure & reliable platform for users with daily profits.</p>
 <button onclick="shareLink()">Share Link & Get 30Rs Bonus</button>
 <button class="logout-btn" onclick="logout()">Logout</button>
 </div>
@@ -183,7 +193,6 @@ body{
 <!-- SUPPORT -->
 <div id="support" class="page hidden">
 <h2>Contact Administration</h2>
-<p>For any deposit, withdrawal, or account issues, contact our support team immediately.</p>
 <p>WhatsApp: <a href="https://chat.whatsapp.com/Kmaiv3VdSo09rio4qcRTRM" target="_blank">Join WhatsApp Group</a></p>
 <p>Email: <a href="mailto:rock.earn92@gmail.com">rock.earn92@gmail.com</a></p>
 </div>
@@ -206,7 +215,7 @@ let plansData = [];
 let userPlans = JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');
 let referrals = JSON.parse(localStorage.getItem('verbose_referrals')||'{}');
 
-// CREATE 25 PLANS 200-30000, days 20-70, 7 special 24h offer
+// CREATE 25 PLANS
 for(let i=1;i<=25;i++){
     let invest = Math.round(200 + (i-1)*(30000-200)/24);
     let days = 20 + Math.floor((i-1)*(70-20)/24);
@@ -287,7 +296,7 @@ function renderPlans(){
         <span class="countdown" id="countdown${p.id}"></span><br>
         <button onclick="buyPlan(${p.id})">Buy Now</button>`;
         list.appendChild(div);
-        if(p.offer) startCountdown(p.id,24*60*60); // 24h countdown
+        if(p.offer) startCountdown(p.id,24*60*60);
     });
 }
 
@@ -332,7 +341,6 @@ function submitDeposit(){
     let amount=parseFloat(document.getElementById('depositAmount').value);
     if(!tx||!proof){alert("Fill TX ID & upload proof");return;}
     balance += amount;
-    // Add daily profit immediately
     let plan = userPlans[userPlans.length-1];
     userProfit = plan ? plan.dailyProfit : 0;
     localStorage.setItem('verbose_balance',balance);
@@ -369,7 +377,7 @@ function addDailyProfit(){
         let daysPassed=Math.floor((now-last)/(1000*60*60*24));
         if(daysPassed>0){
             balance+=p.dailyProfit*daysPassed;
-            userProfit = p.dailyProfit; // Update daily profit shown
+            userProfit = p.dailyProfit;
             p.lastUpdate=now;
         }
     });
