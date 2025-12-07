@@ -11,32 +11,17 @@
 --neon:#0ff;
 --accent:#5af;
 --muted:rgba(230,247,251,0.6);
+--alert:#ff5caa;
+--success:#0f0;
 }
-body{
-margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#e6fbff;
-}
+body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#e6fbff;}
 .hidden{display:none;}
-header{
-padding:20px;text-align:center;font-weight:900;color:var(--neon);
-text-shadow:0 0 12px var(--neon);
-font-size:24px;
-}
+header{padding:20px;text-align:center;font-weight:900;color:var(--neon);text-shadow:0 0 12px var(--neon);font-size:24px;}
 .wrap{max-width:480px;margin:12px auto;padding:12px;}
-.card{
-background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-padding:12px;border-radius:12px;margin-bottom:12px;border:1px solid rgba(0,255,240,0.06);
-}
-input,select,button{
-width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);
-background:transparent;color:#dff;font-size:14px;
-}
-.btn{
-background:linear-gradient(90deg,var(--neon),var(--accent));border:none;color:#001;font-weight:800;cursor:pointer;padding:10px;border-radius:10px;
-}
-.nav{
-position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:10px;
-background:rgba(0,0,0,0.6);border-top:1px solid rgba(0,255,240,0.03);
-}
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:12px;margin-bottom:12px;border:1px solid rgba(0,255,240,0.06);}
+input,select,button{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:#dff;font-size:14px;}
+.btn{background:linear-gradient(90deg,var(--neon),var(--accent));border:none;color:#001;font-weight:800;cursor:pointer;padding:10px;border-radius:10px;}
+.nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:10px;background:rgba(0,0,0,0.6);border-top:1px solid rgba(0,255,240,0.03);}
 .nav div{color:var(--neon);text-align:center;font-size:13px;cursor:pointer;}
 .countdown{font-weight:800;color:var(--neon);margin-top:6px;}
 .muted{color:var(--muted);font-size:13px;}
@@ -50,7 +35,8 @@ background:rgba(0,0,0,0.6);border-top:1px solid rgba(0,255,240,0.03);
 .admin-box div{flex:1;text-align:center;padding:10px;background:rgba(0,255,240,0.06);border-radius:10px;margin:2px;cursor:pointer;}
 .admin-box div i{font-size:20px;margin-bottom:4px;display:block;color:var(--neon);}
 .coming-soon{opacity:0.5;font-style:italic;}
-.alert-note{background:rgba(255,0,128,0.1);color:var(--neon);padding:10px;margin-bottom:12px;border-radius:8px;font-weight:600;text-align:center;}
+.alert-note{background:rgba(255,0,128,0.1);color:var(--alert);padding:10px;margin-bottom:12px;border-radius:8px;font-weight:600;text-align:center;text-shadow:0 0 6px var(--neon);}
+.success-note{background:rgba(0,255,0,0.1);color:var(--success);padding:10px;margin-bottom:12px;border-radius:8px;font-weight:600;text-align:center;text-shadow:0 0 6px var(--neon);}
 .referral-box{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
 .referral-box input{flex:1;}
 </style>
@@ -75,7 +61,7 @@ background:rgba(0,0,0,0.6);border-top:1px solid rgba(0,255,240,0.03);
 
 <!-- DASHBOARD -->
 <div id="dashboardCard" class="card hidden">
-<div class="alert-note">⚠️ All transactions secure. Contact Administration immediately if deposit/withdrawal issues. 24/7 support.</div>
+<div class="alert-note">⚠️ All transactions are manually approved. Deposit/Withdrawal issues? Contact Administration immediately. 24/7 support available!</div>
 <div class="user-box">
 <div>
 <div id="welcomeText" style="font-weight:800;color:var(--neon)"><i class="fas fa-user-check icon"></i>Welcome —</div>
@@ -144,6 +130,7 @@ background:rgba(0,0,0,0.6);border-top:1px solid rgba(0,255,240,0.03);
 <label class="muted">Amount (PKR)</label>
 <input id="withdrawAmount" placeholder="Enter amount"/>
 <button class="btn" onclick="submitWithdraw()"><i class="fas fa-paper-plane icon"></i>Request Withdrawal</button>
+<p class="muted" style="margin-top:6px;text-align:center;">⚠️ Withdrawal will be approved manually by Administration. Contact admin for urgent issues.</p>
 </div>
 
 </div>
@@ -165,19 +152,14 @@ const KEY_USER_PLANS='verbose_plans_';
 const KEY_OFFERS='verbose_offer_';
 const KEY_DEPOSITS='verbose_deposits';
 const KEY_WITHDRAWS='verbose_withdraws';
-
-// STATE
 let currentUser=localStorage.getItem(KEY_USER)||null;
 let plans=[],offerIntervals={};
-
-// PLANS DATA
 for(let i=1;i<=7;i++){let invest=200*i;if(invest>3000) invest=3000;let days=20+Math.floor(Math.random()*51);plans.push({id:i,name:'Special Plan '+i,invest:invest,multiplier:3,total:invest*3,days:days,offer:true});}
 for(let i=8;i<=32;i++){let invest=Math.round(3000+(i-8)*(30000-3000)/24);let duration=20+Math.floor(Math.random()*51);let total=Math.round(invest*2.5);plans.push({id:i,name:'Plan '+(i-7),invest:invest,multiplier:2.5,total:total,days:duration,offer:false});}
 for(let i=33;i<=37;i++){plans.push({id:i,name:'Coming Soon',invest:0,multiplier:0,total:0,days:0,offer:false});}
-
 function fmt(n){return Number(n).toLocaleString('en-US');}
 
-// AUTH FUNCTIONS
+// AUTH
 function doAuth(){
 const mode=document.getElementById('authMode').value;
 const u=(document.getElementById('inputUser').value||'').trim();
@@ -187,8 +169,7 @@ if(!u||!p){alert('Enter username & password');return;}
 const credKey='verbose_cred_'+u;
 if(mode==='signup'){
 if(localStorage.getItem(credKey)){alert('Username exists');return;}
-localStorage.setItem(credKey,p);
-localStorage.setItem(KEY_BAL+u,'0');localStorage.setItem(KEY_DAILY+u,'0');localStorage.setItem(KEY_USER_PLANS+u,'[]');
+localStorage.setItem(credKey,p);localStorage.setItem(KEY_BAL+u,'0');localStorage.setItem(KEY_DAILY+u,'0');localStorage.setItem(KEY_USER_PLANS+u,'[]');
 if(ref && localStorage.getItem('verbose_cred_'+ref)){let bal=Number(localStorage.getItem(KEY_BAL+ref)||0);bal+=30;localStorage.setItem(KEY_BAL+ref,bal);alert(`Referral bonus Rs 30 added to ${ref}`);}
 }else{if(localStorage.getItem(credKey)!==p){alert('Wrong username/password');return;}}
 localStorage.setItem(KEY_USER,u);currentUser=u;afterLoginUI();
@@ -229,46 +210,35 @@ const h=Math.floor(diff/3600),m=Math.floor((diff%3600)/60),s=diff%60;el.innerTex
 function buyPlan(id){if(!currentUser){alert('Login first');return;}const plan=plans.find(p=>p.id===id);if(!plan || plan.name==='Coming Soon'){alert('Plan not available');return;}
 let userPlans=JSON.parse(localStorage.getItem(KEY_USER_PLANS+currentUser)||'[]');
 const dailyProfit=Math.round(plan.total/plan.days);userPlans.push({planId:plan.id,dailyProfit,lastCredit:Date.now()});localStorage.setItem(KEY_USER_PLANS+currentUser,JSON.stringify(userPlans));
-document.getElementById('depositAmount').value=plan.invest;updateDepositNumber();nav('depositCard');alert(`Plan ${plan.name} selected. Now submit your deposit with TX ID and proof.`);
-}
+document.getElementById('depositAmount').value=plan.invest;updateDepositNumber();nav('depositCard');alert(`Plan ${plan.name} selected. Submit your deposit. Admin will manually approve.`);}
 
 // DEPOSIT
 function updateDepositNumber(){const method=document.getElementById('depositMethod').value;document.getElementById('depositNumber').value=method==='jazzcash'?'03705519562':'03379827882';}
 function submitDeposit(){if(!currentUser){alert('Login first');return;}
 const tx=(document.getElementById('depositTx').value||'').trim();const proof=document.getElementById('depositProof').files[0];const amount=Number(document.getElementById('depositAmount').value)||0;
 if(!tx||!proof||!amount){alert('All fields required');return;}
-let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);bal+=amount;localStorage.setItem(KEY_BAL+currentUser,bal);
-let daily=Number(localStorage.getItem(KEY_DAILY+currentUser)||0);daily+=Math.round(amount*0.01);localStorage.setItem(KEY_DAILY+currentUser,daily);
-const deposits=JSON.parse(localStorage.getItem(KEY_DEPOSITS)||'[]');deposits.push({user:currentUser,method:document.getElementById('depositMethod').value,amount,tx,proof:proof.name,time:Date.now()});
-localStorage.setItem(KEY_DEPOSITS,JSON.stringify(deposits));renderDashboard();document.getElementById('depositTx').value='';document.getElementById('depositProof').value='';alert(`Deposit successful! Balance updated, daily profit added.`);nav('dashboardCard');}
+const deposits=JSON.parse(localStorage.getItem(KEY_DEPOSITS)||'[]');deposits.push({user:currentUser,method:document.getElementById('depositMethod').value,amount,tx,proof:proof.name,time:Date.now(),approved:false});
+localStorage.setItem(KEY_DEPOSITS,JSON.stringify(deposits));alert('Deposit submitted! Admin will approve manually.');document.getElementById('depositTx').value='';document.getElementById('depositProof').value='';nav('dashboardCard');}
 
 // WITHDRAW
 function fillWithdrawUser(){if(!currentUser) return;document.getElementById('withdrawUsername').value=currentUser;}
-function submitWithdraw(){
-if(!currentUser){alert('Login first');return;}
+function submitWithdraw(){if(!currentUser){alert('Login first');return;}
 const method=document.getElementById('withdrawMethod').value;
 const account=document.getElementById('withdrawAccount').value.trim();
 const amount=Number(document.getElementById('withdrawAmount').value)||0;
-if(!account||amount<=0){alert('Enter valid account and amount');return;}
-let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);
-if(amount>bal){alert('Insufficient balance');return;}
-bal-=amount;localStorage.setItem(KEY_BAL+currentUser,bal);
-const withdraws=JSON.parse(localStorage.getItem(KEY_WITHDRAWS)||'[]');
-withdraws.push({user:currentUser,method,account,amount,status:'Pending',time:Date.now()});
+if(!account||!amount){alert('Please enter all required fields');return;}
+let withdraws=JSON.parse(localStorage.getItem(KEY_WITHDRAWS)||'[]');
+withdraws.push({user:currentUser,method,account,amount,time:Date.now(),approved:false});
 localStorage.setItem(KEY_WITHDRAWS,JSON.stringify(withdraws));
-document.getElementById('withdrawAmount').value='';document.getElementById('withdrawAccount').value='';
-renderDashboard();alert(`Withdrawal request submitted! Admin will approve soon.`);
-nav('dashboardCard');}
+alert('Withdrawal request submitted! Admin will approve manually. Contact support if urgent.');
+document.getElementById('withdrawAccount').value='';document.getElementById('withdrawAmount').value='';nav('dashboardCard');}
 
-// ADMIN / SUPPORT STUBS
-function openAdmin(){alert('Admin panel coming soon. For now, all withdrawals auto-approved after 2s for demo.');autoApproveWithdrawals();}
-function openSupport(){alert('Support chat coming soon!');}
+// PLACEHOLDER FUNCTIONS FOR ADMIN/SUPPORT
+function openAdmin(){alert('Admin panel is under development. Manual approvals handled here.');}
+function openSupport(){alert('Contact support via WhatsApp/Email for deposit/withdrawal issues.');}
 
-// AUTO APPROVE WITHDRAWALS DEMO
-function autoApproveWithdrawals(){let wds=JSON.parse(localStorage.getItem(KEY_WITHDRAWS)||'[]');wds.forEach(w=>{if(w.status==='Pending'){w.status='Approved';}});localStorage.setItem(KEY_WITHDRAWS,JSON.stringify(wds));alert('All pending withdrawals approved.');}
-
-// INIT
-if(currentUser) afterLoginUI();
+// INITIALIZE
+if(currentUser){afterLoginUI();}
 </script>
 </body>
 </html>
