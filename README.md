@@ -29,28 +29,31 @@ input,select,button{width:100%;padding:10px;margin-top:6px;border-radius:8px;bor
 .admin-box div i{font-size:20px;margin-bottom:4px;display:block;color:var(--neon);}
 .coming-soon{opacity:0.5;font-style:italic;}
 .alert-note{background:rgba(255,0,128,0.1);color:var(--neon);padding:10px;margin-bottom:12px;border-radius:8px;font-weight:600;text-align:center;}
+.referral-box{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.referral-box input{flex:1;}
 </style>
 </head>
 <body>
 <header><i class="fas fa-bolt icon"></i>VERBOSE<i class="fas fa-bolt icon"></i></header>
 <div class="wrap">
 
-<!-- LOGIN -->
+<!-- LOGIN / SIGNUP -->
 <div id="loginCard" class="card">
 <h3 style="margin:0 0 8px 0;color:var(--neon)"><i class="fas fa-user icon"></i>Login / Signup</h3>
 <select id="authMode">
 <option value="login">Login</option>
 <option value="signup">New User</option>
 </select>
-<input id="inputUser" placeholder="Username" />
-<input id="inputPass" placeholder="Password" type="password" />
+<input id="inputUser" placeholder="Username"/>
+<input id="inputPass" placeholder="Password" type="password"/>
+<input id="referralInput" placeholder="Referral Code (optional)"/>
 <button class="btn" onclick="doAuth()"><i class="fas fa-sign-in-alt icon"></i>Submit</button>
 <p class="muted">Tip: Use same device & browser. Data stored locally.</p>
 </div>
 
 <!-- DASHBOARD -->
 <div id="dashboardCard" class="card hidden">
-<div class="alert-note">⚠️ All transactions are secure. For any deposit/withdrawal issues, contact Administration immediately. 24/7 support available.</div>
+<div class="alert-note">⚠️ All transactions secure. Contact Administration immediately if deposit/withdrawal issues. 24/7 support.</div>
 <div class="user-box">
 <div>
 <div id="welcomeText" style="font-weight:800;color:var(--neon)"><i class="fas fa-user-check icon"></i>Welcome —</div>
@@ -64,9 +67,15 @@ input,select,button{width:100%;padding:10px;margin-top:6px;border-radius:8px;bor
 </div>
 </div>
 
+<!-- REFERRAL -->
+<div class="referral-box">
+<input id="referralLink" readonly/>
+<button class="btn" style="width:auto;padding:6px 12px;margin-left:4px;" onclick="copyReferral()"><i class="fas fa-copy icon"></i>Copy</button>
+</div>
+
 <!-- ADMIN / SUPPORT / CONTACT -->
 <div class="admin-box">
-<div onclick="alert('Admin: 03705519562\nEmail: rock.earn92@gmail.com\nWhatsApp Group link opened')"><i class="fas fa-user-shield"></i>Admin</div>
+<div onclick="openAdmin()"><i class="fas fa-user-shield"></i>Admin</div>
 <div onclick="alert('Support: Chat on WhatsApp Group or Email. Our team ensures all queries are resolved promptly.')"><i class="fas fa-headset"></i>Support</div>
 <div onclick="alert('Activity Log coming soon')"><i class="fas fa-chart-line"></i>Activity</div>
 </div>
@@ -135,28 +144,27 @@ const KEY_USER_PLANS='verbose_plans_';
 const KEY_OFFERS='verbose_offer_';
 const KEY_DEPOSITS='verbose_deposits';
 const KEY_WITHDRAWS='verbose_withdraws';
+const KEY_REFERRAL='verbose_referral_';
 
 // STATE
 let currentUser=localStorage.getItem(KEY_USER)||null;
 let plans=[];
 let offerIntervals={};
 
-// SPECIAL OFFERS 7 plans (200→3000, 20–70 days, 3x)
+// SPECIAL OFFERS 7 plans
 for(let i=1;i<=7;i++){
-let invest=200*i; if(invest>3000) invest=3000;
-let days=20+Math.floor(Math.random()*51); // 20–70 days
+let invest=200*i;if(invest>3000) invest=3000;
+let days=20+Math.floor(Math.random()*51);
 plans.push({id:i,name:'Special Plan '+i,invest:invest,multiplier:3,total:invest*3,days:days,offer:true});
 }
-
-// NORMAL PLANS 25 plans (3000+ PKR, 20–70 days, 2.5x)
+// NORMAL PLANS
 for(let i=8;i<=32;i++){
 let invest=Math.round(3000 + (i-8)*(30000-3000)/24);
 let duration=20+Math.floor(Math.random()*51);
 let total=Math.round(invest*2.5);
 plans.push({id:i,name:'Plan '+(i-7),invest:invest,multiplier:2.5,total:total,days:duration,offer:false});
 }
-
-// Coming Soon 5 plans
+// COMING SOON
 for(let i=33;i<=37;i++){plans.push({id:i,name:'Coming Soon',invest:0,multiplier:0,total:0,days:0,offer:false});}
 
 function fmt(n){return Number(n).toLocaleString('en-US');}
@@ -166,21 +174,31 @@ function doAuth(){
 const mode=document.getElementById('authMode').value;
 const u=(document.getElementById('inputUser').value||'').trim();
 const p=(document.getElementById('inputPass').value||'').trim();
+const ref=document.getElementById('referralInput').value.trim();
 if(!u||!p){alert('Enter username & password');return;}
 const credKey='verbose_cred_'+u;
-if(mode==='signup'){if(localStorage.getItem(credKey)){alert('Username exists');return;}
-localStorage.setItem(credKey,p);localStorage.setItem(KEY_BAL+u,'0');localStorage.setItem(KEY_DAILY+u,'0');localStorage.setItem(KEY_USER_PLANS+u,'[]');}
+if(mode==='signup'){
+if(localStorage.getItem(credKey)){alert('Username exists');return;}
+localStorage.setItem(credKey,p);
+localStorage.setItem(KEY_BAL+u,'0');
+localStorage.setItem(KEY_DAILY+u,'0');
+localStorage.setItem(KEY_USER_PLANS+u,'[]');
+// Referral bonus
+if(ref && localStorage.getItem('verbose_cred_'+ref)){let bal=Number(localStorage.getItem(KEY_BAL+ref)||0);bal+=30;localStorage.setItem(KEY_BAL+ref,bal);alert(`Referral bonus Rs 30 added to ${ref}`);}
+}
 else{if(localStorage.getItem(credKey)!==p){alert('Wrong username/password');return;}}
 localStorage.setItem(KEY_USER,u);currentUser=u;afterLoginUI();
 }
 
-function afterLoginUI(){nav('dashboardCard');renderDashboard();renderPlans();startOffers();computeDailyCredits();}
+// REFERRAL LINK
+function updateReferralLink(){if(!currentUser) return;document.getElementById('referralLink').value=window.location.href+'?ref='+currentUser;}
+function copyReferral(){const link=document.getElementById('referralLink');link.select();document.execCommand('copy');alert('Referral link copied!');}
 
 // LOGOUT
 function doLogout(){localStorage.removeItem(KEY_USER);currentUser=null;nav('loginCard');Object.values(offerIntervals).forEach(i=>clearInterval(i));}
 
 // NAV
-function nav(cardId){['loginCard','dashboardCard','plansCard','depositCard','withdrawCard'].forEach(id=>document.getElementById(id).classList.add('hidden'));document.getElementById(cardId).classList.remove('hidden');renderDashboard();fillWithdrawUser();}
+function nav(cardId){['loginCard','dashboardCard','plansCard','depositCard','withdrawCard'].forEach(id=>document.getElementById(id).classList.add('hidden'));document.getElementById(cardId).classList.remove('hidden');renderDashboard();fillWithdrawUser();updateReferralLink();}
 
 // DASHBOARD
 function renderDashboard(){if(!currentUser)return;document.getElementById('welcomeText').innerText='Welcome, '+currentUser;document.getElementById('memberSince').innerText='Member since: '+new Date().toLocaleDateString();
@@ -215,7 +233,7 @@ let userPlans=JSON.parse(localStorage.getItem(KEY_USER_PLANS+currentUser)||'[]')
 const dailyProfit=Math.round(plan.total/plan.days);
 userPlans.push({planId:plan.id,dailyProfit,lastCredit:Date.now()});
 localStorage.setItem(KEY_USER_PLANS+currentUser,JSON.stringify(userPlans));
-let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);bal+=plan.invest;localStorage.setItem(KEY_BAL+currentUser,bal);alert(`Plan ${plan.name} purchased! Rs ${fmt(plan.invest)} added.`);renderDashboard();nav('depositCard');document.getElementById('depositAmount').value=plan.invest;updateDepositNumber();}
+document.getElementById('depositAmount').value=plan.invest;updateDepositNumber();nav('depositCard');alert(`Plan ${plan.name} selected. Now submit your deposit with TX ID and proof.`);}
 
 // DEPOSIT
 function updateDepositNumber(){const method=document.getElementById('depositMethod').value;document.getElementById('depositNumber').value=method==='jazzcash'?'03705519562':'03379827882';}
@@ -223,51 +241,63 @@ function submitDeposit(){
 if(!currentUser){alert('Login first');return;}
 const tx=(document.getElementById('depositTx').value||'').trim();const proof=document.getElementById('depositProof').files[0];const amount=Number(document.getElementById('depositAmount').value)||0;
 if(!tx||!proof||!amount){alert('All fields required');return;}
-alert(`Deposit submitted!\nUser: ${currentUser}\nAmount: Rs ${amount}\nMethod: ${document.getElementById('depositMethod').value}\nTX ID: ${tx}\nProof: ${proof.name}\nContact Admin if any issue.`);
+// Add deposit
 let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);bal+=amount;localStorage.setItem(KEY_BAL+currentUser,bal);
+// Daily profit automatically add
+let daily=Number(localStorage.getItem(KEY_DAILY+currentUser)||0);daily+=Math.round(amount*0.01);localStorage.setItem(KEY_DAILY+currentUser,daily);
 const deposits=JSON.parse(localStorage.getItem(KEY_DEPOSITS)||'[]');deposits.push({user:currentUser,method:document.getElementById('depositMethod').value,amount,tx,proof:proof.name,time:Date.now()});
-localStorage.setItem(KEY_DEPOSITS,JSON.stringify(deposits));renderDashboard();document.getElementById('depositTx').value='';document.getElementById('depositProof').value='';nav('dashboardCard');}
+localStorage.setItem(KEY_DEPOSITS,JSON.stringify(deposits));
+renderDashboard();document.getElementById('depositTx').value='';document.getElementById('depositProof').value='';alert(`Deposit successful! Balance updated, daily profit added.`);nav('dashboardCard');}
 
 // WITHDRAW
-function fillWithdrawUser(){document.getElementById('withdrawUsername').value=currentUser||'';}
+function fillWithdrawUser(){if(!currentUser) return;document.getElementById('withdrawUsername').value=currentUser;}
 function submitWithdraw(){
 if(!currentUser){alert('Login first');return;}
 const method=document.getElementById('withdrawMethod').value;
-const acc=(document.getElementById('withdrawAccount').value||'').trim();
-const amt=Number(document.getElementById('withdrawAmount').value)||0;
-if(!acc||!amt){alert('Enter account & amount');return;}
-let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);if(amt>bal){alert('Insufficient balance');return;}
-alert(`Withdrawal request submitted!\nUser: ${currentUser}\nAmount: Rs ${amt}\nMethod: ${method}\nAccount: ${acc}\nContact Admin if any issue.`);
-bal-=amt;localStorage.setItem(KEY_BAL+currentUser,bal);
-const withdraws=JSON.parse(localStorage.getItem(KEY_WITHDRAWS)||'[]');withdraws.push({user:currentUser,method,account:acc,amount:amt,time:Date.now()});
-localStorage.setItem(KEY_WITHDRAWS,JSON.stringify(withdraws));renderDashboard();document.getElementById('withdrawAmount').value='';nav('dashboardCard');}
+const account=document.getElementById('withdrawAccount').value.trim();
+const amount=Number(document.getElementById('withdrawAmount').value)||0;
+if(!account||!amount){alert('Enter all withdrawal details');return;}
+let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);
+if(amount>bal){alert('Insufficient balance');return;}
+bal-=amount;localStorage.setItem(KEY_BAL+currentUser,bal);
+const withdraws=JSON.parse(localStorage.getItem(KEY_WITHDRAWS)||'[]');
+withdraws.push({user:currentUser,method,account,amount,time:Date.now()});
+localStorage.setItem(KEY_WITHDRAWS,JSON.stringify(withdraws));
+renderDashboard();document.getElementById('withdrawAmount').value='';document.getElementById('withdrawAccount').value='';alert('Withdrawal requested successfully!');nav('dashboardCard');}
 
-// DAILY CREDIT (simple simulation)
-function computeDailyCredits(){
+// ADMIN BUTTON
+function openAdmin(){
+const email='admin@example.com';
+const whatsapp='https://wa.me/923001234567';
+if(confirm('Open Admin Contact?')){window.open('mailto:'+email);window.open(whatsapp);}
+}
+
+// AFTER LOGIN UI
+function afterLoginUI(){nav('dashboardCard');renderPlans();startOffers();updateReferralLink();}
+
+// DAILY PROFIT AUTO ADD (every minute)
+function addDailyProfit(){
 if(!currentUser) return;
 let userPlans=JSON.parse(localStorage.getItem(KEY_USER_PLANS+currentUser)||'[]');
-let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);
-let daily=Number(localStorage.getItem(KEY_DAILY+currentUser)||0);
+let totalProfit=0;
 const now=Date.now();
-userPlans.forEach(plan=>{
-// 24h = 86400000 ms
-if(now - plan.lastCredit >= 86400000){
-bal += plan.dailyProfit;
-daily += plan.dailyProfit;
-plan.lastCredit = now;
+userPlans.forEach(p=>{
+if(now-p.lastCredit>=60*1000){ // every minute simulate 1 day
+totalProfit+=p.dailyProfit;
+p.lastCredit=now;
 }
 });
-localStorage.setItem(KEY_USER_PLANS+currentUser,JSON.stringify(userPlans));
-localStorage.setItem(KEY_BAL+currentUser,bal);
-localStorage.setItem(KEY_DAILY+currentUser,daily);
+if(totalProfit>0){
+let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);bal+=totalProfit;localStorage.setItem(KEY_BAL+currentUser,bal);
+let daily=Number(localStorage.getItem(KEY_DAILY+currentUser)||0);daily+=totalProfit;localStorage.setItem(KEY_DAILY+currentUser,daily);
 renderDashboard();
-// repeat every minute
-setTimeout(computeDailyCredits,60000);
+localStorage.setItem(KEY_USER_PLANS+currentUser,JSON.stringify(userPlans));
 }
+}
+setInterval(addDailyProfit,60*1000);
 
-// INIT
-if(currentUser){afterLoginUI();}else{nav('loginCard');}
+// ON PAGE LOAD
+if(currentUser){afterLoginUI();}
 </script>
-
 </body>
 </html>
