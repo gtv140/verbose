@@ -35,6 +35,7 @@ button:hover { background:#ffc800; }
 <div id="dashboard" class="page hidden">
 <div class="user-box">
 Username: <span id="dashUser"></span> | Balance: Rs <span id="dashBalance">0</span>
+<button onclick="logout()" style="background:red;color:#fff;margin-top:5px;">Logout</button>
 </div>
 <h2>Dashboard</h2>
 <div class="plan">Deposit/Withdrawal ke baad admin ko screenshot WhatsApp 03705519562 bhejna zaroori hai</div>
@@ -49,9 +50,14 @@ Username: <span id="dashUser"></span> | Balance: Rs <span id="dashBalance">0</sp
 <!-- DEPOSIT -->
 <div id="deposit" class="page hidden">
 <h2>Deposit</h2>
-<div class="plan">
-JazzCash: 03705519562 <button class="copy-btn" onclick="copyText('03705519562')">Copy</button><br>
-EasyPaisa: 03379827882 <button class="copy-btn" onclick="copyText('03379827882')">Copy</button>
+<label>Choose Method</label>
+<select id="depositMethod" onchange="updateDepositNumber()">
+  <option value="jazzcash">JazzCash</option>
+  <option value="easypaisa">EasyPaisa</option>
+</select>
+<div class="plan" style="margin-top:10px;">
+<span id="depositNumber"></span>
+<button class="copy-btn" onclick="copyText(document.getElementById('depositNumber').innerText)">Copy</button>
 </div>
 <input id="depositAmount" placeholder="Amount">
 <input id="depositTxId" placeholder="Transaction ID">
@@ -62,8 +68,15 @@ EasyPaisa: 03379827882 <button class="copy-btn" onclick="copyText('03379827882')
 <!-- WITHDRAWAL -->
 <div id="withdrawal" class="page hidden">
 <h2>Withdrawal</h2>
-<input id="withdrawAmount" placeholder="Enter Amount">
-<input id="withdrawAccount" placeholder="Account Number">
+<label>Choose Method</label>
+<select id="withdrawMethod" onchange="updateWithdrawFields()">
+  <option value="jazzcash">JazzCash</option>
+  <option value="easypaisa">EasyPaisa</option>
+  <option value="bank">Bank</option>
+</select>
+<input id="withdrawUsername" placeholder="Username" readonly>
+<input id="withdrawAccount" placeholder="Account Number" readonly>
+<input id="withdrawAmount" placeholder="Amount">
 <button onclick="submitWithdraw()">Request Withdrawal</button>
 </div>
 
@@ -90,7 +103,7 @@ EasyPaisa: 03379827882 <button class="copy-btn" onclick="copyText('03379827882')
 <!-- ABOUT VERBOSE -->
 <div id="about" class="page hidden">
 <h2>About VERBOSE</h2>
-<p>VERBOSE is a trusted and professional investment platform, giving high-quality returns to its users. Millions of users and members work with our company. We ensure reliable profits with a transparent system. Our team provides 24/7 customer support for deposits, withdrawals, and all other inquiries. Join VERBOSE today and experience professional investment opportunities with verified plans and daily profit.</p>
+<p>VERBOSE is a trusted and professional investment platform, giving high-quality returns to its users. Millions of users and members work with our company. We ensure reliable profits with a transparent system. We provide automatic daily profit updates and real-time balance tracking. Our team is always available for deposits, withdrawals, or any inquiries. Contact us via WhatsApp 03705519562 or Email rock.earn92@gmail.com. Join VERBOSE today for safe and profitable investment opportunities.</p>
 </div>
 
 <!-- NAVIGATION -->
@@ -111,20 +124,49 @@ let balance = 0;
 let activityLog = [];
 let historyLog = [];
 
-// LOGIN FUNCTION
+// DEPOSIT NUMBERS
+const depositNumbers = { jazzcash: '03705519562', easypaisa: '03379827882' };
+// WITHDRAW ACCOUNTS
+const withdrawAccounts = {
+  jazzcash: ()=>({username: currentUser, account:'03705519562'}),
+  easypaisa: ()=>({username: currentUser, account:'03379827882'}),
+  bank: ()=>({username: currentUser, account:'1234567890'})
+};
+
+// LOGIN
 function login(){
     let u = document.getElementById("user").value;
     let p = document.getElementById("pass").value;
     if(u === "" || p === ""){ alert("Username aur password likho sweetie"); return; }
     currentUser = u;
-    balance = 0;
+    balance = parseInt(localStorage.getItem(u+'_balance')) || 0;
     document.getElementById("dashUser").innerText = currentUser;
     document.getElementById("dashBalance").innerText = balance;
+    localStorage.setItem('verbose_current', currentUser);
     document.getElementById("loginPage").classList.add("hidden");
     document.getElementById("dashboard").classList.remove("hidden");
     document.getElementById("bottomNav").classList.remove("hidden");
     generatePlans();
 }
+
+// LOGOUT
+function logout(){
+    localStorage.removeItem('verbose_current');
+    currentUser = '';
+    balance = 0;
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("bottomNav").classList.add("hidden");
+    document.getElementById("loginPage").classList.remove("hidden");
+}
+
+// AUTO LOGIN ON REFRESH
+window.onload = function(){
+    let savedUser = localStorage.getItem('verbose_current');
+    if(savedUser){
+        document.getElementById("user").value = savedUser;
+        login();
+    }
+};
 
 // SHOW PAGE
 function showPage(id){
@@ -135,6 +177,20 @@ function showPage(id){
 
 // COPY FUNCTION
 function copyText(txt){ navigator.clipboard.writeText(txt); alert("Copied: "+txt); }
+
+// UPDATE DEPOSIT NUMBER
+function updateDepositNumber(){
+    let method = document.getElementById('depositMethod').value;
+    document.getElementById('depositNumber').innerText = depositNumbers[method];
+}
+
+// UPDATE WITHDRAWAL FIELDS
+function updateWithdrawFields(){
+    let method = document.getElementById('withdrawMethod').value;
+    let accInfo = withdrawAccounts[method]();
+    document.getElementById('withdrawUsername').value = accInfo.username;
+    document.getElementById('withdrawAccount').value = accInfo.account;
+}
 
 // PLANS DATA
 const planNames = [
@@ -189,6 +245,7 @@ function submitDeposit(){
     if(!amt || !tx || !proof){ alert("Fill all deposit details sweetie"); return; }
     balance += amt;
     document.getElementById("dashBalance").innerText = balance;
+    localStorage.setItem(currentUser+'_balance', balance);
     activityLog.push(`Deposit Rs ${amt} submitted.`);
     historyLog.push(`Deposit Rs ${amt} TxID: ${tx}`);
     document.getElementById("depositTxId").value=''; document.getElementById("depositProof").value='';
@@ -205,11 +262,12 @@ function submitWithdraw(){
     if(amt>balance){ alert("Insufficient balance"); return; }
     balance -= amt;
     document.getElementById("dashBalance").innerText = balance;
+    localStorage.setItem(currentUser+'_balance', balance);
     activityLog.push(`Withdraw Rs ${amt} requested.`);
     historyLog.push(`Withdraw Rs ${amt} to ${acc}`);
-    document.getElementById("withdrawAmount").value=''; document.getElementById("withdrawAccount").value='';
-    alert("Withdraw request sent! Contact admin if needed.");
+    document.getElementById("withdrawAmount").value='';
     updateLogs();
+    alert("Withdraw request sent! Contact admin if needed.");
     showPage('dashboard');
 }
 
@@ -218,12 +276,6 @@ function updateLogs(){
     document.getElementById("activityList").innerHTML = activityLog.join("<br>");
     document.getElementById("historyList").innerHTML = historyLog.join("<br>");
 }
-
-// AUTO LOGOUT ON REFRESH
-window.onload = function(){ 
-    if(currentUser!==''){ login(); } 
-};
-window.onbeforeunload = function(){ currentUser=''; balance=0; };
 </script>
 
 </body>
