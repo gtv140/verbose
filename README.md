@@ -59,10 +59,11 @@ button:hover{
     background:#111;
     display:flex;
     justify-content:space-around;
-    padding:10px 0;
+    padding:12px 0;
     border-top:1px solid #0ff;
 }
-.nav div{text-align:center;font-size:12px;cursor:pointer;}
+.nav div{text-align:center;font-size:14px;cursor:pointer;}
+.nav div span{display:block;font-size:24px;} /* icons size bigger */
 .hidden{display:none;}
 .user-box{
     background:#001f3f;
@@ -85,7 +86,7 @@ button:hover{
 }
 .logout-btn{
     position:fixed;
-    bottom:60px;
+    bottom:70px;
     right:15px;
     background:red;
     color:#fff;
@@ -142,7 +143,7 @@ body{
 <div class="alert-box">Deposit, withdrawal, or account issues? Our professional admin team is always available to assist you.</div>
 <div class="user-box">Username: <span id="dashUser"></span> | Balance: Rs <span id="dashBalance">0</span> | Daily Profit: Rs <span id="dashProfit">0</span></div>
 <h2>Dashboard</h2>
-<p style="text-align:center;">Welcome to VERBOSE! A secure, trusted platform delivering daily profits with complete transparency. Your funds and growth are our priority.</p>
+<p style="text-align:center;">Welcome to VERBOSE! Secure, trusted platform delivering daily profits with complete transparency. Your funds and growth are our priority.</p>
 <button class="logout-btn" onclick="logout()">Logout</button>
 </div>
 
@@ -189,18 +190,27 @@ body{
 <!-- SUPPORT -->
 <div id="support" class="page hidden">
 <h2>Contact Administration</h2>
-<p>Our dedicated administration team is available 24/7 to help with deposits, withdrawals, or account inquiries. Reach out anytime for professional support.</p>
+<p>Our dedicated administration team is available 24/7 for deposits, withdrawals, or account inquiries. Reach out anytime for professional support.</p>
 <p>WhatsApp: <a href="https://chat.whatsapp.com/Kmaiv3VdSo09rio4qcRTRM" target="_blank">Join WhatsApp Group</a></p>
 <p>Email: <a href="mailto:rock.earn92@gmail.com">rock.earn92@gmail.com</a></p>
 </div>
 
+<!-- REFERRAL -->
+<div id="referral" class="page hidden">
+<h2>Get Referral Bonus</h2>
+<p>Share your link and earn Rs 30 when the new user deposits!</p>
+<input id="refLink" readonly>
+<button onclick="copyReferral()">Copy Referral Link</button>
+</div>
+
 <!-- NAVIGATION -->
 <div id="bottomNav" class="nav hidden">
-<div onclick="showPage('dashboard')">🏠<br>Home</div>
-<div onclick="showPage('plans')">📦<br>Plans</div>
-<div onclick="showPage('deposit')">💰<br>Deposit</div>
-<div onclick="showPage('withdrawal')">💵<br>Withdraw</div>
-<div onclick="showPage('support')">📞<br>Support</div>
+<div onclick="showPage('dashboard')"><span>🏠</span>Home</div>
+<div onclick="showPage('plans')"><span>📦</span>Plans</div>
+<div onclick="showPage('deposit')"><span>💰</span>Deposit</div>
+<div onclick="showPage('withdrawal')"><span>💵</span>Withdraw</div>
+<div onclick="showPage('support')"><span>📞</span>Support</div>
+<div onclick="showPage('referral')"><span>🎁</span>Bonus</div>
 </div>
 
 <script>
@@ -233,6 +243,11 @@ function login(){
     document.getElementById("dashUser").innerText=currentUser;
     document.getElementById("dashBalance").innerText=balance;
     document.getElementById("dashProfit").innerText=dailyProfit;
+
+    // Referral link
+    let refLink=document.getElementById('refLink');
+    refLink.value = `${window.location.href}?ref=${currentUser}`;
+
     document.getElementById("loginPage").classList.add("hidden");
     document.getElementById("dashboard").classList.remove("hidden");
     document.getElementById("bottomNav").classList.remove("hidden");
@@ -266,6 +281,15 @@ function copyDepositNumber(){
     num.setSelectionRange(0,99999);
     document.execCommand('copy');
     alert("Deposit number copied!");
+}
+
+// COPY REFERRAL
+function copyReferral(){
+    let ref=document.getElementById('refLink');
+    ref.select();
+    ref.setSelectionRange(0,99999);
+    document.execCommand('copy');
+    alert("Referral link copied! Earn Rs 30 per deposit.");
 }
 
 // PLANS
@@ -330,12 +354,22 @@ function submitDeposit(){
     let amount=parseFloat(document.getElementById('depositAmount').value);
     if(!tx||!proof){alert("Fill TX ID & upload proof");return;}
     balance+=amount;
-    dailyProfit += Math.round(amount*0.05); // 5% daily profit example
+    dailyProfit += Math.round(amount*0.05);
     localStorage.setItem('verbose_balance',balance);
     localStorage.setItem('verbose_dailyProfit',dailyProfit);
     document.getElementById('dashBalance').innerText=balance;
     document.getElementById('dashProfit').innerText=dailyProfit;
     alert("Deposit submitted! Admin will verify.");
+
+    // Referral bonus (check URL param)
+    let urlParams = new URLSearchParams(window.location.search);
+    let refUser = urlParams.get('ref');
+    if(refUser && refUser !== currentUser){
+        let refBonus = 30;
+        alert(`Referral bonus Rs ${refBonus} added to ${refUser}!`);
+        // In real system, this would update refUser's balance
+    }
+
     document.getElementById('depositTxId').value='';
     document.getElementById('depositProof').value='';
     showPage('dashboard');
@@ -384,6 +418,11 @@ window.onload=function(){
         dailyProfit=parseFloat(localStorage.getItem('verbose_dailyProfit'));
         document.getElementById("dashBalance").innerText=balance;
         document.getElementById("dashProfit").innerText=dailyProfit;
+
+        // Referral link
+        let refLink=document.getElementById('refLink');
+        refLink.value = `${window.location.href}?ref=${currentUser}`;
+
         document.getElementById("loginPage").classList.add("hidden");
         document.getElementById("dashboard").classList.remove("hidden");
         document.getElementById("bottomNav").classList.remove("hidden");
