@@ -16,6 +16,7 @@ button:hover { background:#ffc800; }
 .plan { background:#1d1d1d; padding:12px; margin:10px 0; border-radius:10px; border:1px solid #333; }
 .hidden { display:none; }
 .copy-btn { padding:5px 8px; background:#007bff; color:#fff; border:none; border-radius:5px; cursor:pointer; margin-left:5px; }
+.user-box { background:#1a1a1a; padding:12px; margin-bottom:15px; border-radius:10px; border:1px solid #333; text-align:center; }
 </style>
 </head>
 <body>
@@ -32,8 +33,10 @@ button:hover { background:#ffc800; }
 
 <!-- DASHBOARD -->
 <div id="dashboard" class="page hidden">
+<div class="user-box">
+Username: <span id="dashUser"></span> | Balance: Rs <span id="dashBalance">0</span>
+</div>
 <h2>Dashboard</h2>
-<p>Welcome to VERBOSE!</p>
 <div class="plan">Deposit/Withdrawal ke baad admin ko screenshot WhatsApp 03705519562 bhejna zaroori hai</div>
 </div>
 
@@ -50,37 +53,44 @@ button:hover { background:#ffc800; }
 JazzCash: 03705519562 <button class="copy-btn" onclick="copyText('03705519562')">Copy</button><br>
 EasyPaisa: 03379827882 <button class="copy-btn" onclick="copyText('03379827882')">Copy</button>
 </div>
-<input placeholder="Enter Amount">
-<input placeholder="Transaction ID">
-<input type="file">
-<button>Submit Deposit</button>
+<input id="depositAmount" placeholder="Amount">
+<input id="depositTxId" placeholder="Transaction ID">
+<input type="file" id="depositProof">
+<button onclick="submitDeposit()">Submit Deposit</button>
 </div>
 
 <!-- WITHDRAWAL -->
 <div id="withdrawal" class="page hidden">
 <h2>Withdrawal</h2>
-<input placeholder="Enter Amount">
-<input placeholder="Account Number">
-<button>Request Withdrawal</button>
+<input id="withdrawAmount" placeholder="Enter Amount">
+<input id="withdrawAccount" placeholder="Account Number">
+<button onclick="submitWithdraw()">Request Withdrawal</button>
 </div>
 
 <!-- SUPPORT -->
 <div id="support" class="page hidden">
 <h2>Support</h2>
 <p>Admin WhatsApp: 03705519562</p>
+<p>Email: <a href="mailto:rock.earn92@gmail.com" style="color:#ffb200;">rock.earn92@gmail.com</a></p>
 <a href="https://wa.me/923705519562" target="_blank">Open WhatsApp</a>
 </div>
 
 <!-- ACTIVITY -->
 <div id="activity" class="page hidden">
 <h2>Activity</h2>
-<p>No activity yet.</p>
+<div id="activityList">No activity yet.</div>
 </div>
 
 <!-- HISTORY -->
 <div id="history" class="page hidden">
 <h2>History</h2>
-<p>No history yet.</p>
+<div id="historyList">No history yet.</div>
+</div>
+
+<!-- ABOUT VERBOSE -->
+<div id="about" class="page hidden">
+<h2>About VERBOSE</h2>
+<p>VERBOSE is a trusted and professional investment platform, giving high-quality returns to its users. Millions of users and members work with our company. We ensure reliable profits with a transparent system. Our team provides 24/7 customer support for deposits, withdrawals, and all other inquiries. Join VERBOSE today and experience professional investment opportunities with verified plans and daily profit.</p>
 </div>
 
 <!-- NAVIGATION -->
@@ -92,14 +102,24 @@ EasyPaisa: 03379827882 <button class="copy-btn" onclick="copyText('03379827882')
 <div onclick="showPage('support')">📞<br>Support</div>
 <div onclick="showPage('activity')">📊<br>Activity</div>
 <div onclick="showPage('history')">📚<br>History</div>
+<div onclick="showPage('about')">ℹ️<br>About</div>
 </div>
 
 <script>
+let currentUser = '';
+let balance = 0;
+let activityLog = [];
+let historyLog = [];
+
 // LOGIN FUNCTION
 function login(){
     let u = document.getElementById("user").value;
     let p = document.getElementById("pass").value;
     if(u === "" || p === ""){ alert("Username aur password likho sweetie"); return; }
+    currentUser = u;
+    balance = 0;
+    document.getElementById("dashUser").innerText = currentUser;
+    document.getElementById("dashBalance").innerText = balance;
     document.getElementById("loginPage").classList.add("hidden");
     document.getElementById("dashboard").classList.remove("hidden");
     document.getElementById("bottomNav").classList.remove("hidden");
@@ -116,36 +136,94 @@ function showPage(id){
 // COPY FUNCTION
 function copyText(txt){ navigator.clipboard.writeText(txt); alert("Copied: "+txt); }
 
-// GENERATE 25 PLANS
+// PLANS DATA
+const planNames = [
+"Starter Boost","Mini Silver","Quick Profit","Prime Basic","Daily Saver",
+"Turbo Start","Ultra 3x","Golden 3x","Royal 3x","Premium 3x",
+"Silver Pro","Gold Pro","Max Saver","Profit Stream","Cash Booster",
+"Elite Plus","Prime Plus","Turbo Earn","Ultra Return","Mega Plan",
+"Diamond Plan","Platinum Plan","Business Pro","Investor Pack","Master King"
+];
+const planData = [];
+for(let i=0;i<25;i++){
+    let amt = (i<10)?200 + i*300 : 3500 + (i-10)*1500;
+    let multiplier = (i<10)?3:2.5;
+    planData.push({name:planNames[i],amount:amt,days:20,multiplier:multiplier});
+}
+
+// GENERATE PLANS
 function generatePlans(){
     let plansDiv = document.getElementById("plansList");
     plansDiv.innerHTML = "";
-    let names = [
-        "Starter Boost","Mini Silver","Quick Profit","Prime Basic","Daily Saver",
-        "Turbo Start","Ultra 3x","Golden 3x","Royal 3x","Premium 3x",
-        "Silver Pro","Gold Pro","Max Saver","Profit Stream","Cash Booster",
-        "Elite Plus","Prime Plus","Turbo Earn","Ultra Return","Mega Plan",
-        "Diamond Plan","Platinum Plan","Business Pro","Investor Pack","Master King"
-    ];
-    let amount = 200;
-    for(let i=1;i<=25;i++){
-        if(i<=10) amount += 300;
-        else amount += 1500;
-        let multiplier = (i<=10)?3:2.5;
-        let totalProfit = amount*multiplier;
-        let dailyProfit = (totalProfit/20).toFixed(0);
+    planData.forEach((p,i)=>{
+        let daily = Math.round(p.amount*p.multiplier/p.days);
+        let offer = (p.multiplier===3)?'<span style="color:#ff0;font-weight:bold;">24h Offer!</span>':'';
         plansDiv.innerHTML += `
             <div class="plan">
-                <b>${names[i-1]}</b><br>
-                Amount: Rs ${amount}<br>
-                Days: 20<br>
-                Daily Profit: Rs ${dailyProfit}<br>
-                Total Profit: Rs ${totalProfit}<br>
-                Multiplier: ${multiplier}x
+                <b>${p.name}</b> ${offer}<br>
+                Amount: Rs ${p.amount}<br>
+                Days: ${p.days}<br>
+                Daily Profit: Rs ${daily}<br>
+                Total Profit: Rs ${p.amount*p.multiplier}<br>
+                <button onclick="buyPlan(${i})">Buy Now</button>
             </div>
         `;
-    }
+    });
 }
+
+// BUY PLAN
+function buyPlan(index){
+    let p = planData[index];
+    document.getElementById("depositAmount").value = p.amount;
+    showPage('deposit');
+    activityLog.push(`Plan ${p.name} selected for deposit.`);
+    historyLog.push(`Bought plan ${p.name} amount Rs ${p.amount}`);
+    updateLogs();
+}
+
+// DEPOSIT
+function submitDeposit(){
+    let amt = parseInt(document.getElementById("depositAmount").value);
+    let tx = document.getElementById("depositTxId").value.trim();
+    let proof = document.getElementById("depositProof").files[0];
+    if(!amt || !tx || !proof){ alert("Fill all deposit details sweetie"); return; }
+    balance += amt;
+    document.getElementById("dashBalance").innerText = balance;
+    activityLog.push(`Deposit Rs ${amt} submitted.`);
+    historyLog.push(`Deposit Rs ${amt} TxID: ${tx}`);
+    document.getElementById("depositTxId").value=''; document.getElementById("depositProof").value='';
+    alert("Deposit submitted! Please send screenshot to admin WhatsApp 03705519562");
+    updateLogs();
+    showPage('dashboard');
+}
+
+// WITHDRAW
+function submitWithdraw(){
+    let amt = parseInt(document.getElementById("withdrawAmount").value);
+    let acc = document.getElementById("withdrawAccount").value.trim();
+    if(!amt || !acc){ alert("Enter amount and account number sweetie"); return; }
+    if(amt>balance){ alert("Insufficient balance"); return; }
+    balance -= amt;
+    document.getElementById("dashBalance").innerText = balance;
+    activityLog.push(`Withdraw Rs ${amt} requested.`);
+    historyLog.push(`Withdraw Rs ${amt} to ${acc}`);
+    document.getElementById("withdrawAmount").value=''; document.getElementById("withdrawAccount").value='';
+    alert("Withdraw request sent! Contact admin if needed.");
+    updateLogs();
+    showPage('dashboard');
+}
+
+// UPDATE ACTIVITY & HISTORY
+function updateLogs(){
+    document.getElementById("activityList").innerHTML = activityLog.join("<br>");
+    document.getElementById("historyList").innerHTML = historyLog.join("<br>");
+}
+
+// AUTO LOGOUT ON REFRESH
+window.onload = function(){ 
+    if(currentUser!==''){ login(); } 
+};
+window.onbeforeunload = function(){ currentUser=''; balance=0; };
 </script>
 
 </body>
