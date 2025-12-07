@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<VERBOSE>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@ input,select,button{width:100%;padding:10px;margin-top:6px;border-radius:6px;bor
 button{background:#007BFF;color:#fff;border:none;cursor:pointer;}
 button:hover{background:#0056b3;}
 .nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:10px;background:#eee;border-top:1px solid #ccc;}
-.nav div{cursor:pointer;text-align:center;font-size:13px;color:#333;}
+.nav div{cursor:pointer;text-align:center;font-size:13px;}
 .hidden{display:none;}
 .plan{display:flex;justify-content:space-between;align-items:center;padding:8px;border:1px solid #ddd;border-radius:6px;margin-bottom:8px;}
 .plan .info{flex:1;}
@@ -22,6 +22,13 @@ button:hover{background:#0056b3;}
 .countdown{font-size:12px;color:#555;margin-top:4px;}
 .logout-btn{margin-top:10px;background:#dc3545;}
 .muted{color:#666;font-size:13px;}
+/* Responsive */
+@media(max-width:480px){
+header{font-size:22px;padding:15px;}
+input,select,button{font-size:13px;padding:8px;}
+.plan{flex-direction:column;align-items:flex-start;}
+.nav div{font-size:12px;}
+}
 </style>
 </head>
 <body>
