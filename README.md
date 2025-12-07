@@ -245,7 +245,7 @@ bal-=amount;
 localStorage.setItem(KEY_BAL+currentUser,bal);
 const withdraws=JSON.parse(localStorage.getItem(KEY_WITHDRAWS)||[]);withdraws.push({user:currentUser,method,account,amount,time:Date.now(),approved:false});
 localStorage.setItem(KEY_WITHDRAWS,JSON.stringify(withdraws));
-alert('Withdrawal request submitted! Admin will manually approve.');
+alert('Withdrawal request submitted! Admin will approve manually.');
 document.getElementById('withdrawAccount').value='';
 document.getElementById('withdrawAmount').value='';
 renderDashboard();
@@ -255,30 +255,7 @@ nav('dashboardCard');
 // SUPPORT
 function openSupport(){nav('supportBox');}
 
-// DAILY PROFIT AUTO-CREDIT
-function creditDailyProfit(){
-if(!currentUser) return;
-let userPlans=JSON.parse(localStorage.getItem(KEY_USER_PLANS+currentUser)||'[]');
-let balance=Number(localStorage.getItem(KEY_BAL+currentUser)||0);
-let dailyTotal=0;
-userPlans.forEach(p=>{
-const now=Date.now();
-if(now-p.lastCredit>=24*3600*1000){
-balance+=p.dailyProfit;
-dailyTotal+=p.dailyProfit;
-p.lastCredit=now;
-}
-});
-localStorage.setItem(KEY_USER_PLANS+currentUser,JSON.stringify(userPlans));
-localStorage.setItem(KEY_BAL+currentUser,balance);
-localStorage.setItem(KEY_DAILY+currentUser,dailyTotal);
-renderDashboard();
-}
-
-// AUTO CREDIT EVERY 1 MIN (FOR DEMO PURPOSE)
-setInterval(creditDailyProfit,60*1000);
-
-// INITIALIZE
+// INIT
 if(currentUser) afterLoginUI();
 </script>
 </body>
