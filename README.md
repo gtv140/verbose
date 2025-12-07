@@ -6,255 +6,246 @@
 <title>VERBOSE</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <style>
-body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#0f172a;color:#fff;}
-header{padding:20px;text-align:center;font-weight:700;font-size:24px;background:#111827;color:#38bdf8;box-shadow:0 4px 12px rgba(0,0,0,0.5);}
+:root{
+--bg:#0a0a0a;
+--primary:#1e90ff;
+--secondary:#4da6ff;
+--text:#e0e0e0;
+--muted:#888;
+--alert:#ff4d4d;
+--success:#4dff4d;
+}
+body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text);}
+header{padding:20px;text-align:center;font-weight:900;font-size:26px;color:var(--primary);}
 .wrap{max-width:480px;margin:12px auto;padding:12px;}
-.card{background:linear-gradient(135deg,#111827,#1e293b);padding:15px;border-radius:15px;margin-bottom:15px;box-shadow:0 8px 20px rgba(0,0,0,0.5);transition:transform 0.3s, background 0.3s;}
-.card:hover{transform: translateY(-4px); background:linear-gradient(135deg,#1e293b,#0f172a);}
-input,select,button{width:100%;padding:10px;margin-top:8px;border-radius:10px;border:none;font-size:14px;}
-input,select{background:#1e293b;color:#fff;}
-button{background:#38bdf8;color:#111827;font-weight:700;cursor:pointer;transition: all 0.3s;}
-button:hover{background:#0ea5e9;color:#fff;transform:scale(1.05);}
-.nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:12px;background:#111827;border-top:1px solid #1e293b;box-shadow:0 -4px 12px rgba(0,0,0,0.5);}
-.nav div{text-align:center;font-size:14px;cursor:pointer;color:#38bdf8;}
-.plan{border:1px solid #38bdf8;border-radius:12px;padding:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;background:#111827;transition:all 0.3s;position:relative;box-shadow:0 6px 16px rgba(0,0,0,0.4);}
-.plan:hover{background:#0f172a;transform:scale(1.03);}
-.plan-badge{position:absolute;top:-10px;right:-10px;background:#0ea5e9;padding:5px 8px;border-radius:50%;font-size:12px;font-weight:700;animation:badgePulse 1.5s infinite;box-shadow:0 2px 8px rgba(0,0,0,0.5);}
-@keyframes badgePulse{0%,100%{transform:scale(1);}50%{transform:scale(1.3);}}
-.progress-container{background:#1e293b;border-radius:10px;height:12px;width:100%;margin-top:6px;}
-.progress-bar{background:#38bdf8;height:100%;border-radius:10px;width:0%;transition:width 1s;}
-.alert-note{background:#1e293b;color:#38bdf8;padding:12px;border-radius:12px;margin-bottom:14px;font-weight:600;text-align:center;}
+.card{background:#111;padding:12px;border-radius:12px;margin-bottom:12px;border:1px solid #222;}
+input,select,button{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid #333;background:#111;color:var(--text);font-size:14px;}
+.btn{background:var(--primary);border:none;color:#fff;font-weight:800;cursor:pointer;padding:10px;border-radius:10px;transition:0.3s;}
+.btn:hover{background:var(--secondary);}
+.nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:10px;background:#111;border-top:1px solid #222;}
+.nav div{color:var(--text);text-align:center;font-size:13px;cursor:pointer;}
+.countdown{font-weight:800;color:var(--primary);margin-top:6px;}
+.muted{color:var(--muted);font-size:13px;}
+.plan{display:flex;justify-content:space-between;gap:10px;padding:10px;border-radius:10px;border:1px solid #222;margin-bottom:8px;background:#111;}
+.plan .meta{flex:1;}
+.plan .actions{width:110px;text-align:right;}
 .user-box{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
-.hidden{display:none;}
-.balance-box{background: linear-gradient(90deg,#0f172a,#1e293b);color:#38bdf8;padding:12px;border-radius:12px;text-align:center;margin-bottom:15px;box-shadow:0 4px 12px rgba(0,0,0,0.5);}
-.balance-box span{display:block;font-size:22px;font-weight:700;}
-.buyBtn{background:#facc15;color:#111827;font-weight:700;border-radius:12px;padding:8px 12px;}
-.buyBtn:hover{background:#eab308;transform:scale(1.05);}
-.logoutBtn{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:#f87171;color:#111827;padding:12px 20px;border-radius:12px;font-weight:700;border:none;cursor:pointer;box-shadow:0 6px 12px rgba(0,0,0,0.5);transition:all 0.3s;}
-.logoutBtn:hover{background:#ef4444;transform:scale(1.05);}
+.user-box .badge{background:#222;padding:4px 8px;border-radius:999px;color:var(--primary);}
+.admin-box{display:flex;justify-content:space-around;margin-top:12px;}
+.admin-box div{flex:1;text-align:center;padding:10px;background:#222;border-radius:10px;margin:2px;cursor:pointer;}
+.admin-box div i{font-size:20px;margin-bottom:4px;display:block;color:var(--primary);}
+.alert-note{background:#330000;color:var(--alert);padding:10px;margin-bottom:12px;border-radius:8px;font-weight:600;text-align:center;}
+.success-note{background:#003300;color:var(--success);padding:10px;margin-bottom:12px;border-radius:8px;font-weight:600;text-align:center;}
+.referral-box{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.referral-box input{flex:1;}
+.logout-btn{position:fixed;bottom:60px;right:20px;background:var(--alert);color:#fff;padding:10px 14px;border-radius:50%;cursor:pointer;font-size:18px;border:none;}
+.logout-btn:hover{background:#ff1a1a;}
 </style>
 </head>
 <body>
-<header><i class="fas fa-bolt"></i> VERBOSE <i class="fas fa-bolt"></i></header>
+<header><i class="fas fa-rocket"></i> VERBOSE</header>
 <div class="wrap">
 
 <!-- LOGIN / SIGNUP -->
 <div id="loginCard" class="card">
-<h3>Login / Signup</h3>
+<h3 style="margin:0 0 8px 0;"><i class="fas fa-user"></i> Login / Signup</h3>
 <select id="authMode">
 <option value="login">Login</option>
 <option value="signup">New User</option>
 </select>
 <input id="inputUser" placeholder="Username"/>
 <input id="inputPass" placeholder="Password" type="password"/>
-<button onclick="doAuth()">Submit</button>
+<input id="referralInput" placeholder="Referral Code (optional)"/>
+<button class="btn" onclick="doAuth()"><i class="fas fa-sign-in-alt"></i> Submit</button>
+<p class="muted">Tip: Use same device & browser. Data stored locally.</p>
 </div>
 
 <!-- DASHBOARD -->
 <div id="dashboardCard" class="card hidden">
-<div class="alert-note">⚠️ Deposit/Withdrawal issues? Contact VERBOSE Admin:<br>Whatsapp: <a href="https://wa.me/03705519562">03705519562</a> | Email: <a href="mailto:rock.earn92@gmail.com">rock.earn92@gmail.com</a></div>
-
-<div class="balance-box">
-Welcome, <span id="welcomeText">User</span><br>
-Balance: <span id="balanceText">0</span> PKR
+<div class="alert-note">⚠️ If any issue with Deposit/Withdrawal, contact VERBOSE Administration immediately.</div>
+<div class="user-box">
+<div>
+<div id="welcomeText" style="font-weight:800;"><i class="fas fa-user-check"></i> Welcome —</div>
+<div id="memberSince" class="muted">Member since —</div>
+</div>
+<div style="text-align:right;">
+<div class="muted">Balance</div>
+<div style="font-weight:900;font-size:18px"><i class="fas fa-coins"></i> Rs <span id="balanceText">0</span></div>
+<div class="badge"><i class="fas fa-calendar-day"></i> Daily: Rs <span id="dailyText">0</span></div>
+</div>
 </div>
 
-<div id="progressGraphs"></div>
+<!-- REFERRAL -->
+<div class="referral-box">
+<input id="referralLink" readonly/>
+<button class="btn" onclick="copyReferral()"><i class="fas fa-copy"></i> Copy</button>
+</div>
+
+<!-- ADMIN -->
+<div class="card">
+<h3>Administration / Support</h3>
+<p>WhatsApp: <a href="https://wa.me/93705519562" target="_blank">03705519562</a></p>
+<p>Email: <a href="mailto:rock.earn92@gmail.com">rock.earn92@gmail.com</a></p>
+<p>VERBOSE — Million+ Users Platform</p>
 </div>
 
 <!-- PLANS -->
 <div id="plansCard" class="card hidden">
-<h3>Plans</h3>
+<h3><i class="fas fa-gift"></i> Plans</h3>
+<div class="muted" style="margin-bottom:8px;">7 Special Offers (24h), 25 Normal Plans + 5 Coming Soon</div>
 <div id="plansList"></div>
 </div>
 
 <!-- DEPOSIT -->
 <div id="depositCard" class="card hidden">
-<h3>Deposit</h3>
-<label>Method</label>
+<h3><i class="fas fa-wallet"></i> Deposit</h3>
+<label class="muted">Method</label>
 <select id="depositMethod" onchange="updateDepositNumber()">
 <option value="jazzcash">JazzCash</option>
 <option value="easypaisa">EasyPaisa</option>
 </select>
-<label>Number</label>
+<label class="muted">Number</label>
 <input id="depositNumber" readonly/>
-<label>Amount (PKR)</label>
+<label class="muted">Amount (PKR)</label>
 <input id="depositAmount" readonly/>
-<label>Transaction ID</label>
+<label class="muted">Transaction ID</label>
 <input id="depositTx" placeholder="Enter TX ID"/>
-<label>Upload Proof</label>
+<label class="muted">Upload Proof</label>
 <input id="depositProof" type="file"/>
-<button onclick="submitDeposit()">Submit Deposit</button>
+<button class="btn" onclick="submitDeposit()"><i class="fas fa-paper-plane"></i> Submit Deposit</button>
 </div>
 
 <!-- WITHDRAW -->
 <div id="withdrawCard" class="card hidden">
-<h3>Withdraw</h3>
-<label>Method</label>
+<h3><i class="fas fa-money-bill-wave"></i> Withdrawal</h3>
+<label class="muted">Method</label>
 <select id="withdrawMethod">
 <option value="jazzcash">JazzCash</option>
 <option value="easypaisa">EasyPaisa</option>
 <option value="bank">Bank</option>
 </select>
-<label>Account / Mobile Number</label>
+<label class="muted">Account / Mobile Number</label>
 <input id="withdrawAccount" placeholder="Enter account or mobile number"/>
-<label>Amount (PKR)</label>
+<label class="muted">Amount (PKR)</label>
 <input id="withdrawAmount" placeholder="Enter amount"/>
-<button onclick="submitWithdraw()">Request Withdrawal</button>
+<button class="btn" onclick="submitWithdraw()"><i class="fas fa-paper-plane"></i> Request Withdrawal</button>
+<p class="muted" style="margin-top:6px;text-align:center;">⚠️ Withdrawal will be approved manually. Contact support for urgent issues.</p>
 </div>
 
-<!-- LOGOUT BUTTON -->
-<button class="logoutBtn" onclick="logoutUser()">Logout</button>
+</div>
 
 <!-- NAV -->
 <div class="nav">
-<div onclick="nav('dashboardCard')"><i class="fas fa-home"></i><br>Home</div>
-<div onclick="nav('plansCard')"><i class="fas fa-gift"></i><br>Plans</div>
-<div onclick="nav('depositCard')"><i class="fas fa-wallet"></i><br>Deposit</div>
-<div onclick="nav('withdrawCard')"><i class="fas fa-money-bill"></i><br>Withdraw</div>
+<div onclick="nav('dashboardCard')"><i class="fas fa-home"></i> Home</div>
+<div onclick="nav('plansCard')"><i class="fas fa-box"></i> Plans</div>
+<div onclick="nav('depositCard')"><i class="fas fa-wallet"></i> Deposit</div>
+<div onclick="nav('withdrawCard')"><i class="fas fa-hand-holding-usd"></i> Withdraw</div>
 </div>
 
+<button class="logout-btn" onclick="doLogout()" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
+
 <script>
+// STORAGE KEYS
 const KEY_USER='verbose_user';
 const KEY_BAL='verbose_balance_';
+const KEY_DAILY='verbose_daily_';
+const KEY_USER_PLANS='verbose_plans_';
+const KEY_OFFERS='verbose_offer_';
+const KEY_DEPOSITS='verbose_deposits';
+const KEY_WITHDRAWS='verbose_withdraws';
 let currentUser=localStorage.getItem(KEY_USER)||null;
+let plans=[],offerIntervals={};
 
-// SAMPLE PLANS
-let plans=[];
+// GENERATE PLANS
 for(let i=1;i<=7;i++){
-let invest=200*i; if(invest>3000) invest=3000; let days=20+Math.floor(Math.random()*51);
-plans.push({id:i,name:'Special Offer '+i,invest:invest,total:invest*3,daily:Math.round(invest*3/days),days:days,offer:true});
+let invest=200*i;if(invest>3000) invest=3000; let days=20+Math.floor(Math.random()*51);
+plans.push({id:i,name:'Special Plan '+i,invest:invest,multiplier:3,total:invest*3,days:days,offer:true});
 }
-for(let i=8;i<=30;i++){
-let invest=3000+(i-8)*(30000-3000)/22; let days=20+Math.floor(Math.random()*51);
-plans.push({id:i,name:'Plan '+i,invest:Math.round(invest),total:Math.round(invest*2.5),daily:Math.round((invest*2.5)/days),days:days,offer:false});
+for(let i=8;i<=32;i++){
+let invest=Math.round(3000+(i-8)*(30000-3000)/24);
+let duration=20+Math.floor(Math.random()*51);
+let total=Math.round(invest*2.5);
+plans.push({id:i,name:'Plan '+(i-7),invest:invest,multiplier:2.5,total:total,days:duration,offer:false});
 }
+for(let i=33;i<=37;i++){
+plans.push({id:i,name:'Coming Soon',invest:0,multiplier:0,total:0,days:0,offer:false});
+}
+function fmt(n){return Number(n).toLocaleString('en-US');}
 
 // AUTH
 function doAuth(){
-const u=document.getElementById('inputUser').value.trim();
-const p=document.getElementById('inputPass').value.trim();
-if(!u||!p){alert('Enter username & password'); return;}
-const key='verbose_cred_'+u;
-if(document.getElementById('authMode').value==='signup'){
-if(localStorage.getItem(key)){alert('Username exists'); return;}
-localStorage.setItem(key,p);
-if(!localStorage.getItem(KEY_BAL+u)) localStorage.setItem(KEY_BAL+u,'0');
-}else{
-if(localStorage.getItem(key)!==p){alert('Wrong username/password'); return;}
+const mode=document.getElementById('authMode').value;
+const u=(document.getElementById('inputUser').value||'').trim();
+const p=(document.getElementById('inputPass').value||'').trim();
+const ref=document.getElementById('referralInput').value.trim();
+if(!u||!p){alert('Enter username & password');return;}
+const credKey='verbose_cred_'+u;
+if(mode==='signup'){
+if(localStorage.getItem(credKey)){alert('Username exists');return;}
+localStorage.setItem(credKey,p);localStorage.setItem(KEY_BAL+u,'0');localStorage.setItem(KEY_DAILY+u,'0');localStorage.setItem(KEY_USER_PLANS+u,'[]');
+if(ref && localStorage.getItem('verbose_cred_'+ref)){let bal=Number(localStorage.getItem(KEY_BAL+ref)||0);bal+=30;localStorage.setItem(KEY_BAL+ref,bal);alert(`Referral bonus Rs 30 added to ${ref}`);}
+}else{if(localStorage.getItem(credKey)!==p){alert('Wrong username/password');return;}}
+localStorage.setItem(KEY_USER,u);currentUser=u;afterLoginUI();
 }
-localStorage.setItem(KEY_USER,u);
-currentUser=u;
-afterLoginUI();
-}
+
+function afterLoginUI(){nav('dashboardCard');renderPlans();startOffers();updateReferralLink();}
+function updateReferralLink(){if(!currentUser) return;document.getElementById('referralLink').value=window.location.href+'?ref='+currentUser;}
+function copyReferral(){const link=document.getElementById('referralLink');link.select();document.execCommand('copy');alert('Referral link copied!');}
+function doLogout(){localStorage.removeItem(KEY_USER);currentUser=null;nav('loginCard');Object.values(offerIntervals).forEach(i=>clearInterval(i));}
 
 // NAV
-function nav(cardId){
-['loginCard','dashboardCard','plansCard','depositCard','withdrawCard'].forEach(id=>document.getElementById(id).classList.add('hidden'));
-document.getElementById(cardId).classList.remove('hidden');
-renderDashboard();
-renderPlans();
-updateDepositNumber();
-}
+function nav(cardId){['loginCard','dashboardCard','plansCard','depositCard','withdrawCard'].forEach(id=>document.getElementById(id).classList.add('hidden'));document.getElementById(cardId).classList.remove('hidden');renderDashboard();fillWithdrawUser();updateReferralLink();}
 
 // DASHBOARD
-function afterLoginUI(){nav('dashboardCard');}
-function renderDashboard(){
-if(!currentUser) return;
-document.getElementById('welcomeText').innerText=currentUser;
-document.getElementById('balanceText').innerText=localStorage.getItem(KEY_BAL+currentUser)||'0';
-renderProgressGraphs();
-}
-
-// LOGOUT
-function logoutUser(){
-localStorage.removeItem(KEY_USER);
-currentUser=null;
-nav('loginCard');
-alert('Logged out successfully!');
-}
-
-// PROGRESS GRAPHS
-function renderProgressGraphs(){
-const container=document.getElementById('progressGraphs'); container.innerHTML='';
-plans.slice(0,5).forEach(plan=>{
-let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);
-let percent=Math.min(100,Math.round((bal/plan.total)*100));
-const div=document.createElement('div'); div.className='card';
-div.innerHTML=`<strong>${plan.name}</strong><br>Daily: Rs ${plan.daily} | Total: Rs ${plan.total}<div class="progress-container"><div class="progress-bar" style="width:${percent}%"></div></div>`;
-container.appendChild(div);
-});
-}
+function renderDashboard(){if(!currentUser)return;document.getElementById('welcomeText').innerText='Welcome, '+currentUser;document.getElementById('memberSince').innerText='Member since: '+new Date().toLocaleDateString();
+document.getElementById('balanceText').innerText=fmt(Number(localStorage.getItem(KEY_BAL+currentUser)||0));document.getElementById('dailyText').innerText=fmt(Number(localStorage.getItem(KEY_DAILY+currentUser)||0));}
 
 // PLANS
 function renderPlans(){
-const container=document.getElementById('plansList'); container.innerHTML='';
+const container=document.getElementById('plansList');container.innerHTML='';
 plans.forEach(plan=>{
-const div=document.createElement('div'); div.className='plan';
-div.innerHTML=`<div><strong>${plan.name}</strong><br>Invest: Rs ${plan.invest}<br>Total: Rs ${plan.total}<br>Daily: Rs ${plan.daily}<br>Days: ${plan.days}${plan.offer?`<br><span id="timer_${plan.id}">Loading timer...</span>`:''}</div>
-<div><button onclick="buyPlan(${plan.id})" class="buyBtn">Buy Now</button></div>`;
-if(plan.offer){
-const badge=document.createElement('div'); badge.className='plan-badge'; badge.innerText='HOT'; div.appendChild(badge);
-startCountdown(plan.id);
-}
-container.appendChild(div);
+const div=document.createElement('div');div.className='plan';if(plan.name==='Coming Soon') div.className+=' coming-soon';
+let dailyProfit=plan.days>0?Math.round(plan.total/plan.days):0;
+div.innerHTML=`<div class="meta"><div style="font-weight:800"><i class="fas fa-gift"></i>${plan.name}</div>
+<div class="muted" style="margin-top:4px">Invest: Rs ${fmt(plan.invest)} · Total: Rs ${fmt(plan.total)} · Days: ${plan.days} · Daily: Rs ${fmt(dailyProfit)}</div>
+${plan.offer?`<div class="countdown" id="countdown_${plan.id}">Loading timer...</div>`:''}</div>
+<div class="actions">${plan.offer||plan.name!=='Coming Soon'?'<button class="btn" onclick="buyPlan('+plan.id+')"><i class="fas fa-shopping-cart"></i> Buy Now</button>':''}</div>`;container.appendChild(div);
 });
 }
 
-// COUNTDOWN
-function startCountdown(id){
-const el=document.getElementById('timer_'+id);
-let end=Date.now()+24*3600*1000;
-setInterval(()=>{let diff=Math.floor((end-Date.now())/1000); if(diff<=0){el.innerText='Offer ended'; return;}
-let h=Math.floor(diff/3600), m=Math.floor((diff%3600)/60), s=diff%60;
-el.innerText=`${h}h:${m}m:${s}s`;},1000);
-}
+// OFFER TIMER
+function startOffers(){plans.forEach(plan=>{if(!plan.offer)return;
+const key=KEY_OFFERS+plan.id;let endTs=Number(localStorage.getItem(key)||0);if(!endTs||endTs<Date.now()){endTs=Date.now()+24*3600*1000;localStorage.setItem(key,endTs);}
+const el=document.getElementById('countdown_'+plan.id);if(!el)return;function tick(){const diff=Math.floor((endTs-Date.now())/1000);if(diff<=0){el.innerText='Offer ended';clearInterval(offerIntervals[plan.id]);return;}
+const h=Math.floor(diff/3600),m=Math.floor((diff%3600)/60),s=diff%60;el.innerText=`${String(h).padStart(2,'0')}h:${String(m).padStart(2,'0')}m:${String(s).padStart(2,'0')}s`;}tick();offerIntervals[plan.id]=setInterval(tick,1000);});}
 
 // BUY PLAN
-function buyPlan(id){
-const plan=plans.find(p=>p.id===id);
-document.getElementById('depositAmount').value=plan.invest;
-nav('depositCard');
-alert(`Plan ${plan.name} selected. Submit your deposit.`);
-}
+function buyPlan(id){if(!currentUser){alert('Login first');return;}const plan=plans.find(p=>p.id===id);if(!plan || plan.name==='Coming Soon'){alert('Plan not available');return;}
+let userPlans=JSON.parse(localStorage.getItem(KEY_USER_PLANS+currentUser)||'[]');
+const dailyProfit=Math.round(plan.total/plan.days);userPlans.push({planId:plan.id,dailyProfit,lastCredit:Date.now()});localStorage.setItem(KEY_USER_PLANS+currentUser,JSON.stringify(userPlans));
+document.getElementById('depositAmount').value=plan.invest;updateDepositNumber();nav('depositCard');alert(`Plan ${plan.name} selected. Submit your deposit. Admin will manually approve.`);}
 
 // DEPOSIT
-function updateDepositNumber(){
-const method=document.getElementById('depositMethod').value;
-document.getElementById('depositNumber').value=method==='jazzcash'?'03705519562':'03379827882';
-}
-function submitDeposit(){
-if(!currentUser){alert('Login first'); return;}
-const amount=Number(document.getElementById('depositAmount').value);
-let prev=Number(localStorage.getItem(KEY_BAL+currentUser)||0);
-let target=prev+amount;
-let current=prev;
-let interval=setInterval(()=>{
-current+=Math.ceil((target-current)/10);
-if(current>=target){current=target; clearInterval(interval);}
-document.getElementById('balanceText').innerText=current;
-localStorage.setItem(KEY_BAL+currentUser,current);
-},50);
-alert('Deposit submitted! Balance updated.');
-nav('dashboardCard');
-}
+function updateDepositNumber(){const method=document.getElementById('depositMethod').value;document.getElementById('depositNumber').value=method==='jazzcash'?'03705519562':'03379827882';}
+function submitDeposit(){if(!currentUser){alert('Login first');return;}
+const tx=(document.getElementById('depositTx').value||'').trim();const proof=document.getElementById('depositProof').files[0];const amount=Number(document.getElementById('depositAmount').value)||0;
+if(!tx||!proof||!amount){alert('All fields required');return;}
+let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);bal+=amount;localStorage.setItem(KEY_BAL+currentUser,bal);
+const deposits=JSON.parse(localStorage.getItem(KEY_DEPOSITS)||'[]');deposits.push({user:currentUser,method:document.getElementById('depositMethod').value,amount,tx,proof:proof.name,time:Date.now(),approved:false});
+localStorage.setItem(KEY_DEPOSITS,JSON.stringify(deposits));alert('Deposit submitted! Admin will approve manually.');document.getElementById('depositTx').value='';document.getElementById('depositProof').value='';nav('dashboardCard');renderDashboard();}
 
 // WITHDRAW
-function submitWithdraw(){
-if(!currentUser){alert('Login first'); return;}
-const amt=Number(document.getElementById('withdrawAmount').value);
-let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);
-if(amt>bal){alert('Insufficient balance'); return;}
-bal-=amt;
-localStorage.setItem(KEY_BAL+currentUser,bal);
-alert('Withdrawal requested!');
-nav('dashboardCard');
-}
-
-// KEEP USER LOGGED IN AFTER REFRESH
-window.addEventListener('load', ()=>{
-if(currentUser) afterLoginUI();
-});
+function fillWithdrawUser(){if(!currentUser) return;}
+function submitWithdraw(){if(!currentUser){alert('Login first');return;}
+const method=document.getElementById('withdrawMethod').value;
+const account=document.getElementById('withdrawAccount').value.trim();
+const amount=Number(document.getElementById('withdrawAmount').value);
+if(!account||!amount){alert('Enter account and amount');return;}
+let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);if(amount>bal){alert('Insufficient balance');return;}
+bal-=amount;localStorage.setItem(KEY_BAL+currentUser,bal);
+const withdraws=JSON.parse(localStorage.getItem(KEY_WITHDRAWS)||'[]');withdraws.push({user:currentUser,method,account,amount,time:Date.now(),approved:false});
+localStorage.setItem(KEY_WITHDRAWS,JSON.stringify(withdraws));
+alert('Withdrawal request submitted! Admin will approve manually.');document.getElementById('withdrawAccount').value='';document.getElementById('withdrawAmount').value='';nav('dashboardCard');renderDashboard();}
 </script>
 </body>
 </html>
