@@ -22,6 +22,7 @@ button:hover{background:#0056b3;}
 .countdown{font-weight:bold;color:green;}
 .copy-btn{background:#28a745;color:#fff;padding:5px;border:none;border-radius:5px;cursor:pointer;margin-top:5px;}
 .copy-btn:hover{background:#218838;}
+.notification{background:#eaf7ea;padding:10px;border:1px solid #28a745;color:#155724;border-radius:5px;margin-bottom:10px;display:none;}
 </style>
 </head>
 <body>
@@ -43,6 +44,7 @@ button:hover{background:#0056b3;}
 <h2>Dashboard</h2>
 <p>Welcome to VERBOSE! Trusted platform, millions of users, daily profits, secure & reliable investment services.</p>
 <button class="logout-btn" onclick="logout()">Logout</button>
+<div id="notification" class="notification"></div>
 </div>
 
 <!-- PLANS -->
@@ -206,7 +208,7 @@ function submitDeposit(){
     balance+=amount;
     localStorage.setItem('verbose_balance',balance);
     document.getElementById('dashBalance').innerText=balance;
-    alert("Deposit submitted! Admin will verify and process it.");
+    showNotification("Deposit submitted! Please share your proof via WhatsApp or email for admin verification.");
     document.getElementById('depositTxId').value='';
     document.getElementById('depositProof').value='';
     showPage('dashboard');
@@ -222,7 +224,7 @@ function submitWithdraw(){
     balance-=amt;
     localStorage.setItem('verbose_balance',balance);
     document.getElementById('dashBalance').innerText=balance;
-    alert(`Withdrawal request of Rs ${amt} received. Admin will process it.`);
+    showNotification(`Withdrawal request of Rs ${amt} received! Please share your account details via WhatsApp or email for verification.`);
     document.getElementById('withdrawAmount').value='';
     document.getElementById('withdrawAccount').value='';
     showPage('dashboard');
@@ -257,6 +259,14 @@ function startCountdown(planId){
         let seconds = Math.floor((distance%(1000*60))/1000);
         countdownEl.innerText = `(${hours}h ${minutes}m ${seconds}s)`;
     },1000);
+}
+
+// NOTIFICATION
+function showNotification(msg){
+    let n = document.getElementById('notification');
+    n.innerText = msg;
+    n.style.display='block';
+    setTimeout(()=>{n.style.display='none';},8000);
 }
 
 // ONLOAD
