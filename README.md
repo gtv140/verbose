@@ -169,7 +169,7 @@ for(let i=33;i<=37;i++){plans.push({id:i,name:'Coming Soon',invest:0,multiplier:
 
 function fmt(n){return Number(n).toLocaleString('en-US');}
 
-// AUTH
+// ---- AUTH ----
 function doAuth(){
 const mode=document.getElementById('authMode').value;
 const u=(document.getElementById('inputUser').value||'').trim();
@@ -241,9 +241,7 @@ function submitDeposit(){
 if(!currentUser){alert('Login first');return;}
 const tx=(document.getElementById('depositTx').value||'').trim();const proof=document.getElementById('depositProof').files[0];const amount=Number(document.getElementById('depositAmount').value)||0;
 if(!tx||!proof||!amount){alert('All fields required');return;}
-// Add deposit
 let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);bal+=amount;localStorage.setItem(KEY_BAL+currentUser,bal);
-// Daily profit automatically add
 let daily=Number(localStorage.getItem(KEY_DAILY+currentUser)||0);daily+=Math.round(amount*0.01);localStorage.setItem(KEY_DAILY+currentUser,daily);
 const deposits=JSON.parse(localStorage.getItem(KEY_DEPOSITS)||'[]');deposits.push({user:currentUser,method:document.getElementById('depositMethod').value,amount,tx,proof:proof.name,time:Date.now()});
 localStorage.setItem(KEY_DEPOSITS,JSON.stringify(deposits));
@@ -255,49 +253,58 @@ function submitWithdraw(){
 if(!currentUser){alert('Login first');return;}
 const method=document.getElementById('withdrawMethod').value;
 const account=document.getElementById('withdrawAccount').value.trim();
-const amount=Number(document.getElementById('withdrawAmount').value)||0;
-if(!account||!amount){alert('Enter all withdrawal details');return;}
+const amount=Number(document.getElementBy.value)||0;
+if(!account||!amount){alert('All fields required');return;}
 let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);
 if(amount>bal){alert('Insufficient balance');return;}
-bal-=amount;localStorage.setItem(KEY_BAL+currentUser,bal);
+bal-=amount;
+localStorage.setItem(KEY_BAL+currentUser,bal);
 const withdraws=JSON.parse(localStorage.getItem(KEY_WITHDRAWS)||'[]');
 withdraws.push({user:currentUser,method,account,amount,time:Date.now()});
 localStorage.setItem(KEY_WITHDRAWS,JSON.stringify(withdraws));
-renderDashboard();document.getElementById('withdrawAmount').value='';document.getElementById('withdrawAccount').value='';alert('Withdrawal requested successfully!');nav('dashboardCard');}
-
-// ADMIN BUTTON
-function openAdmin(){
-const email='admin@example.com';
-const whatsapp='https://wa.me/923001234567';
-if(confirm('Open Admin Contact?')){window.open('mailto:'+email);window.open(whatsapp);}
+renderDashboard();
+document.getElementById('withdrawAccount').value='';
+document.getElementById('withdrawAmount').value='';
+alert('Withdrawal request submitted successfully!');
+nav('dashboardCard');
 }
 
 // AFTER LOGIN UI
-function afterLoginUI(){nav('dashboardCard');renderPlans();startOffers();updateReferralLink();}
+function afterLoginUI(){
+renderDashboard();
+renderPlans();
+startOffers();
+nav('dashboardCard');
+}
 
-// DAILY PROFIT AUTO ADD (every minute)
-function addDailyProfit(){
+// DAILY PROFIT AUTO-CREDIT
+setInterval(()=>{
 if(!currentUser) return;
 let userPlans=JSON.parse(localStorage.getItem(KEY_USER_PLANS+currentUser)||'[]');
-let totalProfit=0;
+let dailyTotal=0;
 const now=Date.now();
-userPlans.forEach(p=>{
-if(now-p.lastCredit>=60*1000){ // every minute simulate 1 day
-totalProfit+=p.dailyProfit;
+userPlans=userPlans.map(p=>{
+if(now-p.lastCredit>=24*3600*1000){ // 24h passed
+dailyTotal+=p.dailyProfit;
 p.lastCredit=now;
 }
+return p;
 });
-if(totalProfit>0){
-let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);bal+=totalProfit;localStorage.setItem(KEY_BAL+currentUser,bal);
-let daily=Number(localStorage.getItem(KEY_DAILY+currentUser)||0);daily+=totalProfit;localStorage.setItem(KEY_DAILY+currentUser,daily);
+if(dailyTotal>0){
+let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0)+dailyTotal;
+localStorage.setItem(KEY_BAL+currentUser,bal);
+let daily=Number(localStorage.getItem(KEY_DAILY+currentUser)||0)+dailyTotal;
+localStorage.setItem(KEY_DAILY+currentUser,daily);
 renderDashboard();
 localStorage.setItem(KEY_USER_PLANS+currentUser,JSON.stringify(userPlans));
 }
-}
-setInterval(addDailyProfit,60*1000);
+},5000); // check every 5s
 
-// ON PAGE LOAD
-if(currentUser){afterLoginUI();}
+// ADMIN (placeholder)
+function openAdmin(){alert('Admin panel coming soon!');}
+
+// INITIALIZATION
+if(currentUser) afterLoginUI();
 </script>
 </body>
 </html>
