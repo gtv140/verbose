@@ -221,7 +221,7 @@ let dailyProfit = parseFloat(localStorage.getItem('verbose_dailyProfit')) || 0;
 let plansData = [];
 let userPlans = JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');
 
-// CREATE 25 PLANS 200-30000, days 20-70, 7 special 24h offer
+// CREATE 25 PLANS
 for(let i=1;i<=25;i++){
     let invest = Math.round(200 + (i-1)*(30000-200)/24);
     let days = 20 + Math.floor((i-1)*(70-20)/24);
@@ -361,13 +361,18 @@ function submitDeposit(){
     document.getElementById('dashProfit').innerText=dailyProfit;
     alert("Deposit submitted! Admin will verify.");
 
-    // Referral bonus (check URL param)
+    // Referral bonus auto add
     let urlParams = new URLSearchParams(window.location.search);
     let refUser = urlParams.get('ref');
     if(refUser && refUser !== currentUser){
-        let refBonus = 30;
-        alert(`Referral bonus Rs ${refBonus} added to ${refUser}!`);
-        // In real system, this would update refUser's balance
+        let refData = JSON.parse(localStorage.getItem('verbose_referrals')||'{}');
+        if(!refData[refUser]){
+            refData[refUser]=0;
+        }
+        refData[refUser] += 30;
+        localStorage.setItem('verbose_referrals',JSON.stringify(refData));
+        if(refUser === currentUser){balance += 30; localStorage.setItem('verbose_balance',balance);}
+        alert(`Referral bonus Rs 30 added to ${refUser}!`);
     }
 
     document.getElementById('depositTxId').value='';
