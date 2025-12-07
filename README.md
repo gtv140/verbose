@@ -6,82 +6,32 @@
 <title>VERBOSE</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <style>
-body {
-    margin:0;
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background:#0f172a;
-    color:#fff;
-}
-header {
-    padding:20px; 
-    text-align:center; 
-    font-weight:700; 
-    font-size:24px; 
-    background:#111827; 
-    color:#38bdf8;
-    box-shadow:0 4px 12px rgba(0,0,0,0.5);
-}
-.wrap {max-width:480px; margin:12px auto; padding:12px;}
-.card {
-    background:linear-gradient(135deg,#111827,#1e293b);
-    padding:15px; 
-    border-radius:15px; 
-    margin-bottom:15px; 
-    box-shadow:0 8px 20px rgba(0,0,0,0.5);
-    transition:transform 0.3s, background 0.3s;
-}
-.card:hover {transform: translateY(-4px); background:linear-gradient(135deg,#1e293b,#0f172a);}
-input, select, button {
-    width:100%; 
-    padding:10px; 
-    margin-top:8px; 
-    border-radius:10px; 
-    border:none; 
-    font-size:14px;
-}
-input, select {background:#1e293b; color:#fff;}
-button {background:#38bdf8; color:#111827; font-weight:700; cursor:pointer; border:none; transition: all 0.3s;}
-button:hover {background:#0ea5e9; color:#fff; transform:scale(1.05);}
-.nav {
-    position:fixed; bottom:0; left:0; right:0; 
-    display:flex; justify-content:space-around; 
-    padding:12px; background:#111827; border-top:1px solid #1e293b;
-    box-shadow:0 -4px 12px rgba(0,0,0,0.5);
-}
-.nav div {text-align:center; font-size:14px; cursor:pointer; color:#38bdf8;}
-.plan {
-    border:1px solid #38bdf8; border-radius:12px; padding:12px; 
-    margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;
-    background:#111827; transition:all 0.3s; position:relative;
-    box-shadow:0 6px 16px rgba(0,0,0,0.4);
-}
-.plan:hover {background:#0f172a; transform:scale(1.03);}
-.plan-badge {
-    position:absolute; top:-10px; right:-10px; background:#0ea5e9; padding:5px 8px; border-radius:50%; font-size:12px; font-weight:700;
-    animation:badgePulse 1.5s infinite;
-    box-shadow:0 2px 8px rgba(0,0,0,0.5);
-}
-@keyframes badgePulse {0%,100%{transform:scale(1);}50%{transform:scale(1.3);}}
-.progress-container {background:#1e293b; border-radius:10px; height:12px; width:100%; margin-top:6px;}
-.progress-bar {background:#38bdf8; height:100%; border-radius:10px; width:0%; transition:width 1s;}
-.alert-note {background:#1e293b; color:#38bdf8; padding:12px; border-radius:12px; margin-bottom:14px; font-weight:600; text-align:center;}
-.user-box {display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;}
-.hidden {display:none;}
-.balance-box {
-    background: linear-gradient(90deg,#0f172a,#1e293b);
-    color:#38bdf8; padding:12px; border-radius:12px; text-align:center;
-    margin-bottom:15px; box-shadow:0 4px 12px rgba(0,0,0,0.5);
-}
-.balance-box span {display:block; font-size:22px; font-weight:700;}
-.buyBtn {background:#facc15; color:#111827; font-weight:700; border-radius:12px; padding:8px 12px;}
-.buyBtn:hover {background:#eab308; transform:scale(1.05);}
-.logoutBtn {
-    position:fixed; bottom:60px; left:50%; transform:translateX(-50%);
-    background:#f87171; color:#111827; padding:12px 20px; border-radius:12px;
-    font-weight:700; border:none; cursor:pointer; box-shadow:0 6px 12px rgba(0,0,0,0.5);
-    transition:all 0.3s;
-}
-.logoutBtn:hover {background:#ef4444; transform:scale(1.05);}
+body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#0f172a;color:#fff;}
+header{padding:20px;text-align:center;font-weight:700;font-size:24px;background:#111827;color:#38bdf8;box-shadow:0 4px 12px rgba(0,0,0,0.5);}
+.wrap{max-width:480px;margin:12px auto;padding:12px;}
+.card{background:linear-gradient(135deg,#111827,#1e293b);padding:15px;border-radius:15px;margin-bottom:15px;box-shadow:0 8px 20px rgba(0,0,0,0.5);transition:transform 0.3s, background 0.3s;}
+.card:hover{transform: translateY(-4px); background:linear-gradient(135deg,#1e293b,#0f172a);}
+input,select,button{width:100%;padding:10px;margin-top:8px;border-radius:10px;border:none;font-size:14px;}
+input,select{background:#1e293b;color:#fff;}
+button{background:#38bdf8;color:#111827;font-weight:700;cursor:pointer;transition: all 0.3s;}
+button:hover{background:#0ea5e9;color:#fff;transform:scale(1.05);}
+.nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:12px;background:#111827;border-top:1px solid #1e293b;box-shadow:0 -4px 12px rgba(0,0,0,0.5);}
+.nav div{text-align:center;font-size:14px;cursor:pointer;color:#38bdf8;}
+.plan{border:1px solid #38bdf8;border-radius:12px;padding:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;background:#111827;transition:all 0.3s;position:relative;box-shadow:0 6px 16px rgba(0,0,0,0.4);}
+.plan:hover{background:#0f172a;transform:scale(1.03);}
+.plan-badge{position:absolute;top:-10px;right:-10px;background:#0ea5e9;padding:5px 8px;border-radius:50%;font-size:12px;font-weight:700;animation:badgePulse 1.5s infinite;box-shadow:0 2px 8px rgba(0,0,0,0.5);}
+@keyframes badgePulse{0%,100%{transform:scale(1);}50%{transform:scale(1.3);}}
+.progress-container{background:#1e293b;border-radius:10px;height:12px;width:100%;margin-top:6px;}
+.progress-bar{background:#38bdf8;height:100%;border-radius:10px;width:0%;transition:width 1s;}
+.alert-note{background:#1e293b;color:#38bdf8;padding:12px;border-radius:12px;margin-bottom:14px;font-weight:600;text-align:center;}
+.user-box{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.hidden{display:none;}
+.balance-box{background: linear-gradient(90deg,#0f172a,#1e293b);color:#38bdf8;padding:12px;border-radius:12px;text-align:center;margin-bottom:15px;box-shadow:0 4px 12px rgba(0,0,0,0.5);}
+.balance-box span{display:block;font-size:22px;font-weight:700;}
+.buyBtn{background:#facc15;color:#111827;font-weight:700;border-radius:12px;padding:8px 12px;}
+.buyBtn:hover{background:#eab308;transform:scale(1.05);}
+.logoutBtn{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:#f87171;color:#111827;padding:12px 20px;border-radius:12px;font-weight:700;border:none;cursor:pointer;box-shadow:0 6px 12px rgba(0,0,0,0.5);transition:all 0.3s;}
+.logoutBtn:hover{background:#ef4444;transform:scale(1.05);}
 </style>
 </head>
 <body>
@@ -283,6 +233,7 @@ let interval=setInterval(()=>{
 current+=Math.ceil((target-current)/10);
 if(current>=target){current=target; clearInterval(interval);}
 document.getElementById('balanceText').innerText=current;
+localStorage.setItem(KEY_BAL+currentUser,current);
 },50);
 alert('Deposit submitted! Balance updated.');
 nav('dashboardCard');
