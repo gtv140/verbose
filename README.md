@@ -20,7 +20,7 @@ input,select,button{width:100%;padding:10px;margin-top:6px;border-radius:8px;bor
 .muted{color:var(--muted);font-size:13px;}
 .plan{display:flex;justify-content:space-between;gap:10px;padding:10px;border-radius:10px;border:1px solid rgba(0,255,240,0.04);margin-bottom:8px;background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(0,0,0,0.04));}
 .plan .meta{flex:1;}
-.plan .actions{width:100px;text-align:right;}
+.plan .actions{width:110px;text-align:right;}
 .user-box{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
 .user-box .badge{background:rgba(0,255,240,0.06);padding:4px 8px;border-radius:999px;color:var(--neon);}
 .icon{margin-right:6px;}
@@ -128,9 +128,19 @@ let currentUser=localStorage.getItem(KEY_USER)||null;
 let plans=[];
 let offerIntervals={};
 
-// GENERATE 7 SPECIAL OFFERS
+// SPECIAL OFFERS (7 plans 200→3000, 3x profit)
 for(let i=1;i<=7;i++){
-plans.push({id:i,name:'Plan '+i,invest:200*i,multiplier:3,total:200*i*3,offer:true});
+let invest=200*i*200/200; // linear 200→3000
+if(invest>3000) invest=3000;
+plans.push({id:i,name:'Special Plan '+i,invest:200*i, multiplier:3, total:200*i*3, offer:true});
+}
+
+// NORMAL PLANS (25 plans 200→30000, 2.5x profit)
+for(let i=8;i<=32;i++){
+let invest=Math.round(200 + (i-8)*(30000-200)/24); // linear 200→30000
+let multiplier=2.5;
+let name=(i<=32)?'Plan '+(i-7):'Coming Soon';
+plans.push({id:i,name:name,invest:invest,multiplier:multiplier,total:Math.round(invest*multiplier),offer:false});
 }
 
 function fmt(n){return Number(n).toLocaleString('en-US');}
