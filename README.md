@@ -1,4 +1,5 @@
-<VERBOSE><html lang="en">
+<VERBOSE>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,24 +16,39 @@ button:hover{background:#0056b3;}
 .hidden{display:none;}
 .user-box{background:#e0f7ff;padding:10px;border-radius:8px;margin-bottom:10px;font-weight:bold;}
 .alert-box{background:#ffe0e0;padding:8px;border-radius:5px;margin-bottom:10px;color:#900;font-weight:bold;}
-.logout-btn{position:fixed;bottom:60px;left:15px;background:red;color:#fff;padding:8px 12px;border-radius:5px;cursor:pointer;}
+.logout-btn{position:fixed;bottom:60px;right:15px;background:red;color:#fff;padding:8px 12px;border-radius:5px;cursor:pointer;}
+.plan-box{border:1px solid #ccc;padding:10px;margin:10px 0;border-radius:8px;}
 </style>
 </head>
-<body><header>VERBOSE</header><!-- LOGIN --><div id="loginPage" class="login-box">
-<h2>Login</h2>
+<body>
+
+<header>VERBOSE</header>
+
+<!-- LOGIN -->
+<div id="loginPage" class="login-box">
+<h2>Login / Signup</h2>
 <input id="user" placeholder="Username">
 <input id="pass" placeholder="Password" type="password">
 <button onclick="login()">Login</button>
-</div><!-- DASHBOARD --><div id="dashboard" class="page hidden">
-<div class="alert-box">Deposit/Withdrawal ke issues ya queries → Admin WhatsApp: 03705519562 / Email: rock.earn92@gmail.com</div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="page hidden">
+<div class="alert-box">Deposit/Withdrawal issues → WhatsApp: 03705519562 / Email: rock.earn92@gmail.com</div>
 <div class="user-box">Username: <span id="dashUser"></span> | Balance: Rs <span id="dashBalance">0</span></div>
 <h2>Dashboard</h2>
 <p>Welcome to VERBOSE! Trusted platform, millions of users, daily profits.</p>
 <button class="logout-btn" onclick="logout()">Logout</button>
-</div><!-- PLANS --><div id="plans" class="page hidden">
+</div>
+
+<!-- PLANS -->
+<div id="plans" class="page hidden">
 <h2>Plans</h2>
 <div id="plansList"></div>
-</div><!-- DEPOSIT --><div id="deposit" class="page hidden">
+</div>
+
+<!-- DEPOSIT -->
+<div id="deposit" class="page hidden">
 <h2>Deposit</h2>
 <label>Method</label>
 <select id="depositMethod" onchange="updateDepositNumber()">
@@ -45,7 +61,10 @@ button:hover{background:#0056b3;}
 <label>Upload Proof</label>
 <input type="file" id="depositProof">
 <button onclick="submitDeposit()">Submit Deposit</button>
-</div><!-- WITHDRAWAL --><div id="withdrawal" class="page hidden">
+</div>
+
+<!-- WITHDRAWAL -->
+<div id="withdrawal" class="page hidden">
 <h2>Withdrawal</h2>
 <label>Method</label>
 <select id="withdrawMethod">
@@ -57,114 +76,164 @@ button:hover{background:#0056b3;}
 <input id="withdrawAccount" placeholder="Account Number (manual)">
 <input id="withdrawAmount" placeholder="Amount">
 <button onclick="submitWithdraw()">Request Withdrawal</button>
-</div><!-- SUPPORT --><div id="support" class="page hidden">
+</div>
+
+<!-- SUPPORT -->
+<div id="support" class="page hidden">
 <h2>Support</h2>
 <p>WhatsApp: 03705519562</p>
 <p>Email: rock.earn92@gmail.com</p>
-</div><!-- NAVIGATION --><div id="bottomNav" class="nav hidden">
+</div>
+
+<!-- NAVIGATION -->
+<div id="bottomNav" class="nav hidden">
 <div onclick="showPage('dashboard')">🏠<br>Home</div>
 <div onclick="showPage('plans')">📦<br>Plans</div>
 <div onclick="showPage('deposit')">💰<br>Deposit</div>
 <div onclick="showPage('withdrawal')">💵<br>Withdraw</div>
 <div onclick="showPage('support')">📞<br>Support</div>
-</div><script>
-// USERS & BALANCE
-let currentUser = null;
-let balance = 0;
+</div>
+
+<script>
+// USERS & LOCAL STORAGE
+let currentUser = localStorage.getItem('verbose_user') || null;
+let balance = parseFloat(localStorage.getItem('verbose_balance')) || 0;
 let plansData = [];
+let userPlans = JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');
+
+// CREATE 25 PLANS 200-30000, days 20-70
 for(let i=1;i<=25;i++){
-    let invest = i<=3 ? i*1000 : i*1200;
-    let profitMultiplier = i<=3 ? 3 : 2.5;
-    plansData.push({id:i,name:`Plan ${i}`,invest:invest,days:i*3,profit:invest*profitMultiplier});
+    let invest = Math.round(200 + (i-1)*(30000-200)/24);
+    let days = 20 + Math.floor((i-1)*(70-20)/24);
+    let multiplier = i<=7 ? 3 : 2.5;
+    plansData.push({id:i,name:`Plan ${i}`,invest:invest,days:days,total:Math.round(invest*multiplier),multiplier:multiplier});
 }
 
 // LOGIN
 function login(){
-let u=document.getElementById("user").value;
-let p=document.getElementById("pass").value;
-if(!u||!p){alert("Enter username & password");return;}
-currentUser=u;
-balance=5000; // starting balance
-document.getElementById("dashUser").innerText=currentUser;
-document.getElementById("dashBalance").innerText=balance;
-document.getElementById("loginPage").classList.add("hidden");
-document.getElementById("dashboard").classList.remove("hidden");
-document.getElementById("bottomNav").classList.remove("hidden");
-renderPlans();
-updateWithdrawUsername();
+    let u=document.getElementById("user").value;
+    let p=document.getElementById("pass").value;
+    if(!u||!p){alert("Enter username & password");return;}
+    currentUser=u;
+    localStorage.setItem('verbose_user',currentUser);
+    if(!localStorage.getItem('verbose_balance')) localStorage.setItem('verbose_balance','5000');
+    balance=parseFloat(localStorage.getItem('verbose_balance'));
+    document.getElementById("dashUser").innerText=currentUser;
+    document.getElementById("dashBalance").innerText=balance;
+    document.getElementById("loginPage").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
+    document.getElementById("bottomNav").classList.remove("hidden");
+    renderPlans();
+    updateWithdrawUsername();
+    addDailyProfit();
 }
 
 // LOGOUT
 function logout(){
-currentUser=null;
-balance=0;
-document.getElementById("loginPage").classList.remove("hidden");
-document.getElementById("dashboard").classList.add("hidden");
-document.getElementById("bottomNav").classList.add("hidden");
-document.getElementById("user").value='';
-document.getElementById("pass").value='';
+    currentUser=null;
+    localStorage.removeItem('verbose_user');
+    document.getElementById("loginPage").classList.remove("hidden");
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("bottomNav").classList.add("hidden");
+    document.getElementById("user").value='';
+    document.getElementById("pass").value='';
 }
 
 // SHOW PAGE
 function showPage(id){
-let pages=document.querySelectorAll(".page");
-pages.forEach(p=>p.classList.add("hidden"));
-document.getElementById(id).classList.remove("hidden");
+    let pages=document.querySelectorAll(".page");
+    pages.forEach(p=>p.classList.add("hidden"));
+    document.getElementById(id).classList.remove("hidden");
 }
 
 // PLANS
 function renderPlans(){
-let list=document.getElementById("plansList");
-list.innerHTML='';
-plansData.forEach(p=>{
-let div=document.createElement('div');
-div.style.border='1px solid #ccc';
-div.style.padding='10px';
-div.style.margin='10px 0';
-div.innerHTML=`<b>${p.name}</b><br>Invest: Rs ${p.invest}<br>Days: ${p.days}<br>Total Profit: Rs ${p.profit.toFixed(0)}<br><button onclick="buyPlan(${p.id})">Buy Now</button>`;
-list.appendChild(div);
-});
+    let list=document.getElementById("plansList");
+    list.innerHTML='';
+    plansData.forEach(p=>{
+        let div=document.createElement('div');
+        div.className='plan-box';
+        div.innerHTML=`<b>${p.name}</b><br>Invest: Rs ${p.invest}<br>Days: ${p.days}<br>Total Profit: Rs ${p.total}<br>
+        <button onclick="buyPlan(${p.id})">Buy Now</button>`;
+        list.appendChild(div);
+    });
 }
 
 function buyPlan(id){
-let plan=plansData.find(p=>p.id===id);
-alert(`You selected ${plan.name}. Deposit Rs ${plan.invest} now.`);
-showPage('deposit');
-document.getElementById('depositMethod').value='jazzcash';
-updateDepositNumber();
+    let plan=plansData.find(p=>p.id===id);
+    alert(`You selected ${plan.name}. Deposit Rs ${plan.invest} now.`);
+    showPage('deposit');
+    document.getElementById('depositMethod').value='jazzcash';
+    updateDepositNumber();
+    userPlans.push({planId:id,lastUpdate:Date.now(),dailyProfit:Math.round(plan.total/plan.days)});
+    localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));
 }
 
 // DEPOSIT
 const depositNumbers={jazzcash:'03705519562',easypaisa:'03379827882'};
 function updateDepositNumber(){
-let method=document.getElementById('depositMethod').value;
-document.getElementById('depositNumber').value=depositNumbers[method];
+    let method=document.getElementById('depositMethod').value;
+    document.getElementById('depositNumber').value=depositNumbers[method];
 }
+
 function submitDeposit(){
-let tx=document.getElementById('depositTxId').value.trim();
-let proof=document.getElementById('depositProof').files[0];
-if(!tx||!proof){alert("Fill TX ID & upload proof");return;}
-balance+=1000; // simulate deposit
-document.getElementById('dashBalance').innerText=balance;
-alert("Deposit submitted! Admin will check.");
-document.getElementById('depositTxId').value='';
-document.getElementById('depositProof').value='';
-showPage('dashboard');
+    let tx=document.getElementById('depositTxId').value.trim();
+    let proof=document.getElementById('depositProof').files[0];
+    if(!tx||!proof){alert("Fill TX ID & upload proof");return;}
+    balance+=1000; // simulate deposit
+    localStorage.setItem('verbose_balance',balance);
+    document.getElementById('dashBalance').innerText=balance;
+    alert("Deposit submitted! Admin will check.");
+    document.getElementById('depositTxId').value='';
+    document.getElementById('depositProof').value='';
+    showPage('dashboard');
 }
 
 // WITHDRAWAL
 function updateWithdrawUsername(){document.getElementById('withdrawUsername').value=currentUser;}
 function submitWithdraw(){
-let amt=parseInt(document.getElementById('withdrawAmount').value);
-let acc=document.getElementById('withdrawAccount').value.trim();
-if(!amt||!acc){alert("Enter amount & account"); return;}
-if(amt>balance){alert("Insufficient balance"); return;}
-balance-=amt;
-document.getElementById('dashBalance').innerText=balance;
-alert(`Withdraw Rs ${amt} requested. Contact admin if needed.`);
-document.getElementById('withdrawAmount').value='';
-document.getElementById('withdrawAccount').value='';
-showPage('dashboard');
+    let amt=parseFloat(document.getElementById('withdrawAmount').value);
+    let acc=document.getElementById('withdrawAccount').value.trim();
+    if(!amt||!acc){alert("Enter amount & account"); return;}
+    if(amt>balance){alert("Insufficient balance"); return;}
+    balance-=amt;
+    localStorage.setItem('verbose_balance',balance);
+    document.getElementById('dashBalance').innerText=balance;
+    alert(`Withdraw Rs ${amt} requested. Contact admin if needed.`);
+    document.getElementById('withdrawAmount').value='';
+    document.getElementById('withdrawAccount').value='';
+    showPage('dashboard');
 }
-</script></body>
+
+// DAILY PROFIT
+function addDailyProfit(){
+    let now=Date.now();
+    userPlans.forEach(p=>{
+        let last=p.lastUpdate||now;
+        let daysPassed=Math.floor((now-last)/(1000*60*60*24));
+        if(daysPassed>0){
+            balance+=p.dailyProfit*daysPassed;
+            p.lastUpdate=now;
+        }
+    });
+    localStorage.setItem('verbose_balance',balance);
+    document.getElementById('dashBalance').innerText=balance;
+    localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));
+}
+
+window.onload=function(){
+    if(currentUser){
+        document.getElementById("dashUser").innerText=currentUser;
+        balance=parseFloat(localStorage.getItem('verbose_balance'));
+        document.getElementById("dashBalance").innerText=balance;
+        document.getElementById("loginPage").classList.add("hidden");
+        document.getElementById("dashboard").classList.remove("hidden");
+        document.getElementById("bottomNav").classList.remove("hidden");
+        renderPlans();
+        updateWithdrawUsername();
+        addDailyProfit();
+    }
+};
+</script>
+</body>
 </html>
