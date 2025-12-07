@@ -3,74 +3,113 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VERBOSE</title>
+<title>Verbose App</title>
+
 <style>
-body {margin:0; font-family:sans-serif; background:#070707; color:#fff; text-align:center;}
-header {padding:20px; font-size:24px; font-weight:bold; color:#0ff;}
-.login-box, .dashboard {max-width:400px; margin:20px auto; padding:20px; background:rgba(0,255,255,0.1); border-radius:10px;}
-input, select, button {width:100%; margin:8px 0; padding:10px; border-radius:6px; border:none; font-size:14px;}
-button {background:#0ff; color:#000; font-weight:bold; cursor:pointer;}
-.nav {position:fixed; bottom:0; width:100%; display:flex; justify-content:space-around; background:#111; padding:10px 0;}
-.nav div {cursor:pointer; font-size:14px;}
-.hidden {display:none;}
+    body {
+        margin:0;
+        padding:0;
+        font-family: Arial, sans-serif;
+        background:#111;
+        color:white;
+    }
+    .container {
+        width:90%;
+        margin:auto;
+        margin-top:40px;
+    }
+    .box {
+        background:#1a1a1a;
+        padding:20px;
+        border-radius:10px;
+        margin-bottom:20px;
+    }
+    input, button {
+        width:100%;
+        padding:12px;
+        margin-top:10px;
+        border:none;
+        border-radius:5px;
+        font-size:16px;
+    }
+    input { background:#333; color:white; }
+    button { background:#0f62fe; color:white; cursor:pointer; }
+    button:hover { opacity:0.8; }
+    .hidden { display:none; }
+    .link-btn {
+        display:block;
+        margin-top:10px;
+        padding:12px;
+        background:#008000;
+        text-align:center;
+        color:white;
+        border-radius:5px;
+        text-decoration:none;
+    }
 </style>
 </head>
+
 <body>
 
-<header>VERBOSE</header>
+<div class="container">
 
-<div id="loginBox" class="login-box">
-  <h3>Login / Signup</h3>
-  <select id="userOption">
-    <option value="login">Login</option>
-    <option value="signup">Signup</option>
-  </select>
-  <input id="username" placeholder="Username">
-  <input id="password" placeholder="Password" type="password">
-  <button onclick="login()">Submit</button>
-</div>
+    <!-- LOGIN PAGE -->
+    <div id="loginPage" class="box">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+    </div>
 
-<div id="dashboard" class="dashboard hidden">
-  <h3>Welcome, <span id="userDisplay">—</span></h3>
-  <p>Balance: Rs <span id="balance">0</span></p>
-  <p>Daily Profit: Rs <span id="daily">0</span></p>
-  <button onclick="logout()">Logout</button>
-</div>
+    <!-- HOME PAGE -->
+    <div id="homePage" class="box hidden">
+        <h2>Welcome <span id="userNameText"></span></h2>
+        
+        <a class="link-btn" href="https://wa.me/923705519562" target="_blank">WhatsApp Contact</a>
+        <a class="link-btn" style="background:#d44638;" href="mailto:test@example.com">Email Contact</a>
 
-<div class="nav">
-  <div onclick="showPage('dashboard')">Home</div>
-  <div onclick="alert('Plans Page')">Plans</div>
-  <div onclick="alert('Deposit Page')">Deposit</div>
-  <div onclick="alert('Withdraw Page')">Withdraw</div>
-  <div onclick="alert('Support Page')">Support</div>
+        <button style="background:#444;" onclick="refreshPage()">Refresh</button>
+        <button style="background:#b30000;" onclick="logout()">Logout</button>
+    </div>
+
 </div>
 
 <script>
-let currentUser = localStorage.getItem('verboseUser') || '';
-let balance = parseFloat(localStorage.getItem('verboseBalance')) || 0;
-let daily = parseFloat(localStorage.getItem('verboseDaily')) || 0;
+    // Auto Login Check
+    window.onload = function() {
+        const savedUser = localStorage.getItem("verboseUser");
+        if (savedUser) {
+            document.getElementById("loginPage").classList.add("hidden");
+            document.getElementById("homePage").classList.remove("hidden");
+            document.getElementById("userNameText").innerText = savedUser;
+        }
+    }
 
-function login(){
-  const u = document.getElementById('username').value.trim();
-  const p = document.getElementById('password').value.trim();
-  if(!u||!p){ alert('Enter username & password'); return; }
-  currentUser = u;
-  localStorage.setItem('verboseUser', currentUser);
-  localStorage.setItem('verboseBalance', balance);
-  localStorage.setItem('verboseDaily', daily);
-  document.getElementById('userDisplay').innerText = currentUser;
-  document.getElementById('balance').innerText = balance;
-  document.getElementById('daily').innerText = daily;
-  document.getElementById('loginBox').classList.add('hidden');
-  document.getElementById('dashboard').classList.remove('hidden');
-}
+    function login() {
+        let user = document.getElementById("username").value.trim();
+        let pass = document.getElementById("password").value.trim();
 
-function logout(){
-  currentUser='';
-  localStorage.removeItem('verboseUser');
-  document.getElementById('loginBox').classList.remove('hidden');
-  document.getElementById('dashboard').classList.add('hidden');
-}
+        if (user === "" || pass === "") {
+            alert("Username ya password missing hai!");
+            return;
+        }
+
+        // Auto accept login (no backend needed)
+        localStorage.setItem("verboseUser", user);
+
+        document.getElementById("userNameText").innerText = user;
+        document.getElementById("loginPage").classList.add("hidden");
+        document.getElementById("homePage").classList.remove("hidden");
+    }
+
+    function refreshPage() {
+        location.reload();
+    }
+
+    function logout() {
+        localStorage.removeItem("verboseUser");
+        location.reload();
+    }
 </script>
 
 </body>
