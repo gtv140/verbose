@@ -5,10 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VERBOSE</title>
 <style>
-/* BASE STYLES */
 body{
     margin:0;
-    font-family:Arial, sans-serif;
+    font-family:Arial,sans-serif;
     background:#000;
     color:#fff;
     overflow-x:hidden;
@@ -91,14 +90,15 @@ button:hover{
 }
 .plan-box{
     border:1px solid #0ff;
-    padding:10px;
+    padding:15px;
     margin:10px 0;
-    border-radius:8px;
+    border-radius:10px;
     background:#111;
-    transition:0.3s;
+    transition:0.3s transform,0.3s box-shadow;
 }
 .plan-box:hover{
-    box-shadow:0 0 10px #0ff;
+    transform:scale(1.05);
+    box-shadow:0 0 20px #0ff;
 }
 .offer{color:#0ff;font-weight:bold;}
 .countdown{
@@ -106,8 +106,6 @@ button:hover{
     color:#0ff;
     margin-top:5px;
 }
-
-/* NEON BACKGROUND */
 @keyframes neonbg{
     0%{background-position:0 0;}
     50%{background-position:100% 100%;}
@@ -124,12 +122,11 @@ body{
 
 <header>VERBOSE</header>
 
-<!-- LOGIN / SIGNUP -->
 <div id="loginPage" class="login-box">
 <h2>Login / Signup</h2>
 <button onclick="showSignup()">New User Signup</button>
 <button onclick="showLogin()">Existing Account Login</button>
-<div id="loginForm" class="">
+<div id="loginForm">
 <input id="user" placeholder="Username">
 <input id="pass" placeholder="Password" type="password">
 <button onclick="login()">Login</button>
@@ -141,22 +138,19 @@ body{
 </div>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dashboard" class="page hidden">
 <div class="alert-box">For any deposit, withdrawal, or account issues, contact admin immediately.</div>
 <div class="user-box">Username: <span id="dashUser"></span> | Balance: Rs <span id="dashBalance">0</span> | Daily Profit: Rs <span id="dashDaily">0</span></div>
 <h2>Dashboard</h2>
-<p>Welcome to VERBOSE! Trusted platform, secure & reliable, millions of users daily profits.</p>
+<p>Welcome to VERBOSE! Trusted platform, secure & reliable.</p>
 <button class="logout-btn" onclick="logout()">Logout</button>
 </div>
 
-<!-- PLANS -->
 <div id="plans" class="page hidden">
 <h2>Plans</h2>
 <div id="plansList"></div>
 </div>
 
-<!-- DEPOSIT -->
 <div id="deposit" class="page hidden">
 <h2>Deposit</h2>
 <label>Method</label>
@@ -175,7 +169,6 @@ body{
 <button onclick="submitDeposit()">Submit Deposit</button>
 </div>
 
-<!-- WITHDRAWAL -->
 <div id="withdrawal" class="page hidden">
 <h2>Withdrawal</h2>
 <label>Method</label>
@@ -185,12 +178,11 @@ body{
 <option value="bank">Bank</option>
 </select>
 <input id="withdrawUsername" readonly>
-<input id="withdrawAccount" placeholder="Account Number (manual)">
+<input id="withdrawAccount" placeholder="Account Number">
 <input id="withdrawAmount" placeholder="Amount">
 <button onclick="submitWithdraw()">Request Withdrawal</button>
 </div>
 
-<!-- REFERRAL -->
 <div id="referral" class="page hidden">
 <h2>Referral</h2>
 <p>Share your referral link to earn Rs 30 bonus when someone deposits using your link.</p>
@@ -198,16 +190,14 @@ body{
 <button onclick="copyReferral()">Copy Link</button>
 </div>
 
-<!-- SUPPORT -->
 <div id="support" class="page hidden">
 <h2>Administration</h2>
-<p>Need help? Our professional admin team is ready 24/7 to assist with deposits, withdrawals, and account inquiries.</p>
+<p>Professional admin team available 24/7 for deposit, withdrawal & account help.</p>
 <p>WhatsApp: <a href="https://chat.whatsapp.com/Kmaiv3VdSo09rio4qcRTRM" target="_blank">Join WhatsApp Group</a></p>
 <p>Email: <a href="mailto:rock.earn92@gmail.com">rock.earn92@gmail.com</a></p>
-<p>VERBOSE is a secure, transparent investment platform with real-time profit tracking and smooth user experience.</p>
+<p>VERBOSE is a secure, transparent platform with real-time profit tracking.</p>
 </div>
 
-<!-- NAVIGATION -->
 <div id="bottomNav" class="nav hidden">
 <div onclick="showPage('dashboard')">🏠<br>Home</div>
 <div onclick="showPage('plans')">📦<br>Plans</div>
@@ -223,10 +213,6 @@ let currentUser = localStorage.getItem('verbose_user') || null;
 let balance = parseFloat(localStorage.getItem('verbose_balance')) || 0;
 let dailyProfit = parseFloat(localStorage.getItem('verbose_daily')) || 0;
 let plansData = [];
-let userPlans = JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');
-let referrals = JSON.parse(localStorage.getItem('verbose_ref')||'{}');
-
-// CREATE PLANS
 for(let i=1;i<=25;i++){
     let invest = Math.round(200 + (i-1)*(30000-200)/24);
     let days = 20 + Math.floor((i-1)*(70-20)/24);
@@ -234,7 +220,7 @@ for(let i=1;i<=25;i++){
     plansData.push({id:i,name:`Plan ${i}`,invest:invest,days:days,total:Math.round(invest*multiplier),multiplier:multiplier,offer:i<=7});
 }
 
-// LOGIN / SIGNUP FUNCTIONS
+// LOGIN/SIGNUP
 function showSignup(){document.getElementById('signupForm').classList.remove('hidden');document.getElementById('loginForm').classList.add('hidden');}
 function showLogin(){document.getElementById('signupForm').classList.add('hidden');document.getElementById('loginForm').classList.remove('hidden');}
 
@@ -283,34 +269,18 @@ function logout(){
     document.getElementById("loginPage").classList.remove("hidden");
     document.getElementById("dashboard").classList.add("hidden");
     document.getElementById("bottomNav").classList.add("hidden");
-    document.getElementById("user").value='';
-    document.getElementById("pass").value='';
 }
 
 // SHOW PAGE
 function showPage(id){
-    let pages=document.querySelectorAll(".page");
-    pages.forEach(p=>p.classList.add("hidden"));
+    document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
     document.getElementById(id).classList.remove("hidden");
 }
 
 // COPY DEPOSIT NUMBER
-function copyDepositNumber(){
-    let num=document.getElementById('depositNumber');
-    num.select();
-    num.setSelectionRange(0,99999);
-    document.execCommand('copy');
-    alert("Deposit number copied!");
-}
-
+function copyDepositNumber(){let num=document.getElementById('depositNumber');num.select();num.setSelectionRange(0,99999);document.execCommand('copy');alert("Deposit number copied!");}
 // COPY REFERRAL
-function copyReferral(){
-    let link=document.getElementById('refLink');
-    link.select();
-    link.setSelectionRange(0,99999);
-    document.execCommand('copy');
-    alert("Referral link copied!");
-}
+function copyReferral(){let link=document.getElementById('refLink');link.select();link.setSelectionRange(0,99999);document.execCommand('copy');alert("Referral link copied!");}
 
 // PLANS
 function renderPlans(){
@@ -357,32 +327,11 @@ function buyPlan(id){
 
 // DEPOSIT
 const depositNumbers={jazzcash:'03705519562',easypaisa:'03379827882'};
-function updateDepositNumber(){
-    let method=document.getElementById('depositMethod').value;
-    document.getElementById('depositNumber').value=depositNumbers[method];
-}
-function submitDeposit(){
-    let amount=parseFloat(document.getElementById('depositAmount').value);
-    balance+=amount;
-    dailyProfit+=Math.round(amount*0.01); // example daily profit 1% of deposit
-    localStorage.setItem('verbose_balance',balance);
-    localStorage.setItem('verbose_daily',dailyProfit);
-    document.getElementById('dashBalance').innerText=balance;
-    document.getElementById('dashDaily').innerText=dailyProfit;
-    alert("Deposit submitted! Admin will verify.");
-    showPage('dashboard');
-}
+function updateDepositNumber(){let method=document.getElementById('depositMethod').value;document.getElementById('depositNumber').value=depositNumbers[method];}
+function submitDeposit(){let amount=parseFloat(document.getElementById('depositAmount').value);balance+=amount;dailyProfit+=Math.round(amount*0.01);localStorage.setItem('verbose_balance',balance);localStorage.setItem('verbose_daily',dailyProfit);document.getElementById('dashBalance').innerText=balance;document.getElementById('dashDaily').innerText=dailyProfit;alert("Deposit submitted! Admin will verify.");showPage('dashboard');}
 
 // WITHDRAWAL
-function submitWithdraw(){
-    let amt=parseFloat(document.getElementById('withdrawAmount').value);
-    if(!amt || amt>balance){alert("Invalid amount"); return;}
-    balance-=amt;
-    localStorage.setItem('verbose_balance',balance);
-    document.getElementById('dashBalance').innerText=balance;
-    alert(`Withdrawal request of Rs ${amt} received. Admin will process it.`);
-    showPage('dashboard');
-}
+function submitWithdraw(){let amt=parseFloat(document.getElementById('withdrawAmount').value);if(!amt||amt>balance){alert("Invalid amount");return;}balance-=amt;localStorage.setItem('verbose_balance',balance);document.getElementById('dashBalance').innerText=balance;alert(`Withdrawal request of Rs ${amt} received. Admin will process it.`);showPage('dashboard');}
 
 // ONLOAD
 window.onload=function(){
