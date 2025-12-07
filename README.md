@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<VERBOSE>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -49,7 +49,7 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5)}
 <header>VERBOSE</header>
 
 <div id="loginPage" class="login-box">
-<h2 style="margin:0 0 8px 0">Login / Signup</h2>
+<h2>Login / Signup</h2>
 <select id="userOption" aria-label="option">
 <option value="login">Login</option>
 <option value="signup">New User Signup</option>
@@ -57,7 +57,7 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5)}
 <input id="user" placeholder="Username" />
 <input id="pass" placeholder="Password" type="password" />
 <button onclick="login()">Submit</button>
-<p class="small" style="margin-top:10px">Tip: Use same device/browser to keep your account saved (local storage).</p>
+<p class="small">Tip: Use same device/browser to keep your account saved (local storage).</p>
 </div>
 
 <div id="dashboard" class="page hidden">
@@ -77,15 +77,15 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5)}
 </div>
 </div>
 
-<h2 style="text-align:center;color:var(--neon);margin:6px 0 10px 0">Dashboard Overview</h2>
-<p class="small" style="text-align:center;margin-top:-6px">Track your plans, deposits and withdrawals securely. Our support team is available 24/7.</p>
+<h2 style="text-align:center;color:var(--neon)">Dashboard Overview</h2>
+<p class="small" style="text-align:center">Track your plans, deposits and withdrawals securely.</p>
 
 <div class="referral-box">
 <div style="display:flex;gap:8px;align-items:center">
 <input id="refLink" readonly style="flex:1" />
 <button onclick="copyReferral()" style="width:110px">Copy Link</button>
 </div>
-<div class="small" style="margin-top:8px">Share this link to invite friends. When they deposit, you get bonus credits automatically.</div>
+<div class="small">Share this link to invite friends. When they deposit, you get bonus credits automatically.</div>
 </div>
 <div style="margin-top:8px; text-align:center">
 <button class="logout-btn" onclick="logout()" title="Logout">Logout</button>
@@ -115,7 +115,7 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5)}
 <label>Upload Proof</label>
 <input type="file" id="depositProof" />
 <button onclick="submitDeposit()">Submit Deposit</button>
-<p class="small" style="margin-top:8px">After submitting, share proof with admin on WhatsApp or Email for verification.</p>
+<p class="small">After submitting, share proof with admin on WhatsApp for verification.</p>
 </div>
 
 <div id="withdrawal" class="page hidden">
@@ -130,7 +130,7 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5)}
 <input id="withdrawAccount" placeholder="Account Number (manual)" />
 <input id="withdrawAmount" placeholder="Amount" />
 <button onclick="submitWithdraw()">Request Withdrawal</button>
-<p class="small" style="margin-top:8px">Requests are reviewed by admin. Keep your proof ready.</p>
+<p class="small">Requests are reviewed by admin. Keep your proof ready.</p>
 </div>
 
 <div id="support" class="page hidden">
@@ -142,20 +142,11 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5)}
 <div>
 <p><strong>WhatsApp Support</strong></p>
 <p class="small">Fastest support — join our group or message the admin directly.</p>
-<p style="margin-top:6px"><a href="https://chat.whatsapp.com/Kmaiv3VdSo09rio4qcRTRM" target="_blank">Join WhatsApp Group</a></p>
-</div>
-</div>
-<div class="support-item">
-<div class="icon">📧</div>
-<div>
-<p><strong>Email Support</strong></p>
-<p class="small">For formal queries and proofs, email our support team.</p>
-<p style="margin-top:6px"><a href="mailto:rock.earn92@gmail.com">rock.earn92@gmail.com</a></p>
+<p><a href="https://chat.whatsapp.com/Kmaiv3VdSo09rio4qcRTRM" target="_blank">Join WhatsApp Group</a></p>
 </div>
 </div>
 </div>
-<p class="support-note">Important: Always use the official support channels above to verify deposits/withdrawals. Avoid sharing sensitive information publicly.</p>
-<p style="color:var(--neon);font-weight:800;text-align:center;margin-top:10px">VERBOSE — Secure. Transparent. Professional.</p>
+<p class="support-note">Always use official channels to verify deposits/withdrawals.</p>
 </div>
 </div>
 
@@ -177,7 +168,7 @@ let referralCode = localStorage.getItem('verbose_referral') || '';
 let plansData = [];
 for(let i=1;i<=30;i++){
 let invest,days,multiplier,coming=false,countdown;
-if(i<=7){ invest=Math.round(200 + (i-1)*(3000-200)/6); multiplier=3; days=20 + Math.floor((i-1)*(50-20)/6); countdown=localStorage.getItem(`planCountdown_${i}`) || (Date.now()+24*3600*1000);}
+if(i<=7){ invest=Math.round(200 + (i-1)*(3000-200)/6); multiplier=3; days=20 + Math.floor((i-1)*(50-20)/6); countdown=parseInt(localStorage.getItem(`planCountdown_${i}`))||Date.now()+24*3600*1000;}
 else if(i<=25){ invest=Math.round(200 + (i-1)*(30000-200)/24); multiplier=2.5; days=20 + Math.floor((i-1)*(70-20)/24); countdown=null;}
 else{ invest=Math.round(200 + (i-1)*(30000-200)/24); multiplier=2.5; days=20 + Math.floor((i-1)*(70-20)/24); coming=true; countdown=null;}
 plansData.push({id:i,name:`Plan ${i}`,invest,days,total:Math.round(invest*multiplier),multiplier,offer:i<=7,coming,countdown});
@@ -239,35 +230,24 @@ list.appendChild(div);
 startCountdowns();
 }
 
-// COUNTDOWN SPECIAL OFFERS
+// COUNTDOWN
 function startCountdowns(){
-    plansData.forEach(plan=>{
-        if(plan.offer){
-            const el=document.getElementById('countdown'+plan.id);
-            if(!el) return;
-            // Agar localStorage me pehle saved ho to use karo, warna abhi ka time +24h
-            let endTime = plan.countdown || (Date.now() + 24*3600*1000);
-            plan.countdown = endTime;
-            localStorage.setItem(`planCountdown_${plan.id}`, endTime);
+plansData.forEach(plan=>{
+if(plan.offer){
+const el=document.getElementById('countdown'+plan.id);
+const interval=setInterval(()=>{
+let now=Date.now();
+let diff=Math.max(plan.countdown-now,0);
+let hrs=Math.floor(diff/3600000);
+let mins=Math.floor((diff%3600000)/60000);
+let secs=Math.floor((diff%60000)/1000);
+el.innerText=`${hrs}h ${mins}m ${secs}s`;
+if(diff<=0){clearInterval(interval);el.innerText='Expired';}
+},1000);
+}});}
 
-            function updateTimer(){
-                const now = Date.now();
-                const diff = endTime - now;
-                if(diff <=0){
-                    el.innerText = "Expired";
-                    return;
-                }
-                const hrs = Math.floor(diff / (1000*60*60));
-                const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
-                const secs = Math.floor((diff % (1000*60)) / 1000);
-                el.innerText = `${hrs}h ${mins}m ${secs}s`;
-            }
-            updateTimer();
-            setInterval(updateTimer,1000);
-        }
-    });
-}
-
-// PLACEHOLDER FUNCTIONS FOR DEPOSIT & WITHDRAW
-function submitDeposit(){alert("Deposit submitted!");}
-function submitWithdraw(){alert("Withdrawal requested!");}
+// INITIAL LOAD
+if(currentUser){login();}
+</script>
+</body>
+</html>
