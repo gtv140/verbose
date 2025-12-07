@@ -30,6 +30,9 @@ button {cursor:pointer; background:var(--primary); color:#fff; font-weight:600;}
 .referral-box {display:flex; margin-bottom:12px;}
 .referral-box input {flex:1;}
 .logout-btn {position:fixed; bottom:60px; left:50%; transform:translateX(-50%); padding:8px 16px; border:none; border-radius:10px; background:#ff4b4b; color:#fff; cursor:pointer; font-weight:600;}
+.icon-grid {display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:12px;}
+.icon-grid div {text-align:center; padding:12px; border-radius:10px; background:rgba(255,255,255,0.05); cursor:pointer;}
+.icon-grid div i {font-size:24px; color:var(--primary); margin-bottom:6px; display:block;}
 </style>
 </head>
 <body>
@@ -65,6 +68,17 @@ button {cursor:pointer; background:var(--primary); color:#fff; font-weight:600;}
 <div class="referral-box">
 <input id="referralLink" readonly>
 <button onclick="copyReferral()"><i class="fas fa-copy"></i> Copy</button>
+</div>
+
+<div class="icon-grid">
+<div><i class="fas fa-gift"></i> Offers</div>
+<div><i class="fas fa-wallet"></i> Deposit</div>
+<div><i class="fas fa-hand-holding-usd"></i> Withdraw</div>
+<div><i class="fas fa-user"></i> Profile</div>
+<div><i class="fas fa-chart-line"></i> Stats</div>
+<div><i class="fas fa-cogs"></i> Settings</div>
+<div><i class="fas fa-bell"></i> Alerts</div>
+<div><i class="fas fa-question-circle"></i> Support</div>
 </div>
 
 <div id="plansCard">
@@ -126,9 +140,12 @@ const KEY_DEPOSITS='verbose_deposits';
 const KEY_WITHDRAWS='verbose_withdraws';
 let currentUser=localStorage.getItem(KEY_USER)||null;
 let plans=[];
+
+// Add plans
 for(let i=1;i<=7;i++){plans.push({id:i,name:'Special Plan '+i,invest:200*i,multiplier:3,total:200*i*3,days:Math.floor(Math.random()*51)+20,offer:true});}
 for(let i=8;i<=30;i++){let invest=3000+(i-8)*1000;plans.push({id:i,name:'Plan '+(i-7),invest:invest,multiplier:2.5,total:invest*2.5,days:Math.floor(Math.random()*51)+20,offer:false});}
 for(let i=31;i<=35;i++){plans.push({id:i,name:'Coming Soon',invest:0,multiplier:0,total:0,days:0,offer:false});}
+
 function fmt(n){return Number(n).toLocaleString();}
 
 // AUTH
