@@ -19,6 +19,7 @@ button:hover{background:#0056b3;}
 .logout-btn{position:fixed;bottom:60px;right:15px;background:red;color:#fff;padding:8px 12px;border-radius:5px;cursor:pointer;}
 .plan-box{border:1px solid #ccc;padding:10px;margin:10px 0;border-radius:8px;background:#f9f9f9;}
 .offer{color:red;font-weight:bold;}
+.timer{color:green;font-weight:bold;}
 </style>
 </head>
 <body>
@@ -35,10 +36,10 @@ button:hover{background:#0056b3;}
 
 <!-- DASHBOARD -->
 <div id="dashboard" class="page hidden">
-<div class="alert-box">For any deposit, withdrawal, or account issues, please contact our support team immediately.</div>
+<div class="alert-box">For any deposit, withdrawal, or account issues, contact our support team immediately for assistance.</div>
 <div class="user-box">Username: <span id="dashUser"></span> | Balance: Rs <span id="dashBalance">0</span></div>
 <h2>Dashboard</h2>
-<p>Welcome to VERBOSE! Trusted platform, millions of users, daily profits, secure & reliable investment services.</p>
+<p>Welcome to VERBOSE! Trusted platform, millions of users, daily profits, secure & reliable investment services. Our professional team is committed to providing a safe and efficient investment experience.</p>
 <button class="logout-btn" onclick="logout()">Logout</button>
 </div>
 
@@ -84,10 +85,10 @@ button:hover{background:#0056b3;}
 <!-- SUPPORT -->
 <div id="support" class="page hidden">
 <h2>Contact Administration</h2>
-<p>For any deposit, withdrawal, or account issues, contact our support team immediately.</p>
+<p>For any deposit, withdrawal, or account issues, contact our professional support team immediately.</p>
 <p>WhatsApp: <a href="https://chat.whatsapp.com/Kmaiv3VdSo09rio4qcRTRM" target="_blank">Join WhatsApp Group</a></p>
 <p>Email: <a href="mailto:rock.earn92@gmail.com">rock.earn92@gmail.com</a></p>
-<p>VERBOSE is a professional investment platform offering secure and reliable investment services for millions of users. Our team is available 24/7 to assist you.</p>
+<p>VERBOSE is a professional investment platform offering secure, reliable, and transparent investment services to millions of users. Our team is available 24/7 to assist with account, deposit, and withdrawal inquiries. Your investment experience and security are our top priorities.</p>
 </div>
 
 <!-- NAVIGATION -->
@@ -111,7 +112,8 @@ for(let i=1;i<=25;i++){
     let invest = Math.round(200 + (i-1)*(30000-200)/24);
     let days = 20 + Math.floor((i-1)*(70-20)/24);
     let multiplier = i<=7 ? 3 : 2.5;
-    plansData.push({id:i,name:`Plan ${i}`,invest:invest,days:days,total:Math.round(invest*multiplier),multiplier:multiplier,offer:i<=7});
+    let offerEnd = i<=7 ? Date.now() + 24*60*60*1000 : 0;
+    plansData.push({id:i,name:`Plan ${i}`,invest:invest,days:days,total:Math.round(invest*multiplier),multiplier:multiplier,offer:i<=7,offerEnd:offerEnd});
 }
 
 // LOGIN
@@ -131,6 +133,7 @@ function login(){
     renderPlans();
     updateWithdrawUsername();
     addDailyProfit();
+    startOfferTimers();
 }
 
 // LOGOUT
@@ -156,9 +159,10 @@ function renderPlans(){
     let list=document.getElementById("plansList");
     list.innerHTML='';
     plansData.forEach(p=>{
+        let timerText = p.offer ? `<span class='timer' id='timer${p.id}'>Calculating...</span>` : '';
         let div=document.createElement('div');
         div.className='plan-box';
-        div.innerHTML=`<b>${p.name}</b> ${p.offer?'<span class="offer">🔥 24h Offer</span>':''}<br>
+        div.innerHTML=`<b>${p.name}</b> ${p.offer?'<span class="offer">🔥 24h Offer</span>':''} ${timerText}<br>
         Invest: Rs ${p.invest}<br>
         Days: ${p.days}<br>
         Total Profit: Rs ${p.total}<br>
@@ -180,6 +184,30 @@ function buyPlan(id){
     }
 }
 
+// OFFER TIMERS
+function startOfferTimers(){
+    plansData.forEach(p=>{
+        if(p.offer){
+            let timerId = setInterval(()=>{
+                let now = Date.now();
+                let diff = p.offerEnd - now;
+                let el = document.getElementById(`timer${p.id}`);
+                if(diff>0){
+                    let hrs = Math.floor(diff/1000/60/60);
+                    let mins = Math.floor((diff/1000/60)%60);
+                    let secs = Math.floor((diff/1000)%60);
+                    if(el) el.innerText = `Ends in ${hrs}h ${mins}m ${secs}s`;
+                }else{
+                    if(el) el.innerText = '';
+                    p.offer=false;
+                    clearInterval(timerId);
+                    renderPlans();
+                }
+            },1000);
+        }
+    });
+}
+
 // DEPOSIT
 const depositNumbers={jazzcash:'03705519562',easypaisa:'03379827882'};
 function updateDepositNumber(){
@@ -194,7 +222,7 @@ function submitDeposit(){
     balance+=amount;
     localStorage.setItem('verbose_balance',balance);
     document.getElementById('dashBalance').innerText=balance;
-    alert("Deposit submitted! Admin will check.");
+    alert("Deposit submitted! Our team will verify and process it shortly.");
     document.getElementById('depositTxId').value='';
     document.getElementById('depositProof').value='';
     showPage('dashboard');
@@ -210,7 +238,7 @@ function submitWithdraw(){
     balance-=amt;
     localStorage.setItem('verbose_balance',balance);
     document.getElementById('dashBalance').innerText=balance;
-    alert(`Withdraw Rs ${amt} requested. Contact admin if needed.`);
+    alert(`Withdrawal request of Rs ${amt} received. Our support team will process it.`);
     document.getElementById('withdrawAmount').value='';
     document.getElementById('withdrawAccount').value='';
     showPage('dashboard');
@@ -244,6 +272,7 @@ window.onload=function(){
         renderPlans();
         updateWithdrawUsername();
         addDailyProfit();
+        startOfferTimers();
     }
 };
 </script>
