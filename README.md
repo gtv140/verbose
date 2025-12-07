@@ -222,7 +222,7 @@ if(days>0){bal+=p.dailyProfit*days;dailyTotal+=p.dailyProfit*days;p.lastCredit+=
 });
 localStorage.setItem(KEY_BAL+currentUser,bal);localStorage.setItem(KEY_DAILY+currentUser,dailyTotal);localStorage.setItem(KEY_USER_PLANS+currentUser,JSON.stringify(userPlans));renderDashboard();
 }
-setInterval(computeDailyCredits,60000); // every minute
+setInterval(computeDailyCredits,60000); 
 </script>
 </body>
 </html>
