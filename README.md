@@ -72,7 +72,7 @@ input,select,button{width:100%;padding:10px;margin-top:6px;border-radius:8px;bor
 <div class="muted">Balance</div>
 <div style="font-weight:900;font-size:18px"><i class="fas fa-coins"></i> Rs <span id="balanceText">0</span></div>
 <div class="badge"><i class="fas fa-calendar-day"></i> Daily: Rs <span id="dailyText">0</span></div>
-<button class="logout-btn" onclick="doLogout()">Logout</button>
+<button class="logout-btn" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
 </div>
 </div>
 
@@ -246,40 +246,40 @@ localStorage.setItem(KEY_BAL+currentUser,bal);
 const withdraws=JSON.parse(localStorage.getItem(KEY_WITHDRAWS)||[]);withdraws.push({user:currentUser,method,account,amount,time:Date.now(),approved:false});
 localStorage.setItem(KEY_WITHDRAWS,JSON.stringify(withdraws));
 alert('Withdrawal request submitted! Admin will manually approve.');
-document.getElementById('withdrawAmount').value='';nav('dashboardCard');}
+document.getElementById('withdrawAccount').value='';
+document.getElementById('withdrawAmount').value='';
+renderDashboard();
+nav('dashboardCard');
+}
 
 // SUPPORT
 function openSupport(){nav('supportBox');}
 
-// AUTO DASHBOARD UPDATE DAILY PROFIT
-function updateDailyProfits(){
+// DAILY PROFIT AUTO-CREDIT
+function creditDailyProfit(){
 if(!currentUser) return;
 let userPlans=JSON.parse(localStorage.getItem(KEY_USER_PLANS+currentUser)||'[]');
+let balance=Number(localStorage.getItem(KEY_BAL+currentUser)||0);
 let dailyTotal=0;
-const now=Date.now();
 userPlans.forEach(p=>{
-// Simple daily accumulation
-const daysPassed=Math.floor((now-p.lastCredit)/(24*3600*1000));
-if(daysPassed>0){
-dailyTotal+=p.dailyProfit*daysPassed;
+const now=Date.now();
+if(now-p.lastCredit>=24*3600*1000){
+balance+=p.dailyProfit;
+dailyTotal+=p.dailyProfit;
 p.lastCredit=now;
 }
 });
-if(dailyTotal>0){
-let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);
-let daily=Number(localStorage.getItem(KEY_DAILY+currentUser)||0);
-bal+=dailyTotal;daily+=dailyTotal;
-localStorage.setItem(KEY_BAL+currentUser,bal);
-localStorage.setItem(KEY_DAILY+currentUser,daily);
 localStorage.setItem(KEY_USER_PLANS+currentUser,JSON.stringify(userPlans));
+localStorage.setItem(KEY_BAL+currentUser,balance);
+localStorage.setItem(KEY_DAILY+currentUser,dailyTotal);
 renderDashboard();
 }
-}
-setInterval(updateDailyProfits,60000); // Update every 1 min
 
-// INIT
-if(currentUser) afterLoginUI();else nav('loginCard');
+// AUTO CREDIT EVERY 1 MIN (FOR DEMO PURPOSE)
+setInterval(creditDailyProfit,60*1000);
 
+// INITIALIZE
+if(currentUser) afterLoginUI();
 </script>
 </body>
 </html>
