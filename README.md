@@ -6,20 +6,20 @@
 <title>VERBOSE</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <style>
-body {margin:0; font-family:Arial,sans-serif; background:#f5f5f5; color:#333;}
-header {padding:20px; text-align:center; font-weight:700; font-size:24px; background:#0066cc; color:#fff;}
+body {margin:0; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f0f2f5; color:#333;}
+header {padding:20px; text-align:center; font-weight:700; font-size:24px; background:#1f2937; color:#fff;}
 .wrap {max-width:480px; margin:12px auto; padding:12px;}
-.card {background:#fff; padding:12px; border-radius:10px; margin-bottom:12px; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
-input, select, button {width:100%; padding:10px; margin-top:6px; border-radius:6px; border:1px solid #ccc; font-size:14px;}
-button {background:#0066cc; color:#fff; font-weight:700; cursor:pointer; border:none;}
-button:hover {background:#005bb5;}
-.nav {position:fixed; bottom:0; left:0; right:0; display:flex; justify-content:space-around; padding:10px; background:#eee; border-top:1px solid #ccc;}
-.nav div {text-align:center; font-size:13px; cursor:pointer; color:#333;}
-.plan {border:1px solid #ccc; border-radius:8px; padding:10px; margin-bottom:8px; background:#fafafa; display:flex; justify-content:space-between; align-items:center;}
-.plan button {width:auto; padding:6px 12px;}
-.alert-note {background:#ffe5e5; color:#cc0000; padding:10px; border-radius:6px; margin-bottom:12px; font-weight:600; text-align:center;}
-.user-box {display:flex; justify-content:space-between; margin-bottom:12px;}
-.referral-box {display:flex; gap:4px; margin-bottom:12px;}
+.card {background:#fff; padding:15px; border-radius:12px; margin-bottom:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1);}
+input, select, button {width:100%; padding:10px; margin-top:8px; border-radius:8px; border:1px solid #ccc; font-size:14px;}
+button {background:#2563eb; color:#fff; font-weight:700; cursor:pointer; border:none;}
+button:hover {background:#1d4ed8;}
+.nav {position:fixed; bottom:0; left:0; right:0; display:flex; justify-content:space-around; padding:12px; background:#fff; border-top:1px solid #ccc;}
+.nav div {text-align:center; font-size:14px; cursor:pointer; color:#2563eb;}
+.plan {border:1px solid #e5e7eb; border-radius:10px; padding:12px; margin-bottom:10px; background:#f9fafb; display:flex; justify-content:space-between; align-items:center;}
+.plan button {width:auto; padding:6px 14px; border-radius:8px;}
+.alert-note {background:#fef3c7; color:#b45309; padding:12px; border-radius:8px; margin-bottom:14px; font-weight:600; text-align:center;}
+.user-box {display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;}
+.referral-box {display:flex; gap:6px; margin-bottom:12px;}
 .hidden {display:none;}
 </style>
 </head>
@@ -44,11 +44,11 @@ button:hover {background:#005bb5;}
 <div class="alert-note">⚠️ Deposit/Withdrawal issues? Contact VERBOSE Admin: <br>Whatsapp: <a href="https://wa.me/03705519562">03705519562</a> | Email: <a href="mailto:rock.earn92@gmail.com">rock.earn92@gmail.com</a></div>
 <div class="user-box">
 <div>
-<div id="welcomeText" style="font-weight:700;">Welcome —</div>
-<div id="memberSince">Member since —</div>
+<div id="welcomeText" style="font-weight:700; font-size:18px;">Welcome —</div>
+<div id="memberSince" style="font-size:14px; color:#6b7280;">Member since —</div>
 </div>
-<div>
-<div>Balance: Rs <span id="balanceText">0</span></div>
+<div style="text-align:right;">
+<div style="font-weight:700; font-size:18px;">Balance: Rs <span id="balanceText">0</span></div>
 </div>
 </div>
 </div>
@@ -128,7 +128,7 @@ const key='verbose_cred_'+u;
 if(document.getElementById('authMode').value==='signup'){
 if(localStorage.getItem(key)){alert('Username exists'); return;}
 localStorage.setItem(key,p);
-localStorage.setItem(KEY_BAL+u,'0');
+if(!localStorage.getItem(KEY_BAL+u)) localStorage.setItem(KEY_BAL+u,'0');
 }else{
 if(localStorage.getItem(key)!==p){alert('Wrong username/password'); return;}
 }
@@ -192,7 +192,9 @@ document.getElementById('depositNumber').value=method==='jazzcash'?'03705519562'
 function submitDeposit(){
 if(!currentUser){alert('Login first'); return;}
 const amount=Number(document.getElementById('depositAmount').value);
-localStorage.setItem(KEY_BAL+currentUser,amount); alert('Deposit submitted! Balance updated.');
+let prev=Number(localStorage.getItem(KEY_BAL+currentUser)||0);
+localStorage.setItem(KEY_BAL+currentUser,prev+amount);
+alert('Deposit submitted! Balance updated.');
 nav('dashboardCard');
 }
 
@@ -207,6 +209,11 @@ localStorage.setItem(KEY_BAL+currentUser,bal);
 alert('Withdrawal requested!');
 nav('dashboardCard');
 }
+
+// KEEP USER LOGGED IN AFTER REFRESH
+window.addEventListener('load', ()=>{
+if(currentUser) afterLoginUI();
+});
 </script>
 </body>
 </html>
