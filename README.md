@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VERBOSE</title>
 <style>
+/* BASE */
 body{
     margin:0;
     font-family:Arial, sans-serif;
@@ -13,23 +14,40 @@ body{
     overflow-x:hidden;
     position:relative;
 }
+
+/* NEON ANIMATED BACKGROUND */
+@keyframes neonbg{
+    0%{background-position:0 0;}
+    50%{background-position:100% 100%;}
+    100%{background-position:0 0;}
+}
+body{
+    background:linear-gradient(45deg,#000,#001f3f,#000,#001f3f);
+    background-size:400% 400%;
+    animation:neonbg 30s linear infinite;
+}
+
+/* HEADER */
 header{
     text-align:center;
-    padding:20px;
-    font-size:28px;
+    padding:25px;
+    font-size:32px;
     font-weight:bold;
     letter-spacing:2px;
     background:linear-gradient(90deg,#0ff,#00f);
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
+    text-shadow:0 0 5px #0ff, 0 0 10px #0ff;
 }
+
+/* PAGES */
 .login-box,.page{
     max-width:400px;
     margin:20px auto;
     background:#111;
     padding:20px;
-    border-radius:10px;
-    box-shadow:0 0 15px #0ff;
+    border-radius:12px;
+    box-shadow:0 0 20px #0ff;
 }
 input,button,select{
     width:100%;
@@ -38,66 +56,80 @@ input,button,select{
     border-radius:5px;
     border:1px solid #0ff;
     background:#000;
-    color:#fff;
+    color:#0ff;
+    font-weight:bold;
 }
 button{
     background:#0ff;
     border:none;
     cursor:pointer;
     transition:0.3s;
+    font-weight:bold;
 }
 button:hover{
     background:#00f;
     color:#fff;
 }
+
+/* NAV */
 .nav{
     position:fixed;
     bottom:0; left:0; right:0;
     background:#111;
     display:flex;
     justify-content:space-around;
-    padding:10px 0;
-    border-top:1px solid #0ff;
+    padding:12px 0;
+    border-top:2px solid #0ff;
 }
-.nav div{text-align:center;font-size:16px;cursor:pointer;}
-.hidden{display:none;}
+.nav div{text-align:center;font-size:18px;cursor:pointer;}
+
+/* USER & ALERT */
 .user-box{
     background:#001f3f;
-    padding:10px;
-    border-radius:8px;
-    margin-bottom:10px;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:12px;
     font-weight:bold;
+    text-align:center;
+    box-shadow:0 0 10px #0ff;
 }
 .alert-box{
     background:#330000;
-    padding:8px;
+    padding:10px;
     border-radius:5px;
-    margin-bottom:10px;
+    margin-bottom:12px;
     color:#f00;
     font-weight:bold;
+    text-align:center;
 }
+
+/* LOGOUT */
 .logout-btn{
     position:fixed;
-    bottom:60px;
+    bottom:70px;
     left:50%;
     transform:translateX(-50%);
     background:red;
     color:#fff;
-    padding:10px 20px;
-    border-radius:5px;
+    padding:12px 22px;
+    border-radius:6px;
     cursor:pointer;
     font-weight:bold;
+    box-shadow:0 0 10px #f00;
 }
+
+/* PLAN */
 .plan-box{
     border:1px solid #0ff;
-    padding:10px;
-    margin:10px 0;
-    border-radius:8px;
+    padding:12px;
+    margin:12px 0;
+    border-radius:10px;
     background:#111;
     transition:0.3s;
+    text-align:center;
 }
 .plan-box:hover{
-    box-shadow:0 0 10px #0ff;
+    box-shadow:0 0 15px #0ff;
 }
 .offer{color:#0ff;font-weight:bold;}
 .countdown{
@@ -120,11 +152,11 @@ button:hover{
 
 <!-- DASHBOARD -->
 <div id="dashboard" class="page hidden">
-<div class="alert-box">For any deposit, withdrawal, or account issues, contact our support team immediately.</div>
+<div class="alert-box">For deposits, withdrawals, or issues, contact our professional support immediately.</div>
 <div class="user-box">Username: <span id="dashUser"></span> | Balance: Rs <span id="dashBalance">0</span> | Daily Profit: Rs <span id="dashProfit">0</span></div>
 <h2>Dashboard</h2>
-<p>Welcome to VERBOSE! A professional, secure, and reliable investment platform. Grow your investment safely and earn daily profits automatically.</p>
-<p>Referral Link: <input id="referralLink" readonly style="background:#000;color:#0ff;font-weight:bold;"><button onclick="copyReferral()">Copy</button></p>
+<p>Welcome to VERBOSE – a premium, secure platform for investments and daily profits.</p>
+<p>Referral Link: <input id="referralLink" readonly><button onclick="copyReferral()">Copy</button></p>
 <button class="logout-btn" onclick="logout()">Logout</button>
 </div>
 
@@ -171,10 +203,10 @@ button:hover{
 <!-- SUPPORT -->
 <div id="support" class="page hidden">
 <h2>Contact Administration</h2>
-<p>For any deposit, withdrawal, or account issues, contact our professional support team immediately.</p>
+<p>For deposits, withdrawals, or account issues, contact our professional team anytime.</p>
 <p>WhatsApp: <a href="https://chat.whatsapp.com/Kmaiv3VdSo09rio4qcRTRM" target="_blank">Join WhatsApp Group</a></p>
 <p>Email: <a href="mailto:rock.earn92@gmail.com">rock.earn92@gmail.com</a></p>
-<p>VERBOSE is a professional, secure platform offering transparent investment services. Our team is available 24/7 to assist with your account, deposits, and withdrawals.</p>
+<p>VERBOSE ensures transparency, security, and automatic daily profit addition based on purchased plans.</p>
 </div>
 
 <!-- NAVIGATION -->
@@ -192,9 +224,8 @@ let currentUser = null;
 let balance = 0;
 let dailyProfit = 0;
 let plansData = [];
-let userPlans = [];
-let userData = JSON.parse(localStorage.getItem('verbose_allUsers')||'{}');
 let countdownIntervals={};
+let userData = JSON.parse(localStorage.getItem('verbose_allUsers')||'{}');
 
 // PLANS
 for(let i=1;i<=25;i++){
