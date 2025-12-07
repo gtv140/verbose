@@ -246,27 +246,40 @@ localStorage.setItem(KEY_BAL+currentUser,bal);
 const withdraws=JSON.parse(localStorage.getItem(KEY_WITHDRAWS)||[]);withdraws.push({user:currentUser,method,account,amount,time:Date.now(),approved:false});
 localStorage.setItem(KEY_WITHDRAWS,JSON.stringify(withdraws));
 alert('Withdrawal request submitted! Admin will manually approve.');
-document.getElementById('withdrawAccount').value='';
-document.getElementById('withdrawAmount').value='';
-renderDashboard();
-nav('dashboardCard');
-}
+document.getElementById('withdrawAmount').value='';nav('dashboardCard');}
 
 // SUPPORT
-function openSupport(){
-nav('supportBox');
-}
+function openSupport(){nav('supportBox');}
 
-// INIT ON LOAD
-window.onload=function(){
-if(currentUser){
-afterLoginUI();
-}else{
-nav('loginCard');
+// AUTO DASHBOARD UPDATE DAILY PROFIT
+function updateDailyProfits(){
+if(!currentUser) return;
+let userPlans=JSON.parse(localStorage.getItem(KEY_USER_PLANS+currentUser)||'[]');
+let dailyTotal=0;
+const now=Date.now();
+userPlans.forEach(p=>{
+// Simple daily accumulation
+const daysPassed=Math.floor((now-p.lastCredit)/(24*3600*1000));
+if(daysPassed>0){
+dailyTotal+=p.dailyProfit*daysPassed;
+p.lastCredit=now;
 }
-updateDepositNumber();
-fillWithdrawUser();
+});
+if(dailyTotal>0){
+let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);
+let daily=Number(localStorage.getItem(KEY_DAILY+currentUser)||0);
+bal+=dailyTotal;daily+=dailyTotal;
+localStorage.setItem(KEY_BAL+currentUser,bal);
+localStorage.setItem(KEY_DAILY+currentUser,daily);
+localStorage.setItem(KEY_USER_PLANS+currentUser,JSON.stringify(userPlans));
+renderDashboard();
 }
+}
+setInterval(updateDailyProfits,60000); // Update every 1 min
+
+// INIT
+if(currentUser) afterLoginUI();else nav('loginCard');
+
 </script>
 </body>
 </html>
