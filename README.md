@@ -1,7 +1,7 @@
 <VERBOSE>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>VERBOSE</title>
 <style>
@@ -64,7 +64,6 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5)}
 <!-- DASHBOARD -->
 <div id="dashboard" class="page hidden">
 <div class="alert-box">Withdrawal or Deposit issues? Contact Administration immediately. Company info at bottom.</div>
-
 <div class="user-box">
 <div class="left">
 <div style="display:flex;gap:12px;align-items:center">
@@ -93,7 +92,6 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5)}
 <div style="margin-top:8px; text-align:center">
 <button class="logout-btn" onclick="logout()" title="Logout">Logout</button>
 </div>
-
 <div style="text-align:center;margin-top:12px;font-size:13px;color:rgba(230,247,251,0.8)">
 VERBOSE Company — Secure, Transparent, Professional.<br>
 Contact Admin: WhatsApp 03705519562 | Email: rock.earn92@gmail.com
@@ -267,49 +265,50 @@ function submitWithdraw(){
   alert(`Withdrawal request submitted!\nMethod: ${method}\nAmount: Rs ${amount}\nAdmin will review soon.`);
 }
 
-// ===== RENDER PLANS =====
+// ===== PLANS RENDER =====
 function renderPlans(){
   const container=document.getElementById('plansList');
   container.innerHTML='';
   plansData.forEach(plan=>{
-    const div=document.createElement('div');
-    div.className='plan-box';
-    div.innerHTML=`
+    const box=document.createElement('div');
+    box.className='plan-box';
+    box.innerHTML=`
       <div class="meta">
-        <b>${plan.name} ${plan.coming?'- Coming Soon':''}</b>
-        <div class="small">Invest: Rs ${plan.invest}</div>
-        <div class="small">Days: ${plan.days} | Total: Rs ${plan.total} ${plan.offer?'<span class="offer">Offer!</span>':''}</div>
+        <b>${plan.name}</b>
+        <div>Invest: Rs ${plan.invest}</div>
+        <div>Days: ${plan.days}</div>
+        <div>Total: Rs ${plan.total}</div>
+        ${plan.offer?'<div class="offer">🔥 Special Offer</div>':''}
+        ${plan.coming?'<div class="small">Coming Soon</div>':''}
       </div>
       <div class="actions">
-        ${plan.coming?'':`<button onclick="buyPlan(${plan.id})">Buy Now</button>`}
+        ${!plan.coming?`<button onclick="joinPlan(${plan.id})">Join</button>`:''}
       </div>
     `;
-    container.appendChild(div);
+    container.appendChild(box);
   });
 }
 
-// ===== BUY PLAN =====
-function buyPlan(planId){
-  const plan=plansData.find(p=>p.id===planId);
-  if(!plan){alert("Plan not found!");return;}
-  document.getElementById('depositAmount').value=plan.invest;
-  showPage('deposit');
-  document.getElementById('depositMethod').value='jazzcash'; // default method
-  updateDepositNumber();
-}
-
-// ===== LOCAL STORAGE UPDATES =====
-function saveBalance(){
+// ===== JOIN PLAN =====
+function joinPlan(id){
+  const plan=plansData.find(p=>p.id===id);
+  if(balance<plan.invest){alert("Insufficient balance!");return;}
+  balance-=plan.invest;
+  dailyProfit+=Math.round(plan.total/plan.days);
+  userPlans.push(plan);
   localStorage.setItem('verbose_balance',balance);
   localStorage.setItem('verbose_daily',dailyProfit);
   localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));
+  document.getElementById('dashBalance').innerText=balance;
+  document.getElementById('dashDaily').innerText=dailyProfit;
+  alert(`Joined ${plan.name}! Your daily profit increased.`);
 }
 
-// ===== INITIALIZE =====
+// ===== INIT =====
 window.onload=function(){
-  if(currentUser){
-    login();
-  }
+  if(currentUser){login();}
+  updateDepositNumber();
+  renderPlans();
 };
 </script>
 </body>
