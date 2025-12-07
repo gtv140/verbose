@@ -22,6 +22,7 @@ button:hover{background:#0056b3;}
 .referral-box input{flex:1;}
 .countdown{font-size:13px;color:#d00;margin-top:4px;}
 .coming-soon{opacity:0.5;font-style:italic;}
+.logout-fixed{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);width:90%;max-width:200px;}
 </style>
 </head>
 <body>
@@ -50,7 +51,6 @@ button:hover{background:#0056b3;}
 <p id="memberSince">Member since —</p>
 <p>Balance: Rs <span id="balanceText">0</span></p>
 <p>Daily: Rs <span id="dailyText">0</span></p>
-<button onclick="doLogout()">Logout</button>
 </div>
 
 <div class="referral-box">
@@ -100,6 +100,7 @@ button:hover{background:#0056b3;}
 <p>Withdrawal is manually approved. Contact admin for urgent issues.</p>
 </div>
 
+<button class="logout-fixed" onclick="doLogout()">Logout</button>
 </div>
 
 <div class="nav">
