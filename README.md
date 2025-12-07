@@ -40,8 +40,8 @@ input, select, button {
     font-size:14px;
 }
 input, select {background:#1e293b; color:#fff;}
-button {background:#38bdf8; color:#111827; font-weight:700; cursor:pointer; border:none;}
-button:hover {background:#0ea5e9; color:#fff;}
+button {background:#38bdf8; color:#111827; font-weight:700; cursor:pointer; border:none; transition: all 0.3s;}
+button:hover {background:#0ea5e9; color:#fff; transform:scale(1.05);}
 .nav {
     position:fixed; bottom:0; left:0; right:0; 
     display:flex; justify-content:space-around; 
@@ -52,9 +52,14 @@ button:hover {background:#0ea5e9; color:#fff;}
 .plan {
     border:1px solid #38bdf8; border-radius:12px; padding:12px; 
     margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;
-    background:#111827; transition:all 0.3s;
+    background:#111827; transition:all 0.3s; position:relative;
 }
 .plan:hover {background:#0f172a; transform:scale(1.02);}
+.plan-badge {
+    position:absolute; top:-10px; right:-10px; background:#0ea5e9; padding:5px 8px; border-radius:50%; font-size:12px; font-weight:700;
+    animation:badgePulse 1.5s infinite;
+}
+@keyframes badgePulse {0%,100%{transform:scale(1);}50%{transform:scale(1.3);}}
 .progress-container {background:#1e293b; border-radius:10px; height:12px; width:100%; margin-top:6px;}
 .progress-bar {background:#38bdf8; height:100%; border-radius:10px; width:0%; transition:width 1s;}
 .alert-note {background:#1e293b; color:#38bdf8; padding:12px; border-radius:12px; margin-bottom:14px; font-weight:600; text-align:center;}
@@ -215,9 +220,12 @@ const container=document.getElementById('plansList'); container.innerHTML='';
 plans.forEach(plan=>{
 const div=document.createElement('div'); div.className='plan';
 div.innerHTML=`<div><strong>${plan.name}</strong><br>Invest: Rs ${plan.invest}<br>Total: Rs ${plan.total}<br>Daily: Rs ${plan.daily}<br>Days: ${plan.days}${plan.offer?`<br><span id="timer_${plan.id}">Loading timer...</span>`:''}</div>
-<div><button onclick="buyPlan(${plan.id})">Buy Now</button></div>`;
+<div><button onclick="buyPlan(${plan.id})" class="buyBtn">Buy Now</button></div>`;
+if(plan.offer){
+const badge=document.createElement('div'); badge.className='plan-badge'; badge.innerText='HOT'; div.appendChild(badge);
+startCountdown(plan.id);
+}
 container.appendChild(div);
-if(plan.offer){startCountdown(plan.id);}
 });
 }
 
@@ -247,7 +255,13 @@ function submitDeposit(){
 if(!currentUser){alert('Login first'); return;}
 const amount=Number(document.getElementById('depositAmount').value);
 let prev=Number(localStorage.getItem(KEY_BAL+currentUser)||0);
-localStorage.setItem(KEY_BAL+currentUser,prev+amount);
+let target=prev+amount;
+let current=prev;
+let interval=setInterval(()=>{
+current+=Math.ceil((target-current)/10);
+if(current>=target){current=target; clearInterval(interval);}
+document.getElementById('balanceText').innerText=current;
+},50);
 alert('Deposit submitted! Balance updated.');
 nav('dashboardCard');
 }
