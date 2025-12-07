@@ -3,12 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VERBOSE — Neon Premium</title>
+<title>VERBOSE</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <style>
 :root{--bg:#040404;--neon:#00f7ff;--accent:#ff5cff;--muted:rgba(230,247,251,0.6);}
-body{margin:0;font-family:Arial,sans-serif;background:#040404;color:#e6fbff;}
+body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#e6fbff;}
 .hidden{display:none;}
-header{padding:20px;text-align:center;font-weight:900;color:var(--neon);text-shadow:0 0 10px var(--neon);font-size:22px;}
+header{padding:20px;text-align:center;font-weight:900;color:var(--neon);text-shadow:0 0 12px var(--neon);font-size:24px;}
 .wrap{max-width:480px;margin:12px auto;padding:12px;}
 .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:12px;margin-bottom:12px;border:1px solid rgba(0,255,240,0.06);}
 input,select,button{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:#dff;font-size:14px;}
@@ -22,22 +23,23 @@ input,select,button{width:100%;padding:10px;margin-top:6px;border-radius:8px;bor
 .plan .actions{width:100px;text-align:right;}
 .user-box{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
 .user-box .badge{background:rgba(0,255,240,0.06);padding:4px 8px;border-radius:999px;color:var(--neon);}
+.icon{margin-right:6px;}
 </style>
 </head>
 <body>
-<header>⚡ VERBOSE — Neon Premium</header>
+<header><i class="fas fa-bolt icon"></i>VERBOSE<i class="fas fa-bolt icon"></i></header>
 <div class="wrap">
 
 <!-- LOGIN -->
 <div id="loginCard" class="card">
-<h3 style="margin:0 0 8px 0;color:var(--neon)">Login / Signup</h3>
+<h3 style="margin:0 0 8px 0;color:var(--neon)"><i class="fas fa-user icon"></i>Login / Signup</h3>
 <select id="authMode">
 <option value="login">Login</option>
 <option value="signup">New User</option>
 </select>
 <input id="inputUser" placeholder="Username" />
 <input id="inputPass" placeholder="Password" type="password" />
-<button class="btn" onclick="doAuth()">Submit</button>
+<button class="btn" onclick="doAuth()"><i class="fas fa-sign-in-alt icon"></i>Submit</button>
 <p class="muted">Tip: Same device & browser. Data stored locally.</p>
 </div>
 
@@ -45,28 +47,28 @@ input,select,button{width:100%;padding:10px;margin-top:6px;border-radius:8px;bor
 <div id="dashboardCard" class="card hidden">
 <div class="user-box">
 <div>
-<div id="welcomeText" style="font-weight:800;color:var(--neon)">Welcome —</div>
+<div id="welcomeText" style="font-weight:800;color:var(--neon)"><i class="fas fa-user-check icon"></i>Welcome —</div>
 <div id="memberSince" class="muted">Member since —</div>
 </div>
 <div style="text-align:right;">
 <div class="muted">Balance</div>
-<div style="font-weight:900;font-size:18px">Rs <span id="balanceText">0</span></div>
-<div class="badge">Daily: Rs <span id="dailyText">0</span></div>
-<div class="btn" style="font-size:13px;padding:4px 8px;margin-top:4px;" onclick="doLogout()">Logout</div>
+<div style="font-weight:900;font-size:18px"><i class="fas fa-coins icon"></i>Rs <span id="balanceText">0</span></div>
+<div class="badge"><i class="fas fa-calendar-day icon"></i>Daily: Rs <span id="dailyText">0</span></div>
+<div class="btn" style="font-size:13px;padding:4px 8px;margin-top:4px;" onclick="doLogout()"><i class="fas fa-sign-out-alt icon"></i>Logout</div>
 </div>
 </div>
 </div>
 
 <!-- PLANS -->
 <div id="plansCard" class="card hidden">
-<h3 style="color:var(--neon);margin-top:0">Special Offers</h3>
+<h3 style="color:var(--neon);margin-top:0"><i class="fas fa-gift icon"></i>Special Offers</h3>
 <div class="muted" style="margin-bottom:8px;">7 plans with 24h countdown timer.</div>
 <div id="plansList"></div>
 </div>
 
 <!-- DEPOSIT -->
 <div id="depositCard" class="card hidden">
-<h3 style="color:var(--neon);margin:0 0 6px 0;">Deposit</h3>
+<h3 style="color:var(--neon);margin:0 0 6px 0;"><i class="fas fa-hand-holding-usd icon"></i>Deposit</h3>
 <label class="muted">Method</label>
 <select id="depositMethod" onchange="updateDepositNumber()">
 <option value="jazzcash">JazzCash — 03705519562</option>
@@ -80,12 +82,12 @@ input,select,button{width:100%;padding:10px;margin-top:6px;border-radius:8px;bor
 <input id="depositTx" placeholder="Enter TX ID"/>
 <label class="muted">Upload Proof</label>
 <input id="depositProof" type="file"/>
-<button class="btn" onclick="submitDeposit()">Submit Deposit</button>
+<button class="btn" onclick="submitDeposit()"><i class="fas fa-paper-plane icon"></i>Submit Deposit</button>
 </div>
 
 <!-- WITHDRAW -->
 <div id="withdrawCard" class="card hidden">
-<h3 style="color:var(--neon);margin:0 0 6px 0;">Withdrawal</h3>
+<h3 style="color:var(--neon);margin:0 0 6px 0;"><i class="fas fa-money-bill-wave icon"></i>Withdrawal</h3>
 <label class="muted">Method</label>
 <select id="withdrawMethod">
 <option value="jazzcash">JazzCash</option>
@@ -98,17 +100,17 @@ input,select,button{width:100%;padding:10px;margin-top:6px;border-radius:8px;bor
 <input id="withdrawAccount" placeholder="Enter account or mobile number"/>
 <label class="muted">Amount (PKR)</label>
 <input id="withdrawAmount" placeholder="Enter amount"/>
-<button class="btn" onclick="submitWithdraw()">Request Withdrawal</button>
+<button class="btn" onclick="submitWithdraw()"><i class="fas fa-paper-plane icon"></i>Request Withdrawal</button>
 </div>
 
 </div>
 
 <!-- NAV -->
 <div class="nav">
-<div onclick="nav('dashboardCard')">🏠 Home</div>
-<div onclick="nav('plansCard')">📦 Plans</div>
-<div onclick="nav('depositCard')">💰 Deposit</div>
-<div onclick="nav('withdrawCard')">💵 Withdraw</div>
+<div onclick="nav('dashboardCard')"><i class="fas fa-home icon"></i>Home</div>
+<div onclick="nav('plansCard')"><i class="fas fa-box icon"></i>Plans</div>
+<div onclick="nav('depositCard')"><i class="fas fa-wallet icon"></i>Deposit</div>
+<div onclick="nav('withdrawCard')"><i class="fas fa-hand-holding-usd icon"></i>Withdraw</div>
 </div>
 
 <script>
@@ -164,8 +166,8 @@ function renderPlans(){
 const container=document.getElementById('plansList');container.innerHTML='';
 plans.forEach(plan=>{
 const div=document.createElement('div');div.className='plan';
-div.innerHTML=`<div class="meta"><div style="font-weight:800">${plan.name}</div><div class="muted" style="margin-top:4px">Invest: Rs ${fmt(plan.invest)} · Total: Rs ${fmt(plan.total)}</div>${plan.offer?`<div class="countdown" id="countdown_${plan.id}">Loading timer...</div>`:''}</div>
-<div class="actions">${plan.offer?'<button class="btn" onclick="buyPlan('+plan.id+')">Buy Now</button>':''}</div>`;container.appendChild(div);
+div.innerHTML=`<div class="meta"><div style="font-weight:800"><i class="fas fa-gift icon"></i>${plan.name}</div><div class="muted" style="margin-top:4px">Invest: Rs ${fmt(plan.invest)} · Total: Rs ${fmt(plan.total)}</div>${plan.offer?`<div class="countdown" id="countdown_${plan.id}">Loading timer...</div>`:''}</div>
+<div class="actions">${plan.offer?'<button class="btn" onclick="buyPlan('+plan.id+')"><i class="fas fa-shopping-cart icon"></i>Buy Now</button>':''}</div>`;container.appendChild(div);
 });
 }
 
