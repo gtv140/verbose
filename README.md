@@ -19,7 +19,7 @@ header {
     font-size:24px; 
     background:#111827; 
     color:#38bdf8;
-    box-shadow:0 4px 12px rgba(0,0,0,0.3);
+    box-shadow:0 4px 12px rgba(0,0,0,0.5);
 }
 .wrap {max-width:480px; margin:12px auto; padding:12px;}
 .card {
@@ -53,11 +53,13 @@ button:hover {background:#0ea5e9; color:#fff; transform:scale(1.05);}
     border:1px solid #38bdf8; border-radius:12px; padding:12px; 
     margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;
     background:#111827; transition:all 0.3s; position:relative;
+    box-shadow:0 6px 16px rgba(0,0,0,0.4);
 }
-.plan:hover {background:#0f172a; transform:scale(1.02);}
+.plan:hover {background:#0f172a; transform:scale(1.03);}
 .plan-badge {
     position:absolute; top:-10px; right:-10px; background:#0ea5e9; padding:5px 8px; border-radius:50%; font-size:12px; font-weight:700;
     animation:badgePulse 1.5s infinite;
+    box-shadow:0 2px 8px rgba(0,0,0,0.5);
 }
 @keyframes badgePulse {0%,100%{transform:scale(1);}50%{transform:scale(1.3);}}
 .progress-container {background:#1e293b; border-radius:10px; height:12px; width:100%; margin-top:6px;}
@@ -68,9 +70,11 @@ button:hover {background:#0ea5e9; color:#fff; transform:scale(1.05);}
 .balance-box {
     background: linear-gradient(90deg,#0f172a,#1e293b);
     color:#38bdf8; padding:12px; border-radius:12px; text-align:center;
-    margin-bottom:15px;
+    margin-bottom:15px; box-shadow:0 4px 12px rgba(0,0,0,0.5);
 }
-.balance-box span {display:block; font-size:20px; font-weight:700;}
+.balance-box span {display:block; font-size:22px; font-weight:700;}
+.buyBtn {background:#facc15; color:#111827; font-weight:700; border-radius:12px; padding:8px 12px;}
+.buyBtn:hover {background:#eab308; transform:scale(1.05);}
 </style>
 </head>
 <body>
