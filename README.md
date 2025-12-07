@@ -2,199 +2,168 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>VERBOSE – Earn Daily</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VERBOSE</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
 <style>
-body{margin:0;font-family:Arial,sans-serif;background:#f5f5f5;color:#333;}
-header{padding:20px;text-align:center;font-size:24px;font-weight:bold;background:#007BFF;color:white;}
-.wrap{max-width:480px;margin:12px auto;padding:12px;}
-.card{background:white;padding:12px;border-radius:12px;margin-bottom:12px;box-shadow:0 2px 6px rgba(0,0,0,0.1);}
-input,select,button{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid #ccc;font-size:14px;}
-.btn{background:#007BFF;border:none;color:white;font-weight:600;cursor:pointer;padding:10px;border-radius:8px;}
-.nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:10px;background:#f0f0f0;border-top:1px solid #ccc;}
-.nav div{text-align:center;font-size:13px;cursor:pointer;}
-.plan{display:flex;justify-content:space-between;align-items:center;padding:10px;border:1px solid #ccc;border-radius:8px;margin-bottom:8px;}
-.plan button{padding:6px 10px;font-size:12px;}
-.hidden{display:none;}
-.alert-note{background:#ffe0e0;color:#900;padding:10px;margin-bottom:12px;border-radius:8px;text-align:center;}
+body{margin:0;padding:0;font-family:Arial;background:#f2f2f2;}
+header{background:#111;color:#fff;padding:15px;text-align:center;font-size:22px;font-weight:bold;}
+.container{padding:15px;}
+.box{background:#fff;padding:15px;margin-bottom:12px;border-radius:8px;box-shadow:0 0 5px rgba(0,0,0,0.1);}
+.plan{border:1px solid #ddd;padding:12px;border-radius:8px;margin-bottom:10px;}
+button{background:#111;color:#fff;padding:10px;width:100%;border:none;border-radius:6px;margin-top:10px;font-size:16px;}
+.copy-btn{background:#008CFF;margin-top:5px;}
+input,select{width:100%;padding:10px;margin-top:8px;border-radius:6px;border:1px solid #ccc;}
+.fixed-nav{position:fixed;bottom:0;left:0;width:100%;background:#fff;padding:10px;display:flex;justify-content:space-around;border-top:1px solid #ccc;}
+.fixed-nav div{text-align:center;font-size:14px;}
+#logoutBtn{color:red;font-weight:bold;}
+.alert{background:#ffebc7;padding:10px;border-radius:6px;border-left:4px solid orange;margin-bottom:10px;font-size:14px;}
 </style>
-</head>
-<body>
-<header>VERBOSE</header>
-<div class="wrap">
-
-<!-- LOGIN / SIGNUP -->
-<div id="loginCard" class="card">
-<h3>Login / Signup</h3>
-<select id="authMode">
-<option value="login">Login</option>
-<option value="signup">New User</option>
-</select>
-<input id="inputUser" placeholder="Username"/>
-<input id="inputPass" placeholder="Password" type="password"/>
-<input id="referralInput" placeholder="Referral Code (optional)"/>
-<button class="btn" onclick="doAuth()">Submit</button>
-<p style="font-size:12px;color:#666;">Tip: Data stored locally, same device & browser.</p>
-</div>
-
-<!-- DASHBOARD -->
-<div id="dashboardCard" class="card hidden">
-<div class="alert-note">⚠️ Deposit/Withdrawal issues? Contact Support immediately (WhatsApp or Email)</div>
-<div style="display:flex;justify-content:space-between;margin-bottom:12px;">
-<div>
-<div id="welcomeText" style="font-weight:bold;">Welcome —</div>
-<div id="memberSince" style="font-size:12px;color:#666;">Member since —</div>
-</div>
-<div style="text-align:right;">
-<div style="font-size:12px;color:#666;">Balance</div>
-<div style="font-weight:bold;font-size:18px">Rs <span id="balanceText">0</span></div>
-</div>
-</div>
-</div>
-
-<!-- PLANS -->
-<div id="plansCard" class="card hidden">
-<h3>Plans</h3>
-<div id="plansList"></div>
-</div>
-
-<!-- DEPOSIT -->
-<div id="depositCard" class="card hidden">
-<h3>Deposit</h3>
-<label>Method</label>
-<select id="depositMethod" onchange="updateDepositNumber()">
-<option value="jazzcash">JazzCash — 03705519562</option>
-<option value="easypaisa">EasyPaisa — 03379827882</option>
-</select>
-<label>Number</label>
-<input id="depositNumber" readonly/>
-<label>Amount (PKR)</label>
-<input id="depositAmount" readonly/>
-<label>Transaction ID</label>
-<input id="depositTx" placeholder="Enter TX ID"/>
-<label>Upload Proof</label>
-<input id="depositProof" type="file"/>
-<button class="btn" onclick="submitDeposit()">Submit Deposit</button>
-</div>
-
-<!-- WITHDRAW -->
-<div id="withdrawCard" class="card hidden">
-<h3>Withdrawal</h3>
-<label>Username</label>
-<input id="withdrawUsername" readonly/>
-<label>Account / Mobile Number</label>
-<input id="withdrawAccount" placeholder="Enter account or mobile number"/>
-<label>Amount (PKR)</label>
-<input id="withdrawAmount" placeholder="Enter amount"/>
-<button class="btn" onclick="submitWithdraw()">Request Withdrawal</button>
-</div>
-
-<!-- NAV -->
-<div class="nav">
-<div onclick="nav('dashboardCard')"><i class="fas fa-home"></i><br>Home</div>
-<div onclick="nav('plansCard')"><i class="fas fa-gift"></i><br>Plans</div>
-<div onclick="nav('depositCard')"><i class="fas fa-wallet"></i><br>Deposit</div>
-<div onclick="nav('withdrawCard')"><i class="fas fa-money-bill-wave"></i><br>Withdraw</div>
-<div id="logoutBtn" onclick="doLogout()" class="hidden"><i class="fas fa-sign-out-alt"></i><br>Logout</div>
-</div>
 
 <script>
-const KEY_USER='verbose_user';
-const KEY_BAL='verbose_balance_';
-const KEY_USER_PLANS='verbose_plans_';
-let currentUser=localStorage.getItem(KEY_USER)||null;
+let balance = 0;
 
-// Plans setup
-let plans=[];
-for(let i=1;i<=7;i++){plans.push({id:i,name:'Special Plan '+i,invest:200*i,total:(200*i)*3,days:20+Math.floor(Math.random()*51),offer:true});}
-for(let i=8;i<=32;i++){let invest=3000+(i-8)*(30000-3000)/24;plans.push({id:i,name:'Plan '+(i-7),invest:Math.round(invest),total:Math.round(invest*2.5),days:20+Math.floor(Math.random()*51),offer:false});}
-for(let i=33;i<=37;i++){plans.push({id:i,name:'Coming Soon',invest:0,total:0,days:0,offer:false});}
-
-// AUTH
-function doAuth(){
-const mode=document.getElementById('authMode').value;
-const u=document.getElementById('inputUser').value.trim();
-const p=document.getElementById('inputPass').value.trim();
-const credKey='verbose_cred_'+u;
-if(!u||!p){alert('Enter username & password');return;}
-if(mode==='signup'){
-if(localStorage.getItem(credKey)){alert('Username exists');return;}
-localStorage.setItem(credKey,p);localStorage.setItem(KEY_BAL+u,'0');localStorage.setItem(KEY_USER_PLANS+u,'[]');
-}else{
-if(localStorage.getItem(credKey)!==p){alert('Wrong username/password');return;}
-}
-localStorage.setItem(KEY_USER,u);currentUser=u;afterLoginUI();
-}
-function afterLoginUI(){nav('dashboardCard');renderPlans();renderDashboard();document.getElementById('logoutBtn').classList.remove('hidden');}
-function doLogout(){localStorage.removeItem(KEY_USER);currentUser=null;nav('loginCard');document.getElementById('logoutBtn').classList.add('hidden');}
-
-// NAV
-function nav(cardId){['loginCard','dashboardCard','plansCard','depositCard','withdrawCard'].forEach(id=>document.getElementById(id).classList.add('hidden'));document.getElementById(cardId).classList.remove('hidden');}
-
-// DASHBOARD
-function renderDashboard(){
-if(!currentUser) return;
-document.getElementById('welcomeText').innerText='Welcome, '+currentUser;
-document.getElementById('memberSince').innerText='Member since: '+new Date().toLocaleDateString();
-document.getElementById('balanceText').innerText=localStorage.getItem(KEY_BAL+currentUser)||0;
-document.getElementById('withdrawUsername').value=currentUser;
+// COPY NUMBER FUNCTION
+function copyNumber(num){
+  navigator.clipboard.writeText(num);
+  alert("Number Copied: " + num);
 }
 
-// PLANS
-function renderPlans(){
-const container=document.getElementById('plansList');
-container.innerHTML='';
-plans.forEach(plan=>{
-const div=document.createElement('div');div.className='plan';
-let dailyProfit=plan.days>0?Math.round(plan.total/plan.days):0;
-div.innerHTML=`<div><strong>${plan.name}</strong><br>Invest: Rs ${plan.invest} · Total: Rs ${plan.total} · Days: ${plan.days} · Daily: Rs ${dailyProfit}</div>
-<div>${plan.offer||plan.name!=='Coming Soon'?'<button onclick="buyPlan('+plan.id+')">Buy Now</button>':''}</div>`;
-container.appendChild(div);
-});
+// BUY PLAN FUNCTION
+function buyPlan(amount){
+  document.getElementById("depositAmount").value = amount;
+  document.getElementById("depositSection").scrollIntoView();
 }
 
-// BUY PLAN
-function buyPlan(id){
-if(!currentUser){alert('Login first');return;}
-const plan=plans.find(p=>p.id===id);
-if(!plan||plan.name==='Coming Soon'){alert('Plan not available');return;}
-document.getElementById('depositAmount').value=plan.invest;
-nav('depositCard');
-alert('Deposit page opened. Enter TX ID & upload proof.');
-}
-
-// DEPOSIT
-function updateDepositNumber(){
-const method=document.getElementById('depositMethod').value;
-document.getElementById('depositNumber').value=method==='jazzcash'?'03705519562':'03379827882';
-}
+// SUBMIT DEPOSIT FUNCTION
 function submitDeposit(){
-if(!currentUser){alert('Login first');return;}
-const amount=Number(document.getElementById('depositAmount').value)||0;
-const tx=document.getElementById('depositTx').value.trim();
-const proof=document.getElementById('depositProof').files[0];
-if(!amount||!tx||!proof){alert('All fields required');return;}
-let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);
-bal+=amount;
-localStorage.setItem(KEY_BAL+currentUser,bal);
-alert('Deposit successful! Balance updated.');
-document.getElementById('depositTx').value='';document.getElementById('depositProof').value='';
-renderDashboard();nav('dashboardCard');
+  let amount = Number(document.getElementById("depositAmount").value);
+  let txid = document.getElementById("txid").value;
+  let proof = document.getElementById("proof").value;
+
+  if(amount <= 0 || txid=="" || proof==""){
+    alert("Please fill all deposit fields.");
+    return;
+  }
+
+  alert("Deposit Submitted. Admin will approve soon.");
+  balance += amount;
+  document.getElementById("balance").innerText = balance;
 }
 
-// WITHDRAW
-function submitWithdraw(){
-if(!currentUser){alert('Login first');return;}
-const amount=Number(document.getElementById('withdrawAmount').value);
-if(!amount){alert('Enter amount');return;}
-let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);
-if(amount>bal){alert('Insufficient balance');return;}
-bal-=amount;localStorage.setItem(KEY_BAL+currentUser,bal);
-alert('Withdrawal request successful! Balance updated.');
-document.getElementById('withdrawAmount').value='';renderDashboard();nav('dashboardCard');
+// WITHDRAW FUNCTION
+function withdraw(){
+  let w = Number(prompt("Enter withdrawal amount:"));
+
+  if(w > balance){
+    alert("Insufficient Balance.");
+  } else {
+    balance -= w;
+    document.getElementById("balance").innerText = balance;
+    alert("Withdrawal Request Submitted. Admin will approve.");
+  }
 }
+
+// PREVENT AUTO LOGOUT ON REFRESH
+window.addEventListener("beforeunload", () => {
+  localStorage.setItem("vb_balance", balance);
+});
+window.onload = () => {
+  if(localStorage.getItem("vb_balance")){
+    balance = Number(localStorage.getItem("vb_balance"));
+    document.getElementById("balance").innerText = balance;
+  }
+};
 </script>
+</head>
+
+<body>
+
+<header>VERBOSE</header>
+
+<div class="container">
+
+<div class="alert">⚠️ Deposit or withdrawal issue? Contact Administration immediately.</div>
+
+<div class="box">
+<h3>Your Balance: PKR <span id="balance">0</span></h3>
+<button onclick="withdraw()">Withdraw</button>
+</div>
+
+<div class="box">
+<h3>Special Offers (24 Hours)</h3>
+
+<div class="plan">
+<b>Plan 1:</b> PKR 200<br>
+Days: 20 • Daily Profit Auto Add<br>
+<button onclick="buyPlan(200)">Buy Now</button>
+</div>
+
+<div class="plan">
+<b>Plan 2:</b> PKR 500<br>
+Days: 30<br>
+<button onclick="buyPlan(500)">Buy Now</button>
+</div>
+
+<div class="plan">
+<b>Plan 3:</b> PKR 1000<br>
+Days: 40<br>
+<button onclick="buyPlan(1000)">Buy Now</button>
+</div>
+
+<div class="plan">
+<b>Plan 4:</b> PKR 2000<br>
+Days: 50<br>
+<button onclick="buyPlan(2000)">Buy Now</button>
+</div>
+
+<div class="plan">
+<b>Plan 5:</b> PKR 3000<br>
+Days: 70<br>
+<button onclick="buyPlan(3000)">Buy Now</button>
+</div>
+</div>
+
+<div class="box">
+<h3>Normal Plans</h3>
+
+<div class="plan"><b>Plan A:</b> 5000 PKR • 30 Days <button onclick="buyPlan(5000)">Buy</button></div>
+<div class="plan"><b>Plan B:</b> 10000 PKR • 45 Days <button onclick="buyPlan(10000)">Buy</button></div>
+<div class="plan"><b>Plan C:</b> 20000 PKR • 60 Days <button onclick="buyPlan(20000)">Buy</button></div>
+<div class="plan"><b>Plan D:</b> 30000 PKR • 80 Days <button onclick="buyPlan(30000)">Buy</button></div>
+
+</div>
+
+<div class="box" id="depositSection">
+<h3>Deposit</h3>
+
+<label>JazzCash (Copy Number)</label>
+<button class="copy-btn" onclick="copyNumber('03705519562')">Copy 03705519562</button>
+
+<label>Easypaisa (Copy Number)</label>
+<button class="copy-btn" onclick="copyNumber('03379827882')">Copy 03379827882</button>
+
+<input type="number" id="depositAmount" placeholder="Amount">
+<input type="text" id="txid" placeholder="Transaction ID">
+<input type="text" id="proof" placeholder="Upload Proof Link">
+
+<button onclick="submitDeposit()">Submit Deposit</button>
+</div>
+
+<div class="box">
+<h3>Administration Support</h3>
+<p><b>Company:</b> VERBOSE – Branch of ROCK EARN (Million+ Active Users)</p>
+<p><b>WhatsApp:</b> <a href="https://wa.me/923705519562">03705519562</a></p>
+<p><b>Email:</b> <a href="mailto:rock.earn92@gmail.com">rock.earn92@gmail.com</a></p>
+<p>24/7 Support Available • Your earnings are fully secure.</p>
+</div>
+
+</div>
+
+<div class="fixed-nav">
+<div onclick="location.reload()">🔄<br>Refresh</div>
+<div id="logoutBtn">🚪<br>Logout</div>
+</div>
 
 </body>
 </html>
