@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VERBOSE</title>
+<title>VERBOSE Dashboard</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <style>
 :root{
@@ -15,19 +15,20 @@
 --alert:#ff7b72;
 }
 body{margin:0;font-family:sans-serif;background:var(--bg);color:#c9d1d9;}
-header{padding:15px;text-align:center;font-size:24px;font-weight:bold;color:var(--blue);}
-.wrap{max-width:500px;margin:10px auto;padding:10px;}
-.card{background:var(--card);padding:12px;margin-bottom:12px;border-radius:10px;}
+header{padding:15px;text-align:center;font-size:26px;font-weight:bold;color:var(--blue);border-bottom:1px solid #30363d;}
+.wrap{max-width:550px;margin:10px auto;padding:10px;}
+.card{background:var(--card);padding:15px;margin-bottom:12px;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,0.5);}
 input,select,button{width:100%;padding:10px;margin-top:6px;border-radius:6px;border:1px solid #30363d;background:transparent;color:#c9d1d9;}
-button{cursor:pointer;background:var(--blue);border:none;color:white;font-weight:bold;}
+button{cursor:pointer;background:var(--blue);border:none;color:white;font-weight:bold;transition:0.2s;}
+button:hover{background:#0f5ad1;}
 .nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:10px;background:#161b22;border-top:1px solid #30363d;}
 .nav div{color:#c9d1d9;text-align:center;font-size:13px;cursor:pointer;}
-.plan{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;margin-bottom:6px;background:#21262d;}
+.plan{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;margin-bottom:8px;background:#21262d;transition:0.2s;}
+.plan:hover{background:#1c1f24;}
 .plan .meta{flex:1;font-size:14px;}
-.plan button{width:100px;font-size:13px;padding:4px;}
 .referral-box{display:flex;gap:6px;margin-bottom:10px;}
 .referral-box input{flex:1;}
-.admin-box div{margin-top:6px;padding:8px;background:#21262d;border-radius:6px;text-align:center;}
+.admin-box div{margin-top:6px;padding:10px;background:#21262d;border-radius:8px;text-align:center;}
 .hidden{display:none;}
 .alert-note{background:rgba(255,123,114,0.1);color:var(--alert);padding:10px;border-radius:6px;margin-bottom:10px;text-align:center;}
 .success-note{background:rgba(46,160,67,0.1);color:var(--success);padding:10px;border-radius:6px;margin-bottom:10px;text-align:center;}
@@ -53,22 +54,22 @@ button{cursor:pointer;background:var(--blue);border:none;color:white;font-weight
 
 <!-- DASHBOARD -->
 <div id="dashboardCard" class="card hidden">
-<div class="alert-note">⚠️ Any deposit/withdrawal issue? Contact administration immediately.</div>
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+<div class="alert-note"><i class="fas fa-exclamation-triangle"></i> Any deposit/withdrawal issue? Contact administration immediately.</div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
 <div>
-<div id="welcomeText" style="font-weight:bold;"></div>
+<div id="welcomeText" style="font-weight:bold;font-size:18px;"></div>
 <div id="memberSince" style="color:var(--muted);font-size:12px;"></div>
 </div>
 <div style="text-align:right;">
 <div style="font-size:12px;color:var(--muted)">Balance</div>
 <div style="font-weight:bold;font-size:16px">Rs <span id="balanceText">0</span></div>
-<div style="margin-top:4px;"><button onclick="doLogout()" style="width:auto;font-size:12px;padding:4px;">Logout</button></div>
+<div style="margin-top:6px;"><button onclick="doLogout()" style="width:auto;font-size:12px;padding:6px;"><i class="fas fa-sign-out-alt"></i> Logout</button></div>
 </div>
 </div>
 
 <div class="referral-box">
 <input id="referralLink" readonly/>
-<button onclick="copyReferral()">Copy Link</button>
+<button onclick="copyReferral()"><i class="fas fa-copy"></i> Copy Link</button>
 </div>
 
 <div class="admin-box">
