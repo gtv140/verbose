@@ -75,6 +75,13 @@ button:hover {background:#0ea5e9; color:#fff; transform:scale(1.05);}
 .balance-box span {display:block; font-size:22px; font-weight:700;}
 .buyBtn {background:#facc15; color:#111827; font-weight:700; border-radius:12px; padding:8px 12px;}
 .buyBtn:hover {background:#eab308; transform:scale(1.05);}
+.logoutBtn {
+    position:fixed; bottom:60px; left:50%; transform:translateX(-50%);
+    background:#f87171; color:#111827; padding:12px 20px; border-radius:12px;
+    font-weight:700; border:none; cursor:pointer; box-shadow:0 6px 12px rgba(0,0,0,0.5);
+    transition:all 0.3s;
+}
+.logoutBtn:hover {background:#ef4444; transform:scale(1.05);}
 </style>
 </head>
 <body>
@@ -146,6 +153,9 @@ Balance: <span id="balanceText">0</span> PKR
 <button onclick="submitWithdraw()">Request Withdrawal</button>
 </div>
 
+<!-- LOGOUT BUTTON -->
+<button class="logoutBtn" onclick="logoutUser()">Logout</button>
+
 <!-- NAV -->
 <div class="nav">
 <div onclick="nav('dashboardCard')"><i class="fas fa-home"></i><br>Home</div>
@@ -204,6 +214,14 @@ if(!currentUser) return;
 document.getElementById('welcomeText').innerText=currentUser;
 document.getElementById('balanceText').innerText=localStorage.getItem(KEY_BAL+currentUser)||'0';
 renderProgressGraphs();
+}
+
+// LOGOUT
+function logoutUser(){
+localStorage.removeItem(KEY_USER);
+currentUser=null;
+nav('loginCard');
+alert('Logged out successfully!');
 }
 
 // PROGRESS GRAPHS
