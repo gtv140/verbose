@@ -1,368 +1,134 @@
 <VERBOSE>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>VERBOSE — Premium Neon App</title>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VERBOSE — Neon Premium</title>
 <style>
-*{
- margin:0; padding:0; font-family:Arial;
- box-sizing:border-box;
-}
-
-body{
- background:#000;
- color:#fff;
- padding:10px;
-}
-
-/* HEADER */
-header{
- text-align:center;
- font-size:24px;
- font-weight:bold;
- padding:12px;
- margin-bottom:15px;
- color:#0ff;
- text-shadow:0 0 15px #0ff;
-}
-
-/* CARD STYLE */
-.card{
- background:#111;
- border:1px solid #0ff;
- border-radius:12px;
- padding:15px;
- margin-bottom:15px;
- box-shadow:0 0 12px #0ff;
-}
-
-/* BUTTONS */
-.btn{
- width:100%;
- padding:12px;
- border:none;
- background:#0ff;
- color:#000;
- font-weight:bold;
- margin-top:10px;
- border-radius:8px;
- box-shadow:0 0 15px #0ff;
-}
-
-input, select{
- width:100%;
- padding:10px;
- background:#000;
- border:1px solid #0ff;
- border-radius:8px;
- color:#0ff;
- margin-top:8px;
-}
-
-.nav{
- position:fixed; bottom:0; left:0; width:100%;
- background:#000;
- border-top:2px solid #0ff;
- display:flex;
- justify-content:space-around;
- padding:10px 0;
-}
-
-.nav div{
- color:#0ff;
- text-align:center;
- font-size:12px;
-}
-
-section{ display:none; }
-
-/* NEON TITLES */
-h3{
- color:#0ff;
- text-shadow:0 0 10px #0ff;
- margin-bottom:10px;
-}
-
-/* PLAN CARDS */
-.planBox{
- background:#000;
- border:1px solid #0ff;
- border-radius:10px;
- padding:10px;
- margin-bottom:10px;
- color:#0ff;
-}
-
-.buyBtn{
- background:#0ff;
- color:#000;
- padding:10px;
- width:100%;
- font-weight:bold;
- border:none;
- border-radius:6px;
- margin-top:8px;
- box-shadow:0 0 12px #0ff;
-}
+:root{--bg:#040404;--neon:#00f7ff;--accent:#ff5cff;--muted:rgba(230,247,251,0.6);}
+body{margin:0;font-family:Arial,sans-serif;background:#040404;color:#e6fbff;}
+.hidden{display:none;}
+header{padding:20px;text-align:center;font-weight:900;color:var(--neon);text-shadow:0 0 10px var(--neon);font-size:22px;}
+.wrap{max-width:480px;margin:12px auto;padding:12px;}
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:12px;margin-bottom:12px;border:1px solid rgba(0,255,240,0.06);}
+input,select,button{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:#dff;font-size:14px;}
+.btn{background:linear-gradient(90deg,var(--neon),var(--accent));border:none;color:#001;font-weight:800;cursor:pointer;padding:10px;border-radius:10px;}
+.nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:10px;background:rgba(0,0,0,0.6);border-top:1px solid rgba(0,255,240,0.03);}
+.nav div{color:var(--neon);text-align:center;font-size:13px;cursor:pointer;}
+.countdown{font-weight:800;color:var(--neon);margin-top:6px;}
+.muted{color:var(--muted);font-size:13px;}
+.plan{display:flex;justify-content:space-between;gap:10px;padding:10px;border-radius:10px;border:1px solid rgba(0,255,240,0.04);margin-bottom:8px;background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(0,0,0,0.04));}
+.plan .meta{flex:1;}
+.plan .actions{width:100px;text-align:right;}
 </style>
 </head>
-
 <body>
+<header>⚡ VERBOSE — Neon Premium</header>
+<div class="wrap">
 
-<header>⚡ VERBOSE Premium Neon</header>
-
-<!-- LOGIN PAGE -->
-<section id="loginPage" style="display:block">
-<div class="card">
-<h3>👤 Login Account</h3>
-
-<label>Username</label>
-<input id="loginUser">
-
-<label>Password</label>
-<input id="loginPass" type="password">
-
-<button class="btn" onclick="login()">Login</button>
-
-<p style="margin-top:10px;color:#0ff;">Not Registered? Create Account Below</p>
+<!-- LOGIN -->
+<div id="loginCard" class="card">
+<h3 style="margin:0 0 8px 0;color:var(--neon)">Login / Signup</h3>
+<select id="authMode">
+<option value="login">Login</option>
+<option value="signup">New User</option>
+</select>
+<input id="inputUser" placeholder="Username" />
+<input id="inputPass" placeholder="Password" type="password" />
+<button class="btn" onclick="doAuth()">Submit</button>
+<p class="muted">Tip: Same device & browser. Data stored locally.</p>
 </div>
-
-<div class="card">
-<h3>✍️ Create Account</h3>
-
-<label>Username</label>
-<input id="regUser">
-
-<label>Password</label>
-<input id="regPass" type="password">
-
-<button class="btn" onclick="register()">Create Account</button>
-</div>
-</section>
 
 <!-- DASHBOARD -->
-<section id="dashboard">
-<div class="card">
-<h3>🏠 Dashboard</h3>
-<p id="welcomeName" style="font-size:18px;font-weight:bold;color:#0ff;"></p>
-<p><strong>Balance: </strong> <span id="balance" style="color:#0ff;">0</span> PKR</p>
-<p><strong>Daily Profit:</strong> <span id="dailyProfit" style="color:#0ff;">0</span> PKR</p>
-<br>
-<p style="color:#0ff;">
-⚠ Deposit / Withdrawal issue?  
-Administration se rabta karein:  
-📞 03705519562  
-✉ rock.earn92@gmail.com
-</p>
+<div id="dashboardCard" class="card hidden">
+<div style="display:flex;justify-content:space-between;">
+<div>
+<div id="welcomeText" style="font-weight:800;color:var(--neon)">Welcome —</div>
+<div id="memberSince" class="muted">Member since —</div>
 </div>
-</section>
-
-<!-- PLANS PAGE -->
-<section id="plansPage">
-<div class="card">
-<h3>📦 Special Offers (3x — 24 Hours)</h3>
-<div id="specialPlans"></div>
+<div style="text-align:right;">
+<div class="muted">Balance</div>
+<div style="font-weight:900;font-size:18px">Rs <span id="balanceText">0</span></div>
+<div class="btn" style="font-size:13px;padding:4px 8px;margin-top:4px;" onclick="doLogout()">Logout</div>
+</div>
+</div>
 </div>
 
-<div class="card">
-<h3>💼 Normal Plans (2.5x)</h3>
-<div id="normalPlans"></div>
+<!-- PLANS -->
+<div id="plansCard" class="card hidden">
+<h3 style="color:var(--neon);margin-top:0">Special Offers</h3>
+<div class="muted" style="margin-bottom:8px;">7 plans with 24h countdown timer.</div>
+<div id="plansList"></div>
 </div>
-</section>
-
-<!-- DEPOSIT -->
-<section id="depositPage">
-<div class="card">
-<h3>📥 Deposit</h3>
-
-<label>Amount</label>
-<input id="depAmount" readonly>
-
-<label>Method</label>
-<select id="depMethod">
-<option>JazzCash — 03705519562</option>
-<option>Easypaisa — 03379827882</option>
-</select>
-
-<label>Transaction ID</label>
-<input id="trxID">
-
-<label>Upload Proof</label>
-<input type="file" id="proof">
-
-<button class="btn" onclick="makeDeposit()">Add Deposit</button>
 
 </div>
-</section>
 
-<!-- WITHDRAW -->
-<section id="withdrawPage">
-<div class="card">
-<h3>📤 Withdraw</h3>
-
-<label>Amount</label>
-<input id="wdAmount">
-
-<label>Method</label>
-<select id="wdMethod">
-<option>JazzCash</option>
-<option>Easypaisa</option>
-<option>Bank Transfer</option>
-</select>
-
-<label>Your Number / Account</label>
-<input id="wdAcc">
-
-<button class="btn" onclick="withdraw()">Request Withdraw</button>
-</div>
-</section>
-
-<!-- SUPPORT -->
-<section id="supportPage">
-<div class="card">
-<h3>📞 Administration Support</h3>
-<p>🟢 WhatsApp: <strong>03705519562</strong></p>
-<p>✉ Email: <strong>rock.earn92@gmail.com</strong></p>
-</div>
-</section>
-
-<!-- NAVIGATION -->
+<!-- NAV -->
 <div class="nav">
-<div onclick="show('dashboard')">🏠 Home</div>
-<div onclick="show('plansPage')">📦 Plans</div>
-<div onclick="show('depositPage')">💰 Deposit</div>
-<div onclick="show('withdrawPage')">💵 Withdraw</div>
-<div onclick="show('supportPage')">📞 Support</div>
-<div onclick="logout()">🚪 Logout</div>
+<div onclick="nav('dashboardCard')">🏠 Home</div>
+<div onclick="nav('plansCard')">📦 Plans</div>
 </div>
 
 <script>
-// STORAGE SAFE LOGIN
-function register(){
- let u = regUser.value;
- let p = regPass.value;
- if(!u || !p){ alert("Enter details"); return; }
+const KEY_USER='verbose_user',KEY_BAL='verbose_bal_';
+let currentUser=localStorage.getItem(KEY_USER)||null;
+let plans=[]; let offerIntervals={};
 
- localStorage.setItem("acc_"+u, p);
- alert("Account Created!");
+// generate 7 special offers
+for(let i=1;i<=7;i++){
+plans.push({id:i,name:'Plan '+i,invest:200*i,multiplier:3,total:200*i*3,offer:true});
 }
 
-function login(){
- let u = loginUser.value;
- let p = loginPass.value;
+function fmt(n){return Number(n).toLocaleString('en-US');}
 
- let chk = localStorage.getItem("acc_"+u);
-
- if(chk === p){
-   localStorage.setItem("loggedUser", u);
-
-   if(localStorage.getItem("bal_"+u)==null){
-     localStorage.setItem("bal_"+u, 0);
-     localStorage.setItem("profit_"+u,0);
-   }
-
-   loadDashboard();
-   show('dashboard');
- } else {
-   alert("Wrong username or password");
- }
+// AUTH
+function doAuth(){
+const mode=document.getElementById('authMode').value;
+const u=(document.getElementById('inputUser').value||'').trim();
+const p=(document.getElementById('inputPass').value||'').trim();
+if(!u||!p){alert('Enter username & password');return;}
+const credKey='verbose_cred_'+u;
+if(mode==='signup'){if(localStorage.getItem(credKey)){alert('Username exists');return;}
+localStorage.setItem(credKey,p); localStorage.setItem(KEY_BAL+u,'0');}
+else{if(localStorage.getItem(credKey)!==p){alert('Wrong username/password');return;}}
+localStorage.setItem(KEY_USER,u); currentUser=u; afterLoginUI();
 }
 
-// SAFE SHOW SECTIONS
-function show(id){
- document.querySelectorAll("section").forEach(s=>s.style.display='none');
- document.getElementById(id).style.display='block';
- loadDashboard();
-}
+function afterLoginUI(){nav('dashboardCard'); renderDashboard(); renderPlans(); startOffers();}
 
-// DASHBOARD LOAD
-function loadDashboard(){
- let u = localStorage.getItem("loggedUser");
- if(!u) return;
+function doLogout(){localStorage.removeItem(KEY_USER);currentUser=null;nav('loginCard');Object.values(offerIntervals).forEach(i=>clearInterval(i));}
 
- welcomeName.innerHTML = "Welcome, " + u;
+// NAV
+function nav(cardId){['loginCard','dashboardCard','plansCard'].forEach(id=>document.getElementById(id).classList.add('hidden'));document.getElementById(cardId).classList.remove('hidden');renderDashboard();}
 
- balance.innerHTML = localStorage.getItem("bal_"+u);
- dailyProfit.innerHTML = localStorage.getItem("profit_"+u);
-}
+// DASHBOARD
+function renderDashboard(){if(!currentUser)return;document.getElementById('welcomeText').innerText='Welcome, '+currentUser;
+document.getElementById('memberSince').innerText='Member since: '+new Date().toLocaleDateString();
+document.getElementById('balanceText').innerText=fmt(Number(localStorage.getItem(KEY_BAL+currentUser)||0));}
 
-// LOGOUT SAFE
-function logout(){
- localStorage.removeItem("loggedUser");
- show('loginPage');
-}
-
-// ======================
 // PLANS
-// ======================
-let specials = [
-200,300,500,700,1000,1500,3000
-];
-
-let normals = [
-5000,7000,10000,12000,15000,18000,20000,
-22000,24000,26000,28000,30000
-];
-
-// LOAD PLANS
-function loadPlans(){
- let sp=""; let nm="";
-
- specials.forEach(a=>{
-   sp+=`
-   <div class='planBox'>
-   <p>Plan Amount: ${a} PKR</p>
-   <p>Profit: 3x</p>
-   <p>Daily Profit: ${Math.round(a*3/30)} PKR</p>
-   <button class='buyBtn' onclick="buyNow(${a})">Buy Now</button>
-   </div>`;
- });
-
- normals.forEach(a=>{
-   nm+=`
-   <div class='planBox'>
-   <p>Amount: ${a} PKR</p>
-   <p>Profit: 2.5x</p>
-   <p>Daily Profit: ${Math.round(a*2.5/30)} PKR</p>
-   <button class='buyBtn' onclick="buyNow(${a})">Buy Now</button>
-   </div>`;
- });
-
- specialPlans.innerHTML=sp;
- normalPlans.innerHTML=nm;
+function renderPlans(){
+const container=document.getElementById('plansList');container.innerHTML='';
+plans.forEach(plan=>{
+const div=document.createElement('div');div.className='plan';
+div.innerHTML=`<div class="meta"><div style="font-weight:800">${plan.name}</div>
+<div class="muted" style="margin-top:4px">Invest: Rs ${fmt(plan.invest)} · Total: Rs ${fmt(plan.total)}</div>
+${plan.offer?`<div class="countdown" id="countdown_${plan.id}">Loading timer...</div>`:''}</div>
+<div class="actions">${plan.offer?'<button class="btn" onclick="buyPlan('+plan.id+')">Buy Now</button>':''}</div>`;container.appendChild(div);
+});
 }
 
-loadPlans();
+// Offer countdown
+function startOffers(){plans.forEach(plan=>{if(!plan.offer)return;
+const key='verbose_offer_'+plan.id;let endTs=Number(localStorage.getItem(key)||0);if(!endTs||endTs<Date.now()){endTs=Date.now()+24*3600*1000;localStorage.setItem(key,endTs);}
+const el=document.getElementById('countdown_'+plan.id);if(!el)return;
+function tick(){const diff=Math.floor((endTs-Date.now())/1000);if(diff<=0){el.innerText='Offer ended';clearInterval(offerIntervals[plan.id]);return;}
+const h=Math.floor(diff/3600),m=Math.floor((diff%3600)/60),s=diff%60;el.innerText=`${String(h).padStart(2,'0')}h:${String(m).padStart(2,'0')}m:${String(s).padStart(2,'0')}s`;}
+tick();offerIntervals[plan.id]=setInterval(tick,1000);});}
 
-// BUY NOW → Deposit Auto Fill
-function buyNow(amount){
- depAmount.value = amount;
- show('depositPage');
-}
-
-// MAKE DEPOSIT
-function makeDeposit(){
- let u = localStorage.getItem("loggedUser");
- if(!u) return;
-
- let amt = Number(depAmount.value);
- let bal = Number(localStorage.getItem("bal_"+u));
-
- localStorage.setItem("bal_"+u, bal+amt);
-
- alert("Deposit Added!");
- show('dashboard');
- loadDashboard();
-}
-
-// WITHDRAW
-function withdraw(){
- alert("Withdrawal request submitted!");
- show('dashboard');
-}
+// Buy plan -> credit balance
+function buyPlan(id){if(!currentUser){alert('Login first');return;}
+const plan=plans.find(p=>p.id===id);if(!plan)return;let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);bal+=plan.invest;localStorage.setItem(KEY_BAL+currentUser,bal);alert(`Plan ${plan.name} purchased! Rs ${fmt(plan.invest)} added.`);renderDashboard();}
 </script>
-
 </body>
 </html>
