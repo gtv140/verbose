@@ -1,3 +1,4 @@
+<VERBOSE>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -14,31 +15,42 @@ button:hover{background:#0056b3;}
 .nav div{text-align:center;font-size:12px;cursor:pointer;}
 .hidden{display:none;}
 .user-box{background:#e0f7ff;padding:10px;border-radius:8px;margin-bottom:10px;font-weight:bold;}
-.alert-box{background:#fff3cd;padding:10px;border-radius:5px;margin-bottom:10px;color:#856404;border:1px solid #ffeeba;}
+.alert-box{background:#ffe0e0;padding:8px;border-radius:5px;margin-bottom:10px;color:#900;font-weight:bold;}
 .logout-btn{position:fixed;bottom:60px;right:15px;background:red;color:#fff;padding:8px 12px;border-radius:5px;cursor:pointer;}
 .plan-box{border:1px solid #ccc;padding:10px;margin:10px 0;border-radius:8px;background:#f9f9f9;}
 .offer{color:red;font-weight:bold;}
-.support-box{background:#e2e3e5;padding:10px;border-radius:8px;margin-bottom:10px;border:1px solid #d6d8db;}
 </style>
 </head>
-<body><header>VERBOSE</header><!-- LOGIN --><div id="loginPage" class="login-box">
+<body>
+
+<header>VERBOSE</header>
+
+<!-- LOGIN -->
+<div id="loginPage" class="login-box">
 <h2>Login / Signup</h2>
 <input id="user" placeholder="Username">
 <input id="pass" placeholder="Password" type="password">
 <button onclick="login()">Login</button>
-</div><!-- DASHBOARD --><div id="dashboard" class="page hidden">
-<div class="alert-box">
-<strong>Notice:</strong> For any deposit or withdrawal related issues, please contact our customer support immediately.
 </div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="page hidden">
+<div class="alert-box">For any deposit, withdrawal, or account issues, please contact our support team immediately.</div>
 <div class="user-box">Username: <span id="dashUser"></span> | Balance: Rs <span id="dashBalance">0</span></div>
 <h2>Dashboard</h2>
-<p>Welcome to VERBOSE! We are a trusted financial platform serving thousands of users daily. Monitor your investments and profits conveniently from here.</p>
+<p>Welcome to VERBOSE! Trusted platform, millions of users, daily profits, secure & reliable investment services.</p>
 <button class="logout-btn" onclick="logout()">Logout</button>
-</div><!-- PLANS --><div id="plans" class="page hidden">
-<h2>Investment Plans</h2>
+</div>
+
+<!-- PLANS -->
+<div id="plans" class="page hidden">
+<h2>Plans</h2>
 <div id="plansList"></div>
-</div><!-- DEPOSIT --><div id="deposit" class="page hidden">
-<h2>Deposit Funds</h2>
+</div>
+
+<!-- DEPOSIT -->
+<div id="deposit" class="page hidden">
+<h2>Deposit</h2>
 <label>Method</label>
 <select id="depositMethod" onchange="updateDepositNumber()">
 <option value="jazzcash">JazzCash</option>
@@ -52,42 +64,49 @@ button:hover{background:#0056b3;}
 <label>Upload Proof</label>
 <input type="file" id="depositProof">
 <button onclick="submitDeposit()">Submit Deposit</button>
-</div><!-- WITHDRAWAL --><div id="withdrawal" class="page hidden">
-<h2>Request Withdrawal</h2>
+</div>
+
+<!-- WITHDRAWAL -->
+<div id="withdrawal" class="page hidden">
+<h2>Withdrawal</h2>
 <label>Method</label>
 <select id="withdrawMethod">
 <option value="jazzcash">JazzCash</option>
 <option value="easypaisa">EasyPaisa</option>
-<option value="bank">Bank Transfer</option>
+<option value="bank">Bank</option>
 </select>
 <input id="withdrawUsername" readonly>
 <input id="withdrawAccount" placeholder="Account Number (manual)">
 <input id="withdrawAmount" placeholder="Amount">
-<button onclick="submitWithdraw()">Submit Request</button>
-</div><!-- SUPPORT --><div id="support" class="page hidden">
-<h2>Customer Support</h2>
-<div class="support-box">
-<p>If you face any issues with deposits, withdrawals, or your account, our professional support team is available 24/7 to assist you.</p>
-<p><strong>Email:</strong> support@verbosefinance.com</p>
-<p><strong>WhatsApp:</strong> 0370-5519562</p>
-<p><strong>Company:</strong> VERBOSE Finance Ltd.<br>
-Registered in Pakistan, providing secure investment services with transparent operations.</p>
-<p>We are committed to resolving all queries promptly. Please provide your username and transaction details for faster support.</p>
+<button onclick="submitWithdraw()">Request Withdrawal</button>
 </div>
-</div><!-- NAVIGATION --><div id="bottomNav" class="nav hidden">
+
+<!-- SUPPORT -->
+<div id="support" class="page hidden">
+<h2>Contact Administration</h2>
+<p>For any deposit, withdrawal, or account issues, contact our support team immediately.</p>
+<p>WhatsApp: <a href="https://chat.whatsapp.com/Kmaiv3VdSo09rio4qcRTRM" target="_blank">Join WhatsApp Group</a></p>
+<p>Email: <a href="mailto:rock.earn92@gmail.com">rock.earn92@gmail.com</a></p>
+<p>VERBOSE is a professional investment platform offering secure and reliable investment services for millions of users. Our team is available 24/7 to assist you.</p>
+</div>
+
+<!-- NAVIGATION -->
+<div id="bottomNav" class="nav hidden">
 <div onclick="showPage('dashboard')">🏠<br>Home</div>
 <div onclick="showPage('plans')">📦<br>Plans</div>
 <div onclick="showPage('deposit')">💰<br>Deposit</div>
 <div onclick="showPage('withdrawal')">💵<br>Withdraw</div>
 <div onclick="showPage('support')">📞<br>Support</div>
-</div><script>
+</div>
+
+<script>
 // USERS & LOCAL STORAGE
 let currentUser = localStorage.getItem('verbose_user') || null;
 let balance = parseFloat(localStorage.getItem('verbose_balance')) || 0;
 let plansData = [];
 let userPlans = JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');
 
-// CREATE 25 PLANS, 7 special 24h offer
+// CREATE 25 PLANS 200-30000, days 20-70, 7 special 24h offer
 for(let i=1;i<=25;i++){
     let invest = Math.round(200 + (i-1)*(30000-200)/24);
     let days = 20 + Math.floor((i-1)*(70-20)/24);
@@ -175,7 +194,7 @@ function submitDeposit(){
     balance+=amount;
     localStorage.setItem('verbose_balance',balance);
     document.getElementById('dashBalance').innerText=balance;
-    alert("Deposit submitted! Our support team will verify shortly.");
+    alert("Deposit submitted! Admin will check.");
     document.getElementById('depositTxId').value='';
     document.getElementById('depositProof').value='';
     showPage('dashboard');
@@ -191,7 +210,7 @@ function submitWithdraw(){
     balance-=amt;
     localStorage.setItem('verbose_balance',balance);
     document.getElementById('dashBalance').innerText=balance;
-    alert(`Withdrawal Rs ${amt} requested. Support will contact you if needed.`);
+    alert(`Withdraw Rs ${amt} requested. Contact admin if needed.`);
     document.getElementById('withdrawAmount').value='';
     document.getElementById('withdrawAccount').value='';
     showPage('dashboard');
@@ -227,5 +246,6 @@ window.onload=function(){
         addDailyProfit();
     }
 };
-</script></body>
+</script>
+</body>
 </html>
