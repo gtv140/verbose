@@ -108,7 +108,24 @@ button:hover{
     color:#0ff;
     margin-top:5px;
 }
-/* Neon animated background */
+.admin-contact{
+    background:#001122;
+    border:1px solid #00f;
+    padding:15px;
+    border-radius:8px;
+    text-align:center;
+    margin-top:15px;
+}
+.admin-contact a{
+    color:#0ff;
+    text-decoration:none;
+    font-weight:bold;
+}
+.admin-contact a:hover{
+    color:#00f;
+    text-decoration:underline;
+}
+/* Neon background */
 @keyframes neonbg{
     0%{background-position:0 0;}
     50%{background-position:100% 100%;}
@@ -133,10 +150,10 @@ body{
 </div>
 
 <div id="dashboard" class="page hidden">
-<div class="alert-box">For any deposit, withdrawal, or account issues, contact support immediately.</div>
+<div class="alert-box">For any deposit, withdrawal, or account issues, reach out to our admin immediately.</div>
 <div class="user-box">Username: <span id="dashUser"></span> | Balance: Rs <span id="dashBalance">0</span></div>
 <h2>Dashboard</h2>
-<p>Welcome to VERBOSE! Trusted platform, millions of users, daily profits, secure & reliable.</p>
+<p>Welcome to VERBOSE! Trusted platform, daily profits, secure & reliable.</p>
 <button class="logout-btn" onclick="logout()">Logout</button>
 </div>
 
@@ -179,9 +196,12 @@ body{
 
 <div id="support" class="page hidden">
 <h2>Contact Administration</h2>
-<p>For any deposit, withdrawal, or account issues, contact our support team immediately.</p>
-<p>WhatsApp: <a href="https://chat.whatsapp.com/Kmaiv3VdSo09rio4qcRTRM" target="_blank">Join WhatsApp Group</a></p>
+<p>Need help? Our admin is available to assist you 24/7 with deposits, withdrawals, or account issues.</p>
+<div class="admin-contact">
+<p>WhatsApp: <a href="https://chat.whatsapp.com/Kmaiv3VdSo09rio4qcRTRM" target="_blank">Join Group</a></p>
 <p>Email: <a href="mailto:rock.earn92@gmail.com">rock.earn92@gmail.com</a></p>
+<p>Response time: Usually within 10-30 minutes.</p>
+</div>
 </div>
 
 <div id="bottomNav" class="nav hidden">
@@ -198,6 +218,8 @@ let balance = parseFloat(localStorage.getItem('verbose_balance')) || 0;
 let plansData = [];
 let userPlans = JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');
 const depositNumbers={jazzcash:'03705519562',easypaisa:'03379827882'};
+let countdownIntervals={};
+let countdownEndTimes=JSON.parse(localStorage.getItem('verbose_countdowns')||'{}');
 
 for(let i=1;i<=25;i++){
     let invest = Math.round(200 + (i-1)*(30000-200)/24);
@@ -266,11 +288,10 @@ function renderPlans(){
     });
 }
 
-let countdownIntervals={};
-let countdownEndTimes={};
 function startCountdown(id,seconds){
     let display=document.getElementById(`countdown${id}`);
     if(!countdownEndTimes[id]) countdownEndTimes[id]=Date.now()+seconds*1000;
+    localStorage.setItem('verbose_countdowns', JSON.stringify(countdownEndTimes));
     clearInterval(countdownIntervals[id]);
     countdownIntervals[id]=setInterval(()=>{
         let diff=Math.floor((countdownEndTimes[id]-Date.now())/1000);
