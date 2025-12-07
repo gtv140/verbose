@@ -1,7 +1,7 @@
 <VERBOSE>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>VERBOSE</title>
 <style>
@@ -51,14 +51,14 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5)}
 <!-- LOGIN / SIGNUP -->
 <div id="loginPage" class="login-box">
 <h2 style="margin:0 0 8px 0">Login / Signup</h2>
-<select id="userOption" aria-label="option">
+<select id="userOption">
 <option value="login">Login</option>
 <option value="signup">New User Signup</option>
 </select>
 <input id="user" placeholder="Username" />
 <input id="pass" placeholder="Password" type="password" />
 <button onclick="login()">Submit</button>
-<p class="small" style="margin-top:10px">Tip: Use same device/browser to keep your account saved (local storage).</p>
+<p class="small">Tip: Use same device/browser to keep your account saved (local storage).</p>
 </div>
 
 <!-- DASHBOARD -->
@@ -78,19 +78,17 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5)}
 <div style="margin-top:8px" class="badge">Daily: Rs <span id="dashDaily">0</span></div>
 </div>
 </div>
-
 <h2 style="text-align:center;color:var(--neon);margin:6px 0 10px 0">Dashboard Overview</h2>
 <p class="small" style="text-align:center;margin-top:-6px">Track your plans, deposits and withdrawals securely. Admin support is 24/7.</p>
-
 <div class="referral-box">
 <div style="display:flex;gap:8px;align-items:center">
 <input id="refLink" readonly style="flex:1" />
 <button onclick="copyReferral()" style="width:110px">Copy Link</button>
 </div>
-<div class="small" style="margin-top:8px">Share this link to invite friends. When they deposit, you get bonus credits automatically.</div>
+<div class="small">Share this link to invite friends. When they deposit, you get bonus credits automatically.</div>
 </div>
 <div style="margin-top:8px; text-align:center">
-<button class="logout-btn" onclick="logout()" title="Logout">Logout</button>
+<button class="logout-btn" onclick="logout()">Logout</button>
 </div>
 <div style="text-align:center;margin-top:12px;font-size:13px;color:rgba(230,247,251,0.8)">
 VERBOSE Company — Secure, Transparent, Professional.<br>
@@ -123,7 +121,7 @@ Contact Admin: WhatsApp 03705519562 | Email: rock.earn92@gmail.com
 <label>Upload Proof</label>
 <input type="file" id="depositProof" />
 <button onclick="submitDeposit()">Submit Deposit</button>
-<p class="small" style="margin-top:8px">After submitting, share proof with admin via WhatsApp or Email for verification.</p>
+<p class="small">After submitting, share proof with admin via WhatsApp or Email for verification.</p>
 </div>
 
 <!-- WITHDRAWAL -->
@@ -139,7 +137,7 @@ Contact Admin: WhatsApp 03705519562 | Email: rock.earn92@gmail.com
 <input id="withdrawAccount" placeholder="Account Number (manual)" />
 <input id="withdrawAmount" placeholder="Amount" />
 <button onclick="submitWithdraw()">Request Withdrawal</button>
-<p class="small" style="margin-top:8px">Requests are reviewed by admin. Keep your proof ready. Contact admin if any issue.</p>
+<p class="small">Requests are reviewed by admin. Keep your proof ready. Contact admin if any issue.</p>
 </div>
 
 <!-- SUPPORT -->
@@ -152,7 +150,7 @@ Contact Admin: WhatsApp 03705519562 | Email: rock.earn92@gmail.com
 <div>
 <p><strong>WhatsApp Support</strong></p>
 <p class="small">Fastest support — message admin directly.</p>
-<p style="margin-top:6px">+92 3705519562</p>
+<p>+92 3705519562</p>
 </div>
 </div>
 <div class="support-item">
@@ -160,12 +158,11 @@ Contact Admin: WhatsApp 03705519562 | Email: rock.earn92@gmail.com
 <div>
 <p><strong>Email Support</strong></p>
 <p class="small">For formal queries and proofs, email admin.</p>
-<p style="margin-top:6px">rock.earn92@gmail.com</p>
+<p>rock.earn92@gmail.com</p>
 </div>
 </div>
 </div>
 <p class="support-note">Always use official support channels. Avoid sharing sensitive info publicly.</p>
-<p style="color:var(--neon);font-weight:800;text-align:center;margin-top:10px">VERBOSE — Secure. Transparent. Professional.</p>
 </div>
 </div>
 
@@ -187,12 +184,11 @@ let userPlans = JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');
 let referralCode = localStorage.getItem('verbose_referral') || '';
 
 let plansData = [];
-for(let i=1;i<=30;i++){
-  let invest,days,multiplier,coming=false,countdown;
-  if(i<=7){ invest=200 + (i-1)*400; multiplier=3; days=20 + (i-1)*2; countdown=localStorage.getItem(`planCountdown_${i}`) || (Date.now()+24*3600*1000);}
-  else if(i<=25){ invest=500 + (i-8)*500; multiplier=2.5; days=25 + (i-8); countdown=null;}
-  else{ invest=1000 + (i-26)*1000; multiplier=2.5; days=30 + (i-26); coming=true; countdown=null;}
-  plansData.push({id:i,name:`Plan ${i}`,invest,days,total:Math.round(invest*multiplier),multiplier,offer:i<=7,coming,countdown});
+for(let i=1;i<=25;i++){
+  let invest=200 + (i-1)*1200; let multiplier=2.5; let days=10+ i; plansData.push({id:i,name:`Plan ${i}`,invest,days,total:Math.round(invest*multiplier),multiplier,offer:true,coming:false,countdown:Date.now()+24*3600*1000});
+}
+for(let i=26;i<=30;i++){
+  let invest=2000 + (i-26)*2000; let multiplier=2.5; let days=20+i; plansData.push({id:i,name:`Plan ${i}`,invest,total:Math.round(invest*multiplier),multiplier,coming:true});
 }
 
 // ===== LOGIN / DASHBOARD =====
@@ -265,51 +261,51 @@ function submitWithdraw(){
   alert(`Withdrawal request submitted!\nMethod: ${method}\nAmount: Rs ${amount}\nAdmin will review soon.`);
 }
 
-// ===== PLANS RENDER =====
+// ===== RENDER PLANS =====
 function renderPlans(){
-  const container=document.getElementById('plansList');
-  container.innerHTML='';
-  plansData.forEach(plan=>{
-    const box=document.createElement('div');
-    box.className='plan-box';
-    box.innerHTML=`
-      <div class="meta">
-        <b>${plan.name}</b>
-        <div>Invest: Rs ${plan.invest}</div>
-        <div>Days: ${plan.days}</div>
-        <div>Total: Rs ${plan.total}</div>
-        ${plan.offer?'<div class="offer">🔥 Special Offer</div>':''}
-        ${plan.coming?'<div class="small">Coming Soon</div>':''}
-      </div>
-      <div class="actions">
-        ${!plan.coming?`<button onclick="joinPlan(${plan.id})">Join</button>`:''}
-      </div>
-    `;
-    container.appendChild(box);
+  const container=document.getElementById('plansList'); container.innerHTML='';
+  plansData.forEach(p=>{
+    let div=document.createElement('div'); div.className='plan-box';
+    div.innerHTML=`<div class="meta"><b>${p.name}</b><div class="small">Invest: Rs ${p.invest} | Total: Rs ${p.total} | Days: ${p.days || '-'} ${p.offer?'<span class="offer">Special 24h!</span>':''}</div><div class="small countdown" id="timer${p.id}"></div></div><div class="actions">
+  ${p.coming ? '<button disabled>Coming Soon</button>' : `<button onclick="buyPlan(${p.id})">Buy Now</button>`}
+</div>`;
+    container.appendChild(div);
+    if(!p.coming){
+      startCountdown(p.id, p.countdown);
+    }
   });
 }
 
-// ===== JOIN PLAN =====
-function joinPlan(id){
-  const plan=plansData.find(p=>p.id===id);
-  if(balance<plan.invest){alert("Insufficient balance!");return;}
-  balance-=plan.invest;
-  dailyProfit+=Math.round(plan.total/plan.days);
-  userPlans.push(plan);
-  localStorage.setItem('verbose_balance',balance);
-  localStorage.setItem('verbose_daily',dailyProfit);
-  localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));
-  document.getElementById('dashBalance').innerText=balance;
-  document.getElementById('dashDaily').innerText=dailyProfit;
-  alert(`Joined ${plan.name}! Your daily profit increased.`);
+// ===== COUNTDOWN =====
+function startCountdown(id, endTime){
+  const el = document.getElementById(`timer${id}`);
+  if(!el) return;
+  function update(){
+    const now=Date.now();
+    let diff=endTime-now;
+    if(diff<=0){el.innerText="Expired";clearInterval(interval); return;}
+    let h=Math.floor(diff/3600000);
+    let m=Math.floor((diff%3600000)/60000);
+    let s=Math.floor((diff%60000)/1000);
+    el.innerText=`${h}h ${m}m ${s}s`;
+  }
+  update();
+  const interval=setInterval(update,1000);
 }
 
-// ===== INIT =====
-window.onload=function(){
-  if(currentUser){login();}
-  updateDepositNumber();
-  renderPlans();
-};
+// ===== BUY PLAN =====
+function buyPlan(id){
+  const plan=plansData.find(p=>p.id===id);
+  if(!plan) return;
+  document.getElementById('depositAmount').value=plan.invest;
+  showPage('deposit');
+  alert(`You selected ${plan.name}. Deposit Rs ${plan.invest} to continue.`);
+}
+
+// ===== INITIALIZE =====
+if(currentUser){
+  login();
+}
 </script>
 </body>
 </html>
