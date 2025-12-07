@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<VERBOSE>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -9,7 +9,6 @@
 </style>
 </head>
 <body>
-
 <header>VERBOSE</header>
 
 <!-- LOGIN / SIGNUP -->
@@ -156,7 +155,7 @@ for(let i=1;i<=30;i++){
   if(i<=7){ invest=Math.round(200 + (i-1)*(3000-200)/6); multiplier=3; days=20 + Math.floor((i-1)*(50-20)/6);}
   else if(i<=25){ invest=Math.round(200 + (i-1)*(30000-200)/24); multiplier=2.5; days=20 + Math.floor((i-1)*(70-20)/24);}
   else{ invest=Math.round(200 + (i-1)*(30000-200)/24); multiplier=2.5; days=20 + Math.floor((i-1)*(70-20)/24); coming=true;}
-  plansData.push({id:i,name:`Plan ${i}`,invest,days,total:Math.round(invest*multiplier),multiplier,offer:i<=7,coming});
+  plansData.push({id:i,name:`Plan ${i}`,invest,days,total:Math.round(invest*multiplier),multiplier,offer:i<=7,coming,countdown:null});
 }
 
 // === AUTH ===
@@ -207,105 +206,103 @@ function showPage(id){
 }
 
 // COPY HELPERS
-function copyDepositNumber(){
-    const num = document.getElementById('depositNumber');
-    num.select();
-    document.execCommand('copy');
-    alert("Deposit number copied!");
-}
-function copyReferral(){
-    const ref = document.getElementById('refLink');
-    ref.select();
-    document.execCommand('copy');
-    alert("Referral link copied!");
+function copyDepositNumber(){const num=document.getElementById('depositNumber');num.select();document.execCommand('copy');alert("Deposit number copied!");}
+function copyReferral(){const ref=document.getElementById('refLink');ref.select();document.execCommand('copy');alert("Referral link copied!");}
+
+// UPDATE DEPOSIT NUMBER
+function updateDepositNumber(){
+    const method = document.getElementById('depositMethod').value;
+    const num = method === 'jazzcash' ? '03705519562' : '03379827882';
+    document.getElementById('depositNumber').value = num;
+    document.getElementById('depositAmount').value = '500';
 }
 
-// CONTINUE JS
+// DEPOSIT SUBMIT
+function submitDeposit(){
+    const tx = document.getElementById('depositTxId').value.trim();
+    if(!tx){ alert("Enter transaction ID"); return; }
+    alert("Deposit submitted! Admin will verify soon.");
+    document.getElementById('depositTxId').value = '';
+    document.getElementById('depositProof').value = '';
+}
 
+// WITHDRAWAL SUBMIT
+function submitWithdraw(){
+    const amt = parseFloat(document.getElementById('withdrawAmount').value);
+    if(!amt || amt <=0){ alert("Enter valid amount"); return; }
+    alert("Withdrawal request submitted! Admin will review.");
+    document.getElementById('withdrawAmount').value='';
+    document.getElementById('withdrawAccount').value='';
+}
+
+// RENDER PLANS
 function renderPlans(){
-    const list = document.getElementById('plansList');
-    list.innerHTML = '';
-    plansData.forEach(plan=>{
+    const container = document.getElementById('plansList');
+    container.innerHTML='';
+    plansData.forEach(p=>{
         const div = document.createElement('div');
-        div.className = 'plan-box';
-        div.innerHTML = `
+        div.className='plan-box';
+        div.innerHTML=`
             <div class="meta">
-                <b>${plan.name}</b>
-                <div>Invest: Rs ${plan.invest}</div>
-                <div>Days: ${plan.days}</div>
-                <div>Total Return: Rs ${plan.total}</div>
-                ${plan.offer ? '<div class="offer">Special Offer!</div>' : ''}
-                ${plan.coming ? '<div class="small">Coming Soon</div>' : ''}
+                <b>${p.name}</b>
+                Invest: Rs ${p.invest} <br>
+                Profit: Rs ${p.total} in ${p.days} days
+                ${p.offer?'<div class="offer">Special Offer!</div>':''}
             </div>
             <div class="actions">
-                ${!plan.coming ? `<button onclick="buyPlan(${plan.id})">Buy</button>` : ''}
+                ${p.coming?'<span class="small">Coming Soon</span>':'<button onclick="buyPlan('+p.id+')">Buy</button>'}
+                <div class="countdown" id="countdown${p.id}"></div>
             </div>
         `;
-        list.appendChild(div);
+        container.appendChild(div);
+        if(!p.coming) startCountdown(p.id,p.days);
     });
 }
 
 // BUY PLAN
 function buyPlan(id){
     const plan = plansData.find(p=>p.id===id);
-    if(balance < plan.invest){ alert("Insufficient balance!"); return; }
+    if(balance<plan.invest){ alert("Insufficient balance"); return; }
     balance -= plan.invest;
-    dailyProfit += (plan.total - plan.invest)/plan.days;
-    userPlans.push(plan);
-    saveUserData();
-    alert(`${plan.name} purchased! Daily profit updated.`);
-    updateDashboard();
+    dailyProfit += Math.round(plan.total/plan.days);
+    localStorage.setItem('verbose_balance',balance);
+    localStorage.setItem('verbose_daily',dailyProfit);
+    document.getElementById('dashBalance').innerText = balance;
+    document.getElementById('dashDaily').innerText = dailyProfit;
+    alert(`${plan.name} purchased!`);
 }
 
-// SAVE USER DATA
-function saveUserData(){
-    localStorage.setItem('verbose_balance', balance);
-    localStorage.setItem('verbose_daily', dailyProfit);
-    localStorage.setItem('verbose_userPlans', JSON.stringify(userPlans));
+// COUNTDOWN TIMER
+function startCountdown(id,days){
+    const countEl = document.getElementById('countdown'+id);
+    let endTime = new Date().getTime() + days*24*60*60*1000;
+    function update(){
+        const now = new Date().getTime();
+        const distance = endTime - now;
+        if(distance<=0){ countEl.innerText='Completed'; return; }
+        const d=Math.floor(distance/(1000*60*60*24));
+        const h=Math.floor((distance%(1000*60*60*24))/(1000*60*60));
+        const m=Math.floor((distance%(1000*60*60))/(1000*60));
+        const s=Math.floor((distance%60000)/1000);
+        countEl.innerText=`${d}d ${h}h ${m}m ${s}s`;
+        requestAnimationFrame(update);
+    }
+    update();
 }
 
-// UPDATE DASHBOARD
-function updateDashboard(){
-    document.getElementById('dashBalance').innerText = balance.toFixed(2);
-    document.getElementById('dashDaily').innerText = dailyProfit.toFixed(2);
+// INITIALIZE DASHBOARD IF USER EXISTS
+if(currentUser){
+    document.getElementById('loginPage').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+    document.getElementById('bottomNav').classList.remove('hidden');
+    document.getElementById('dashUser').innerText = currentUser;
+    document.getElementById('dashBalance').innerText = balance;
+    document.getElementById('dashDaily').innerText = dailyProfit;
+    document.getElementById('dashSince').innerText = new Date().toLocaleDateString();
+    document.getElementById('refLink').value = `https://gtv140.github.io/verbose/?ref=${referralCode}`;
+    updateDepositNumber();
+    renderPlans();
 }
-
-// DEPOSIT NUMBER
-function updateDepositNumber(){
-    const method = document.getElementById('depositMethod').value;
-    if(method==='jazzcash'){ document.getElementById('depositNumber').value='03705519562'; }
-    else if(method==='easypaisa'){ document.getElementById('depositNumber').value='03379827882'; }
-    document.getElementById('depositAmount').value='Enter amount manually';
-}
-
-// SUBMIT DEPOSIT
-function submitDeposit(){
-    const txId = document.getElementById('depositTxId').value.trim();
-    if(!txId){ alert("Enter Transaction ID"); return; }
-    alert("Deposit submitted! Admin will verify soon.");
-    document.getElementById('depositTxId').value='';
-    document.getElementById('depositProof').value='';
-}
-
-// WITHDRAW
-function submitWithdraw(){
-    const method = document.getElementById('withdrawMethod').value;
-    const acc = document.getElementById('withdrawAccount').value.trim();
-    const amt = parseFloat(document.getElementById('withdrawAmount').value);
-    if(!acc || !amt || amt>balance){ alert("Invalid details or insufficient balance"); return; }
-    balance -= amt;
-    saveUserData();
-    updateDashboard();
-    alert("Withdrawal request submitted! Admin will process.");
-    document.getElementById('withdrawAccount').value='';
-    document.getElementById('withdrawAmount').value='';
-}
-
-// INIT
-window.onload = function(){
-    if(currentUser){ login(); }
-};
 </script>
-
 </body>
 </html>
