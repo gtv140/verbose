@@ -31,7 +31,7 @@ input,select,button{width:100%;padding:10px;margin-top:6px;border-radius:6px;bor
 <div class="wrap">
 
 <!-- LOGIN -->
-<div id="loginCard" class="card">
+<div id="loginCard" class="card hidden">
 <h3>Login / Signup</h3>
 <select id="authMode">
 <option value="login">Login</option>
@@ -118,10 +118,11 @@ const KEY_DAILY='verbose_daily_';
 const KEY_USER_PLANS='verbose_plans_';
 const KEY_DEPOSITS='verbose_deposits';
 const KEY_WITHDRAWS='verbose_withdraws';
+const KEY_OFFERS='verbose_offer_';
 let currentUser=localStorage.getItem(KEY_USER)||null;
+let plans=[],offerIntervals={};
 
 // PLANS
-let plans=[];
 for(let i=1;i<=7;i++){let invest=200*i;if(invest>3000) invest=3000;let days=20+Math.floor(Math.random()*10);plans.push({id:i,name:'Special Plan '+i,invest:invest,multiplier:3,total:invest*3,days:days,offer:true});}
 for(let i=8;i<=32;i++){let invest=Math.round(3000+(i-8)*(30000-3000)/24);let days=20+Math.floor(Math.random()*61);let total=Math.round(invest*2.5);plans.push({id:i,name:'Plan '+(i-7),invest:invest,multiplier:2.5,total:total,days:days,offer:false});}
 for(let i=33;i<=37;i++){plans.push({id:i,name:'Coming Soon',invest:0,multiplier:0,total:0,days:0,offer:false});}
@@ -144,17 +145,35 @@ if(ref && localStorage.getItem('verbose_cred_'+ref)){let bal=Number(localStorage
 localStorage.setItem(KEY_USER,u);currentUser=u;afterLoginUI();
 }
 
-function afterLoginUI(){nav('dashboardCard');renderPlans();updateReferralLink();}
+function afterLoginUI(){nav('dashboardCard');renderPlans();startOffers();updateReferralLink();updateDailyProfit();}
+
 function updateReferralLink(){if(!currentUser) return;document.getElementById('referralLink').value=window.location.href+'?ref='+currentUser;}
 function copyReferral(){const link=document.getElementById('referralLink');link.select();document.execCommand('copy');alert('Referral link copied!');}
-function doLogout(){localStorage.removeItem(KEY_USER);currentUser=null;nav('loginCard');}
+function doLogout(){localStorage.removeItem(KEY_USER);currentUser=null;nav('loginCard');Object.values(offerIntervals).forEach(i=>clearInterval(i));}
 
 // NAV
 function nav(cardId){['loginCard','dashboardCard','plansCard','depositCard','withdrawCard'].forEach(id=>document.getElementById(id).classList.add('hidden'));document.getElementById(cardId).classList.remove('hidden');renderDashboard();fillWithdrawUser();updateReferralLink();}
 
 // DASHBOARD
-function renderDashboard(){if(!currentUser)return;document.getElementById('welcomeText').innerText='Welcome, '+currentUser;document.getElementById('memberSince').innerText='Member since: '+new Date().toLocaleDateString();
-document.getElementById('balanceText').innerText=fmt(Number(localStorage.getItem(KEY_BAL+currentUser)||0));document.getElementById('dailyText').innerText=fmt(Number(localStorage.getItem(KEY_DAILY+currentUser)||0));}
+function renderDashboard(){if(!currentUser)return;
+document.getElementById('welcomeText').innerText='Welcome, '+currentUser;
+document.getElementById('memberSince').innerText='Member since: '+new Date().toLocaleDateString();
+document.getElementById('balanceText').innerText=fmt(Number(localStorage.getItem(KEY_BAL+currentUser)||0));
+document.getElementById('dailyText').innerText=fmt(Number(localStorage.getItem(KEY_DAILY+currentUser)||0));
+}
+
+// DAILY PROFIT
+function updateDailyProfit(){if(!currentUser) return;
+let userPlans=JSON.parse(localStorage.getItem(KEY_USER_PLANS+currentUser)||'[]');
+let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);
+let dailyTotal=0;
+userPlans.forEach(p=>{dailyTotal+=p.dailyProfit;});
+bal+=dailyTotal;
+localStorage.setItem(KEY_BAL+currentUser,bal);
+localStorage.setItem(KEY_DAILY+currentUser,dailyTotal);
+renderDashboard();
+setTimeout(updateDailyProfit,24*60*60*1000); // next day
+}
 
 // PLANS
 function renderPlans(){
@@ -167,6 +186,12 @@ container.appendChild(div);
 });
 }
 
+// OFFER TIMER
+function startOffers(){plans.forEach(plan=>{if(!plan.offer)return;
+const key=KEY_OFFERS+plan.id;let endTs=Number(localStorage.getItem(key)||0);if(!endTs||endTs<Date.now()){endTs=Date.now()+24*3600*1000;localStorage.setItem(key,endTs);}
+const el=document.getElementById('countdown_'+plan.id);if(!el)return;function tick(){const diff=Math.floor((endTs-Date.now())/1000);if(diff<=0){el.innerText='Offer ended';clearInterval(offerIntervals[plan.id]);return;}
+const h=Math.floor(diff/3600),m=Math.floor((diff%3600)/60),s=diff%60;el.innerText=`${String(h).padStart(2,'0')}h:${String(m).padStart(2,'0')}m:${String(s).padStart(2,'0')}s`;}tick();offerIntervals[plan.id]=setInterval(tick,1000);});}
+
 // BUY PLAN
 function buyPlan(id){if(!currentUser){alert('Login first');return;}const plan=plans.find(p=>p.id===id);if(!plan || plan.name==='Coming Soon'){alert('Plan not available');return;}
 let userPlans=JSON.parse(localStorage.getItem(KEY_USER_PLANS+currentUser)||'[]');const dailyProfit=Math.round(plan.total/plan.days);userPlans.push({planId:plan.id,dailyProfit,lastCredit:Date.now()});localStorage.setItem(KEY_USER_PLANS+currentUser,JSON.stringify(userPlans));
@@ -177,7 +202,7 @@ function updateDepositNumber(){const method=document.getElementById('depositMeth
 function submitDeposit(){if(!currentUser){alert('Login first');return;}
 const tx=(document.getElementById('depositTx').value||'').trim();const proof=document.getElementById('depositProof').files[0];const amount=Number(document.getElementById('depositAmount').value)||0;
 if(!tx||!proof||!amount){alert('All fields required');return;}
-const deposits=JSON.parse(localStorage.getItem(KEY_DEPOSITS)||'[]');deposits.push({user:currentUser,method:document.getElementById('depositMethod').value,amount,tx,proof:proof.name,time:Date.now(),approved:false});
+const deposits=JSON.parse(localStorage.getItem(KEY_DEPOSITS)||[]);deposits.push({user:currentUser,method:document.getElementById('depositMethod').value,amount,tx,proof:proof.name,time:Date.now(),approved:false});
 localStorage.setItem(KEY_DEPOSITS,JSON.stringify(deposits));alert('Deposit submitted!');document.getElementById('depositTx').value='';document.getElementById('depositProof').value='';nav('dashboardCard');}
 
 // WITHDRAW
