@@ -1,4 +1,3 @@
-<VERBOSE>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -15,44 +14,31 @@ button:hover{background:#0056b3;}
 .nav div{text-align:center;font-size:12px;cursor:pointer;}
 .hidden{display:none;}
 .user-box{background:#e0f7ff;padding:10px;border-radius:8px;margin-bottom:10px;font-weight:bold;}
-.alert-box{background:#fff3cd;padding:12px;border-radius:5px;margin-bottom:10px;color:#856404;font-weight:bold;}
+.alert-box{background:#fff3cd;padding:10px;border-radius:5px;margin-bottom:10px;color:#856404;border:1px solid #ffeeba;}
 .logout-btn{position:fixed;bottom:60px;right:15px;background:red;color:#fff;padding:8px 12px;border-radius:5px;cursor:pointer;}
-.plan-box{border:1px solid #ccc;padding:10px;margin:10px 0;border-radius:8px;background:#f9f9f9;position:relative;}
-.offer{color:red;font-weight:bold;position:absolute;top:10px;right:10px;}
-.timer{color:#007bff;font-weight:bold;}
+.plan-box{border:1px solid #ccc;padding:10px;margin:10px 0;border-radius:8px;background:#f9f9f9;}
+.offer{color:red;font-weight:bold;}
+.support-box{background:#e2e3e5;padding:10px;border-radius:8px;margin-bottom:10px;border:1px solid #d6d8db;}
 </style>
 </head>
-<body>
-
-<header>VERBOSE</header>
-
-<!-- LOGIN -->
-<div id="loginPage" class="login-box">
+<body><header>VERBOSE</header><!-- LOGIN --><div id="loginPage" class="login-box">
 <h2>Login / Signup</h2>
 <input id="user" placeholder="Username">
 <input id="pass" placeholder="Password" type="password">
 <button onclick="login()">Login</button>
+</div><!-- DASHBOARD --><div id="dashboard" class="page hidden">
+<div class="alert-box">
+<strong>Notice:</strong> For any deposit or withdrawal related issues, please contact our customer support immediately.
 </div>
-
-<!-- DASHBOARD -->
-<div id="dashboard" class="page hidden">
-<div class="alert-box">For any deposit or withdrawal queries, please contact our Customer Support via WhatsApp or Email. We are here to assist you professionally.</div>
 <div class="user-box">Username: <span id="dashUser"></span> | Balance: Rs <span id="dashBalance">0</span></div>
 <h2>Dashboard</h2>
-<p>Welcome to VERBOSE, a trusted investment platform with millions of satisfied users. Earn daily profits securely and professionally.</p>
+<p>Welcome to VERBOSE! We are a trusted financial platform serving thousands of users daily. Monitor your investments and profits conveniently from here.</p>
 <button class="logout-btn" onclick="logout()">Logout</button>
-</div>
-
-<!-- PLANS -->
-<div id="plans" class="page hidden">
-<h2>Plans</h2>
+</div><!-- PLANS --><div id="plans" class="page hidden">
+<h2>Investment Plans</h2>
 <div id="plansList"></div>
-</div>
-
-<!-- DEPOSIT -->
-<div id="deposit" class="page hidden">
-<h2>Deposit</h2>
-<div class="alert-box">Please follow the instructions carefully. If you encounter any issues, contact our Customer Support immediately.</div>
+</div><!-- DEPOSIT --><div id="deposit" class="page hidden">
+<h2>Deposit Funds</h2>
 <label>Method</label>
 <select id="depositMethod" onchange="updateDepositNumber()">
 <option value="jazzcash">JazzCash</option>
@@ -66,56 +52,50 @@ button:hover{background:#0056b3;}
 <label>Upload Proof</label>
 <input type="file" id="depositProof">
 <button onclick="submitDeposit()">Submit Deposit</button>
-</div>
-
-<!-- WITHDRAWAL -->
-<div id="withdrawal" class="page hidden">
-<h2>Withdrawal</h2>
-<div class="alert-box">For withdrawal issues, please contact Customer Support immediately. Ensure your account details are correct.</div>
+</div><!-- WITHDRAWAL --><div id="withdrawal" class="page hidden">
+<h2>Request Withdrawal</h2>
 <label>Method</label>
 <select id="withdrawMethod">
 <option value="jazzcash">JazzCash</option>
 <option value="easypaisa">EasyPaisa</option>
-<option value="bank">Bank</option>
+<option value="bank">Bank Transfer</option>
 </select>
 <input id="withdrawUsername" readonly>
 <input id="withdrawAccount" placeholder="Account Number (manual)">
 <input id="withdrawAmount" placeholder="Amount">
-<button onclick="submitWithdraw()">Request Withdrawal</button>
+<button onclick="submitWithdraw()">Submit Request</button>
+</div><!-- SUPPORT --><div id="support" class="page hidden">
+<h2>Customer Support</h2>
+<div class="support-box">
+<p>If you face any issues with deposits, withdrawals, or your account, our professional support team is available 24/7 to assist you.</p>
+<p><strong>Email:</strong> support@verbosefinance.com</p>
+<p><strong>WhatsApp:</strong> 0370-5519562</p>
+<p><strong>Company:</strong> VERBOSE Finance Ltd.<br>
+Registered in Pakistan, providing secure investment services with transparent operations.</p>
+<p>We are committed to resolving all queries promptly. Please provide your username and transaction details for faster support.</p>
 </div>
-
-<!-- SUPPORT -->
-<div id="support" class="page hidden">
-<h2>Customer Support & Company Info</h2>
-<p>VERBOSE Investments Ltd.</p>
-<p>Email: support@verboseinvest.com</p>
-<p>WhatsApp: 03705519562</p>
-<p>We are committed to providing professional assistance for all your investment queries. Reach out for deposit, withdrawal, or account support.</p>
-</div>
-
-<!-- NAVIGATION -->
-<div id="bottomNav" class="nav hidden">
+</div><!-- NAVIGATION --><div id="bottomNav" class="nav hidden">
 <div onclick="showPage('dashboard')">🏠<br>Home</div>
 <div onclick="showPage('plans')">📦<br>Plans</div>
 <div onclick="showPage('deposit')">💰<br>Deposit</div>
 <div onclick="showPage('withdrawal')">💵<br>Withdraw</div>
 <div onclick="showPage('support')">📞<br>Support</div>
-</div>
-
-<script>
+</div><script>
+// USERS & LOCAL STORAGE
 let currentUser = localStorage.getItem('verbose_user') || null;
 let balance = parseFloat(localStorage.getItem('verbose_balance')) || 0;
 let plansData = [];
 let userPlans = JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');
 
-// 25 Plans 200-30000, 20-70 days, 7 special 24h offer
+// CREATE 25 PLANS, 7 special 24h offer
 for(let i=1;i<=25;i++){
     let invest = Math.round(200 + (i-1)*(30000-200)/24);
     let days = 20 + Math.floor((i-1)*(70-20)/24);
     let multiplier = i<=7 ? 3 : 2.5;
-    plansData.push({id:i,name:`Plan ${i}`,invest:invest,days:days,total:Math.round(invest*multiplier),multiplier:multiplier,offer:i<=7,endTime:i<=7?Date.now()+(24*60*60*1000):null});
+    plansData.push({id:i,name:`Plan ${i}`,invest:invest,days:days,total:Math.round(invest*multiplier),multiplier:multiplier,offer:i<=7});
 }
 
+// LOGIN
 function login(){
     let u=document.getElementById("user").value;
     let p=document.getElementById("pass").value;
@@ -132,9 +112,9 @@ function login(){
     renderPlans();
     updateWithdrawUsername();
     addDailyProfit();
-    updateTimers();
 }
 
+// LOGOUT
 function logout(){
     currentUser=null;
     localStorage.removeItem('verbose_user');
@@ -145,12 +125,14 @@ function logout(){
     document.getElementById("pass").value='';
 }
 
+// SHOW PAGE
 function showPage(id){
     let pages=document.querySelectorAll(".page");
     pages.forEach(p=>p.classList.add("hidden"));
     document.getElementById(id).classList.remove("hidden");
 }
 
+// PLANS
 function renderPlans(){
     let list=document.getElementById("plansList");
     list.innerHTML='';
@@ -162,7 +144,6 @@ function renderPlans(){
         Days: ${p.days}<br>
         Total Profit: Rs ${p.total}<br>
         Daily Profit: Rs ${Math.round(p.total/p.days)}<br>
-        ${p.offer?'<span class="timer" id="timer-'+p.id+'">Loading...</span><br>':''}
         <button onclick="buyPlan(${p.id})">Buy Now</button>`;
         list.appendChild(div);
     });
@@ -180,6 +161,7 @@ function buyPlan(id){
     }
 }
 
+// DEPOSIT
 const depositNumbers={jazzcash:'03705519562',easypaisa:'03379827882'};
 function updateDepositNumber(){
     let method=document.getElementById('depositMethod').value;
@@ -193,12 +175,13 @@ function submitDeposit(){
     balance+=amount;
     localStorage.setItem('verbose_balance',balance);
     document.getElementById('dashBalance').innerText=balance;
-    alert("Deposit submitted! Admin will check.");
+    alert("Deposit submitted! Our support team will verify shortly.");
     document.getElementById('depositTxId').value='';
     document.getElementById('depositProof').value='';
     showPage('dashboard');
 }
 
+// WITHDRAWAL
 function updateWithdrawUsername(){document.getElementById('withdrawUsername').value=currentUser;}
 function submitWithdraw(){
     let amt=parseFloat(document.getElementById('withdrawAmount').value);
@@ -208,12 +191,13 @@ function submitWithdraw(){
     balance-=amt;
     localStorage.setItem('verbose_balance',balance);
     document.getElementById('dashBalance').innerText=balance;
-    alert(`Withdraw Rs ${amt} requested. Contact admin if needed.`);
+    alert(`Withdrawal Rs ${amt} requested. Support will contact you if needed.`);
     document.getElementById('withdrawAmount').value='';
     document.getElementById('withdrawAccount').value='';
     showPage('dashboard');
 }
 
+// DAILY PROFIT
 function addDailyProfit(){
     let now=Date.now();
     userPlans.forEach(p=>{
@@ -229,30 +213,7 @@ function addDailyProfit(){
     localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));
 }
 
-function updateTimers(){
-    plansData.forEach(p=>{
-        if(p.offer){
-            let timerEl=document.getElementById('timer-'+p.id);
-            if(timerEl){
-                let interval=setInterval(()=>{
-                    let remaining=p.endTime-Date.now();
-                    if(remaining<=0){
-                        timerEl.innerText='Offer ended';
-                        clearInterval(interval);
-                        p.offer=false;
-                        renderPlans();
-                    }else{
-                        let h=Math.floor(remaining/(1000*60*60));
-                        let m=Math.floor((remaining%(1000*60*60))/(1000*60));
-                        let s=Math.floor((remaining%(1000*60))/1000);
-                        timerEl.innerText=`Offer ends in ${h}h ${m}m ${s}s`;
-                    }
-                },1000);
-            }
-        }
-    });
-}
-
+// ONLOAD
 window.onload=function(){
     if(currentUser){
         document.getElementById("dashUser").innerText=currentUser;
@@ -264,9 +225,7 @@ window.onload=function(){
         renderPlans();
         updateWithdrawUsername();
         addDailyProfit();
-        updateTimers();
     }
 };
-</script>
-</body>
+</script></body>
 </html>
