@@ -24,6 +24,10 @@ input,select,button{width:100%;padding:10px;margin-top:6px;border-radius:8px;bor
 .user-box{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
 .user-box .badge{background:rgba(0,255,240,0.06);padding:4px 8px;border-radius:999px;color:var(--neon);}
 .icon{margin-right:6px;}
+.admin-box{display:flex;justify-content:space-around;margin-top:12px;}
+.admin-box div{flex:1;text-align:center;padding:10px;background:rgba(0,255,240,0.06);border-radius:10px;margin:2px;cursor:pointer;}
+.admin-box div i{font-size:20px;margin-bottom:4px;display:block;color:var(--neon);}
+.coming-soon{opacity:0.5;font-style:italic;}
 </style>
 </head>
 <body>
@@ -57,12 +61,19 @@ input,select,button{width:100%;padding:10px;margin-top:6px;border-radius:8px;bor
 <div class="btn" style="font-size:13px;padding:4px 8px;margin-top:4px;" onclick="doLogout()"><i class="fas fa-sign-out-alt icon"></i>Logout</div>
 </div>
 </div>
+
+<!-- ADMIN / SUPPORT / ACTIVITY -->
+<div class="admin-box">
+<div onclick="alert('Admin panel coming soon')"><i class="fas fa-user-shield"></i>Admin</div>
+<div onclick="alert('Support panel coming soon')"><i class="fas fa-headset"></i>Support</div>
+<div onclick="alert('Activity log coming soon')"><i class="fas fa-chart-line"></i>Activity</div>
+</div>
 </div>
 
 <!-- PLANS -->
 <div id="plansCard" class="card hidden">
-<h3 style="color:var(--neon);margin-top:0"><i class="fas fa-gift icon"></i>Special Offers</h3>
-<div class="muted" style="margin-bottom:8px;">7 plans with 24h countdown timer.</div>
+<h3 style="color:var(--neon);margin-top:0"><i class="fas fa-gift icon"></i>Special & Normal Plans</h3>
+<div class="muted" style="margin-bottom:8px;">Special Offers: 7 plans (24h countdown). Normal: 25 plans + 5 Coming Soon.</div>
 <div id="plansList"></div>
 </div>
 
@@ -130,14 +141,13 @@ let offerIntervals={};
 
 // SPECIAL OFFERS (7 plans 200→3000, 3x profit)
 for(let i=1;i<=7;i++){
-let invest=200*i*200/200; // linear 200→3000
-if(invest>3000) invest=3000;
-plans.push({id:i,name:'Special Plan '+i,invest:200*i, multiplier:3, total:200*i*3, offer:true});
+let invest=200*i; if(invest>3000) invest=3000;
+plans.push({id:i,name:'Special Plan '+i,invest:invest, multiplier:3, total:invest*3, offer:true});
 }
 
-// NORMAL PLANS (25 plans 200→30000, 2.5x profit)
-for(let i=8;i<=32;i++){
-let invest=Math.round(200 + (i-8)*(30000-200)/24); // linear 200→30000
+// NORMAL PLANS (25 plans 200→30000, 2.5x profit) + 5 Coming Soon
+for(let i=8;i<=37;i++){
+let invest=Math.round(200 + (i-8)*(30000-200)/24);
 let multiplier=2.5;
 let name=(i<=32)?'Plan '+(i-7):'Coming Soon';
 plans.push({id:i,name:name,invest:invest,multiplier:multiplier,total:Math.round(invest*multiplier),offer:false});
@@ -176,6 +186,7 @@ function renderPlans(){
 const container=document.getElementById('plansList');container.innerHTML='';
 plans.forEach(plan=>{
 const div=document.createElement('div');div.className='plan';
+if(plan.name==='Coming Soon') div.className+=' coming-soon';
 div.innerHTML=`<div class="meta"><div style="font-weight:800"><i class="fas fa-gift icon"></i>${plan.name}</div><div class="muted" style="margin-top:4px">Invest: Rs ${fmt(plan.invest)} · Total: Rs ${fmt(plan.total)}</div>${plan.offer?`<div class="countdown" id="countdown_${plan.id}">Loading timer...</div>`:''}</div>
 <div class="actions">${plan.offer?'<button class="btn" onclick="buyPlan('+plan.id+')"><i class="fas fa-shopping-cart icon"></i>Buy Now</button>':''}</div>`;container.appendChild(div);
 });
