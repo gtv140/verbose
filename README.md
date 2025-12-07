@@ -6,22 +6,65 @@
 <title>VERBOSE</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <style>
-body {margin:0; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f0f2f5; color:#333;}
-header {padding:20px; text-align:center; font-weight:700; font-size:24px; background:#1f2937; color:#fff;}
+body {
+    margin:0;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg,#f0f2f5,#e5e7eb);
+    color:#333;
+}
+header {
+    padding:20px; 
+    text-align:center; 
+    font-weight:700; 
+    font-size:24px; 
+    background:#111827; 
+    color:#fff;
+    box-shadow:0 4px 12px rgba(0,0,0,0.2);
+}
 .wrap {max-width:480px; margin:12px auto; padding:12px;}
-.card {background:#fff; padding:15px; border-radius:12px; margin-bottom:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1);}
-input, select, button {width:100%; padding:10px; margin-top:8px; border-radius:8px; border:1px solid #ccc; font-size:14px;}
+.card {
+    background:#fff;
+    padding:15px; 
+    border-radius:15px; 
+    margin-bottom:15px; 
+    box-shadow:0 8px 20px rgba(0,0,0,0.1);
+    transition:transform 0.3s;
+}
+.card:hover {transform: translateY(-4px);}
+input, select, button {
+    width:100%; 
+    padding:10px; 
+    margin-top:8px; 
+    border-radius:10px; 
+    border:1px solid #ccc; 
+    font-size:14px;
+}
 button {background:#2563eb; color:#fff; font-weight:700; cursor:pointer; border:none;}
 button:hover {background:#1d4ed8;}
-.nav {position:fixed; bottom:0; left:0; right:0; display:flex; justify-content:space-around; padding:12px; background:#fff; border-top:1px solid #ccc;}
+.nav {
+    position:fixed; bottom:0; left:0; right:0; 
+    display:flex; justify-content:space-around; 
+    padding:12px; background:#fff; border-top:1px solid #ccc;
+    box-shadow:0 -4px 12px rgba(0,0,0,0.05);
+}
 .nav div {text-align:center; font-size:14px; cursor:pointer; color:#2563eb;}
-.plan {border:1px solid #e5e7eb; border-radius:10px; padding:12px; margin-bottom:10px; background:#f9fafb; display:flex; justify-content:space-between; align-items:center;}
-.plan button {width:auto; padding:6px 14px; border-radius:8px;}
-.progress-container {background:#e5e7eb; border-radius:8px; height:10px; width:100%; margin-top:6px;}
-.progress-bar {background:#2563eb; height:100%; border-radius:8px; width:0%;}
-.alert-note {background:#fef3c7; color:#b45309; padding:12px; border-radius:8px; margin-bottom:14px; font-weight:600; text-align:center;}
+.plan {
+    border:1px solid #e5e7eb; border-radius:12px; padding:12px; 
+    margin-bottom:10px; background:#f9fafb; display:flex; justify-content:space-between; align-items:center;
+    transition:all 0.3s;
+}
+.plan:hover {background:#e0f2fe; transform:scale(1.02);}
+.progress-container {background:#e5e7eb; border-radius:10px; height:12px; width:100%; margin-top:6px;}
+.progress-bar {background:#2563eb; height:100%; border-radius:10px; width:0%; transition:width 1s;}
+.alert-note {background:#fef3c7; color:#b45309; padding:12px; border-radius:12px; margin-bottom:14px; font-weight:600; text-align:center;}
 .user-box {display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;}
 .hidden {display:none;}
+.balance-box {
+    background: linear-gradient(90deg,#2563eb,#3b82f6);
+    color:#fff; padding:12px; border-radius:12px; text-align:center;
+    margin-bottom:15px;
+}
+.balance-box span {display:block; font-size:20px; font-weight:700;}
 </style>
 </head>
 <body>
@@ -42,16 +85,13 @@ button:hover {background:#1d4ed8;}
 
 <!-- DASHBOARD -->
 <div id="dashboardCard" class="card hidden">
-<div class="alert-note">⚠️ Deposit/Withdrawal issues? Contact VERBOSE Admin: <br>Whatsapp: <a href="https://wa.me/03705519562">03705519562</a> | Email: <a href="mailto:rock.earn92@gmail.com">rock.earn92@gmail.com</a></div>
-<div class="user-box">
-<div>
-<div id="welcomeText" style="font-weight:700; font-size:18px;">Welcome —</div>
-<div id="memberSince" style="font-size:14px; color:#6b7280;">Member since —</div>
+<div class="alert-note">⚠️ Deposit/Withdrawal issues? Contact VERBOSE Admin:<br>Whatsapp: <a href="https://wa.me/03705519562">03705519562</a> | Email: <a href="mailto:rock.earn92@gmail.com">rock.earn92@gmail.com</a></div>
+
+<div class="balance-box">
+Welcome, <span id="welcomeText">User</span><br>
+Balance: <span id="balanceText">0</span> PKR
 </div>
-<div style="text-align:right;">
-<div style="font-weight:700; font-size:18px;">Balance: Rs <span id="balanceText">0</span></div>
-</div>
-</div>
+
 <div id="progressGraphs"></div>
 </div>
 
@@ -105,7 +145,6 @@ button:hover {background:#1d4ed8;}
 </div>
 
 <script>
-// STORAGE KEYS
 const KEY_USER='verbose_user';
 const KEY_BAL='verbose_balance_';
 let currentUser=localStorage.getItem(KEY_USER)||null;
@@ -152,8 +191,7 @@ updateDepositNumber();
 function afterLoginUI(){nav('dashboardCard');}
 function renderDashboard(){
 if(!currentUser) return;
-document.getElementById('welcomeText').innerText='Welcome, '+currentUser;
-document.getElementById('memberSince').innerText='Member since: '+new Date().toLocaleDateString();
+document.getElementById('welcomeText').innerText=currentUser;
 document.getElementById('balanceText').innerText=localStorage.getItem(KEY_BAL+currentUser)||'0';
 renderProgressGraphs();
 }
