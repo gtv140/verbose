@@ -20,6 +20,8 @@ button:hover{background:#0056b3;}
 .success{background:#e0ffe0;padding:10px;margin-bottom:12px;border-radius:6px;color:#070;}
 .referral-box{display:flex;gap:6px;margin-bottom:12px;}
 .referral-box input{flex:1;}
+.countdown{font-size:13px;color:#d00;margin-top:4px;}
+.coming-soon{opacity:0.5;font-style:italic;}
 </style>
 </head>
 <body>
@@ -67,7 +69,6 @@ button:hover{background:#0056b3;}
 <!-- PLANS -->
 <div id="plansCard" class="card" style="display:none;">
 <h3>Plans</h3>
-<p>Special Offers: 7 plans (24h timer). Normal plans: 25 plans.</p>
 <div id="plansList"></div>
 </div>
 
@@ -109,22 +110,33 @@ button:hover{background:#0056b3;}
 </div>
 
 <script>
+// STORAGE KEYS
 const KEY_USER='verbose_user';
 const KEY_BAL='verbose_balance_';
 const KEY_DAILY='verbose_daily_';
 const KEY_USER_PLANS='verbose_plans_';
 const KEY_DEPOSITS='verbose_deposits';
 const KEY_WITHDRAWS='verbose_withdraws';
+const KEY_OFFERS='verbose_offer_';
 let currentUser=localStorage.getItem(KEY_USER)||null;
 
-// 7 Special Offers
+// PLANS DATA
 let plans=[];
 for(let i=1;i<=7;i++){
-let invest=200*i;
-if(invest>3000) invest=3000;
-let days=20+Math.floor(Math.random()*51);
-plans.push({id:i,name:'Special Plan '+i,invest:invest,total:invest*3,days:days});
+  let invest=200*i;if(invest>3000) invest=3000;
+  let days=Math.floor(Math.random()*(70-20+1))+20;
+  plans.push({id:i,name:'Special Plan '+i,invest:invest,multiplier:3,total:invest*3,days:days,offer:true});
 }
+for(let i=8;i<=32;i++){
+  let invest=Math.round(3000 + (i-8)*(30000-3000)/24);
+  let days=Math.floor(Math.random()*(70-20+1))+20;
+  let total=Math.round(invest*2.5);
+  plans.push({id:i,name:'Plan '+(i-7),invest:invest,multiplier:2.5,total:total,days:days,offer:false});
+}
+for(let i=33;i<=37;i++){
+  plans.push({id:i,name:'Coming Soon',invest:0,multiplier:0,total:0,days:0,offer:false});
+}
+let offerIntervals={};
 
 function fmt(n){return Number(n).toLocaleString();}
 
@@ -154,10 +166,10 @@ localStorage.setItem(KEY_USER,u);currentUser=u;
 afterLoginUI();
 }
 
-function afterLoginUI(){nav('dashboardCard');renderPlans();updateReferralLink();}
+function afterLoginUI(){nav('dashboardCard');renderPlans();startOffers();updateReferralLink();}
 function updateReferralLink(){if(!currentUser) return;document.getElementById('referralLink').value=window.location.href+'?ref='+currentUser;}
 function copyReferral(){const link=document.getElementById('referralLink');link.select();document.execCommand('copy');alert('Referral link copied!');}
-function doLogout(){localStorage.removeItem(KEY_USER);currentUser=null;nav('loginCard');}
+function doLogout(){localStorage.removeItem(KEY_USER);currentUser=null;nav('loginCard');Object.values(offerIntervals).forEach(i=>clearInterval(i));}
 
 // NAV
 function nav(cardId){
@@ -181,17 +193,37 @@ function renderPlans(){
 const container=document.getElementById('plansList');container.innerHTML='';
 plans.forEach(plan=>{
 const div=document.createElement('div');div.className='plan';
-div.innerHTML=`<div><strong>${plan.name}</strong><br>Invest: Rs ${fmt(plan.invest)} · Total: Rs ${fmt(plan.total)} · Days: ${plan.days}</div>
-<button onclick="buyPlan(${plan.id})">Buy Now</button>`;
+if(plan.name==='Coming Soon') div.className+=' coming-soon';
+let daily=Math.floor(plan.total/plan.days);
+div.innerHTML=`<div><strong>${plan.name}</strong><br>Invest: Rs ${fmt(plan.invest)} · Total: Rs ${fmt(plan.total)} · Days: ${plan.days} · Daily: Rs ${fmt(daily)}</div>
+${plan.offer?`<div class="countdown" id="countdown_${plan.id}">Loading timer...</div>`:''}
+<button ${plan.name==='Coming Soon'?'disabled':''} onclick="buyPlan(${plan.id})">${plan.name==='Coming Soon'?'Coming Soon':'Buy Now'}</button>`;
 container.appendChild(div);
 });
 }
+
+function startOffers(){
+plans.forEach(plan=>{if(!plan.offer)return;
+const key=KEY_OFFERS+plan.id;
+let endTs=Number(localStorage.getItem(key)||0);
+if(!endTs||endTs<Date.now()){endTs=Date.now()+24*3600*1000;localStorage.setItem(key,endTs);}
+const el=document.getElementById('countdown_'+plan.id);if(!el)return;
+function tick(){
+const diff=Math.floor((endTs-Date.now())/1000);
+if(diff<=0){el.innerText='Offer ended';clearInterval(offerIntervals[plan.id]);return;}
+const h=Math.floor(diff/3600),m=Math.floor((diff%3600)/60),s=diff%60;
+el.innerText=`${String(h).padStart(2,'0')}h:${String(m).padStart(2,'0')}m:${String(s).padStart(2,'0')}s`;
+}
+tick();offerIntervals[plan.id]=setInterval(tick,1000);
+});
+}
+
 function buyPlan(id){
 if(!currentUser){alert('Login first');return;}
 const plan=plans.find(p=>p.id===id);
-if(!plan){alert('Plan not found');return;}
+if(!plan || plan.name==='Coming Soon'){alert('Plan not available');return;}
 let userPlans=JSON.parse(localStorage.getItem(KEY_USER_PLANS+currentUser)||'[]');
-userPlans.push({planId:plan.id,dailyProfit:Math.round(plan.total/plan.days),lastCredit:Date.now()});
+userPlans.push({planId:plan.id,dailyProfit:Math.floor(plan.total/plan.days),lastCredit:Date.now()});
 localStorage.setItem(KEY_USER_PLANS+currentUser,JSON.stringify(userPlans));
 document.getElementById('depositAmount').value=plan.invest;
 nav('depositCard');
