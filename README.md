@@ -16,7 +16,7 @@ button:hover { background:#ffc800; }
 .plan { background:#1d1d1d; padding:12px; margin:10px 0; border-radius:10px; border:1px solid #333; }
 .hidden { display:none; }
 .copy-btn { padding:5px 8px; background:#007bff; color:#fff; border:none; border-radius:5px; cursor:pointer; margin-left:5px; }
-.user-box { background:#1a1a1a; padding:12px; margin-bottom:15px; border-radius:10px; border:1px solid #333; text-align:center; }
+.user-box { background:#1a1a1a; padding:12px; margin-bottom:15px; border-radius:10px; border:1px solid #333; text-align:center; position:relative; }
 </style>
 </head>
 <body>
@@ -35,7 +35,7 @@ button:hover { background:#ffc800; }
 <div id="dashboard" class="page hidden">
 <div class="user-box">
 Username: <span id="dashUser"></span> | Balance: Rs <span id="dashBalance">0</span>
-<button onclick="logout()" style="background:red;color:#fff;margin-top:5px;">Logout</button>
+<button onclick="logout()" style="position:absolute; top:10px; right:10px; background:red;color:#fff; padding:5px 10px; border-radius:5px;">Logout</button>
 </div>
 <h2>Dashboard</h2>
 <div class="plan">Deposit/Withdrawal ke baad admin ko screenshot WhatsApp 03705519562 bhejna zaroori hai</div>
@@ -147,6 +147,7 @@ function login(){
     document.getElementById("dashboard").classList.remove("hidden");
     document.getElementById("bottomNav").classList.remove("hidden");
     generatePlans();
+    updateLogs();
 }
 
 // LOGOUT
@@ -159,12 +160,19 @@ function logout(){
     document.getElementById("loginPage").classList.remove("hidden");
 }
 
-// AUTO LOGIN ON REFRESH
+// AUTO LOGIN ON REFRESH FIX
 window.onload = function(){
     let savedUser = localStorage.getItem('verbose_current');
     if(savedUser){
-        document.getElementById("user").value = savedUser;
-        login();
+        currentUser = savedUser;
+        balance = parseInt(localStorage.getItem(currentUser+'_balance')) || 0;
+        document.getElementById("dashUser").innerText = currentUser;
+        document.getElementById("dashBalance").innerText = balance;
+        document.getElementById("loginPage").classList.add("hidden");
+        document.getElementById("dashboard").classList.remove("hidden");
+        document.getElementById("bottomNav").classList.remove("hidden");
+        generatePlans();
+        updateLogs();
     }
 };
 
