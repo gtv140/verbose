@@ -149,14 +149,14 @@ const KEY_WITHDRAWS='verbose_withdraws';
 let currentUser=localStorage.getItem(KEY_USER)||null;
 let plans=[],offerIntervals={};
 
-// PLANS
+// PLANS DATA
 for(let i=1;i<=7;i++){let invest=200*i;if(invest>3000) invest=3000;let days=20+Math.floor(Math.random()*51);plans.push({id:i,name:'Special Plan '+i,invest:invest,multiplier:3,total:invest*3,days:days,offer:true});}
 for(let i=8;i<=32;i++){let invest=Math.round(3000+(i-8)*(30000-3000)/24);let duration=20+Math.floor(Math.random()*51);let total=Math.round(invest*2.5);plans.push({id:i,name:'Plan '+(i-7),invest:invest,multiplier:2.5,total:total,days:duration,offer:false});}
 for(let i=33;i<=37;i++){plans.push({id:i,name:'Coming Soon',invest:0,multiplier:0,total:0,days:0,offer:false});}
 
 function fmt(n){return Number(n).toLocaleString('en-US');}
 
-// AUTH
+// AUTH FUNCTIONS
 function doAuth(){
 const mode=document.getElementById('authMode').value;
 const u=(document.getElementById('inputUser').value||'').trim();
@@ -174,12 +174,8 @@ localStorage.setItem(KEY_USER,u);currentUser=u;afterLoginUI();
 }
 
 function afterLoginUI(){nav('dashboardCard');renderPlans();startOffers();updateReferralLink();}
-
-// REFERRAL
 function updateReferralLink(){if(!currentUser) return;document.getElementById('referralLink').value=window.location.href+'?ref='+currentUser;}
 function copyReferral(){const link=document.getElementById('referralLink');link.select();document.execCommand('copy');alert('Referral link copied!');}
-
-// LOGOUT
 function doLogout(){localStorage.removeItem(KEY_USER);currentUser=null;nav('loginCard');Object.values(offerIntervals).forEach(i=>clearInterval(i));}
 
 // NAV
@@ -202,9 +198,9 @@ ${plan.offer?`<div class="countdown" id="countdown_${plan.id}">Loading timer...<
 });
 }
 
-// Offers countdown
+// OFFER TIMER
 function startOffers(){plans.forEach(plan=>{if(!plan.offer)return;
-const key='verbose_offer_'+plan.id;let endTs=Number(localStorage.getItem(key)||0);if(!endTs||endTs<Date.now()){endTs=Date.now()+24*3600*1000;localStorage.setItem(key,endTs);}
+const key=KEY_OFFERS+plan.id;let endTs=Number(localStorage.getItem(key)||0);if(!endTs||endTs<Date.now()){endTs=Date.now()+24*3600*1000;localStorage.setItem(key,endTs);}
 const el=document.getElementById('countdown_'+plan.id);if(!el)return;function tick(){const diff=Math.floor((endTs-Date.now())/1000);if(diff<=0){el.innerText='Offer ended';clearInterval(offerIntervals[plan.id]);return;}
 const h=Math.floor(diff/3600),m=Math.floor((diff%3600)/60),s=diff%60;el.innerText=`${String(h).padStart(2,'0')}h:${String(m).padStart(2,'0')}m:${String(s).padStart(2,'0')}s`;}tick();offerIntervals[plan.id]=setInterval(tick,1000);});}
 
@@ -223,29 +219,30 @@ if(!tx||!proof||!amount){alert('All fields required');return;}
 let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);bal+=amount;localStorage.setItem(KEY_BAL+currentUser,bal);
 let daily=Number(localStorage.getItem(KEY_DAILY+currentUser)||0);daily+=Math.round(amount*0.01);localStorage.setItem(KEY_DAILY+currentUser,daily);
 const deposits=JSON.parse(localStorage.getItem(KEY_DEPOSITS)||'[]');deposits.push({user:currentUser,method:document.getElementById('depositMethod').value,amount,tx,proof:proof.name,time:Date.now()});
-localStorage.setItem(KEY_DEPOSITS,JSON.stringify(deposits));renderDashboard();document.getElementById('depositTx').value='';document.getElementById('depositProof').value='';alert(`Deposit successful! Balance updated, daily profit added.`);nav('dashboardCard');
-}
+localStorage.setItem(KEY_DEPOSITS,JSON.stringify(deposits));renderDashboard();document.getElementById('depositTx').value='';document.getElementById('depositProof').value='';alert(`Deposit successful! Balance updated, daily profit added.`);nav('dashboardCard');}
 
 // WITHDRAW
 function fillWithdrawUser(){if(!currentUser) return;document.getElementById('withdrawUsername').value=currentUser;}
 function submitWithdraw(){if(!currentUser){alert('Login first');return;}
-const method=document.getElementById('withdrawMethod').value;const account=document..getElementById('withdrawAccount').value.trim();
+const method=document.getElementById('withdrawMethod').value;
+const account=document.getElementById('withdrawAccount').value.trim();
 const amount=Number(document.getElementById('withdrawAmount').value)||0;
 if(!account||amount<=0){alert('Enter valid account and amount');return;}
-let withdraws=JSON.parse(localStorage.getItem(KEY_WITHDRAWS)||'[]');
+let withdraws=JSON.parse(localStorage.getItem(KEY_WITHDRAws')||'[]');
 withdraws.push({user:currentUser,method,account,amount,time:Date.now()});
 localStorage.setItem(KEY_WITHDRAWS,JSON.stringify(withdraws));
-alert(`Withdrawal request of Rs ${amount} submitted successfully! Admin will process soon.`);
-document.getElementById('withdrawAmount').value='';document.getElementById('withdrawAccount').value='';
-nav('dashboardCard');
-}
+let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);
+if(amount>bal){alert('Insufficient balance');return;}
+bal-=amount;localStorage.setItem(KEY_BAL+currentUser,bal);
+alert(`Withdrawal requested: Rs ${amount} via ${method}. Admin will process soon.`);
+renderDashboard();document.getElementById('withdrawAmount').value='';document.getElementById('withdrawAccount').value='';}
 
 // ADMIN / SUPPORT
-function openAdmin(){window.open('https://wa.me/93705519562','_blank');}
-function openSupport(){window.open('https://wa.me/93705519562','_blank');}
+function openAdmin(){window.open('https://wa.me/03705519562','_blank');}
+function openSupport(){window.open('https://wa.me/03705519562','_blank');}
 
 // INITIALIZE
-document.addEventListener('DOMContentLoaded',()=>{
 if(currentUser){afterLoginUI();}else{nav('loginCard');}
-updateDepositNumber();
-});
+</script>
+</body>
+</html>
