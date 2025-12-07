@@ -14,34 +14,24 @@ body{
     overflow-x:hidden;
     position:relative;
 }
-/* NEON HEADER */
 header{
     text-align:center;
     padding:20px;
-    font-size:32px;
+    font-size:28px;
     font-weight:bold;
     letter-spacing:3px;
-    color:#0ff;
-    text-shadow:
-        0 0 5px #0ff,
-        0 0 10px #0ff,
-        0 0 20px #0ff,
-        0 0 40px #00f,
-        0 0 80px #00f;
-    animation: neonGlow 2s ease-in-out infinite alternate;
+    background:linear-gradient(90deg,#0ff,#00f,#0ff,#00f);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    text-shadow:0 0 10px #0ff,0 0 20px #00f;
 }
-@keyframes neonGlow{
-    0%{text-shadow: 0 0 5px #0ff,0 0 10px #0ff,0 0 20px #0ff,0 0 40px #00f,0 0 80px #00f;}
-    100%{text-shadow: 0 0 10px #0ff,0 0 20px #0ff,0 0 40px #0ff,0 0 60px #00f,0 0 100px #00f;}
-}
-
 .login-box,.page{
     max-width:400px;
     margin:20px auto;
     background:#111;
     padding:20px;
     border-radius:10px;
-    box-shadow:0 0 15px #0ff;
+    box-shadow:0 0 20px #0ff;
 }
 input,button,select{
     width:100%;
@@ -53,14 +43,15 @@ input,button,select{
     color:#fff;
 }
 button{
-    background:#00f;
+    background:#0ff;
     border:none;
     cursor:pointer;
     transition:0.3s;
+    font-weight:bold;
 }
 button:hover{
-    background:#0ff;
-    color:#000;
+    background:#00f;
+    color:#fff;
 }
 .nav{
     position:fixed;
@@ -79,14 +70,18 @@ button:hover{
     border-radius:8px;
     margin-bottom:10px;
     font-weight:bold;
+    text-align:center;
+    box-shadow:0 0 10px #0ff;
 }
 .alert-box{
-    background:#330000;
-    padding:8px;
+    background:#330033;
+    padding:10px;
     border-radius:5px;
     margin-bottom:10px;
-    color:#f00;
+    color:#0ff;
     font-weight:bold;
+    text-align:center;
+    box-shadow:0 0 10px #00f;
 }
 .logout-btn{
     position:fixed;
@@ -107,14 +102,16 @@ button:hover{
     transition:0.3s;
 }
 .plan-box:hover{
-    box-shadow:0 0 10px #0ff;
+    box-shadow:0 0 20px #0ff;
 }
 .offer{color:#0ff;font-weight:bold;}
 .countdown{
     font-weight:bold;
     color:#0ff;
     margin-top:5px;
+    text-align:center;
 }
+
 /* NEON ANIMATION BACKGROUND */
 @keyframes neonbg{
     0%{background-position:0 0;}
@@ -124,7 +121,7 @@ button:hover{
 body{
     background:linear-gradient(45deg,#000,#001f3f,#000,#001f3f);
     background-size:400% 400%;
-    animation:neonbg 20s linear infinite;
+    animation:neonbg 25s linear infinite;
 }
 </style>
 </head>
@@ -142,11 +139,10 @@ body{
 
 <!-- DASHBOARD -->
 <div id="dashboard" class="page hidden">
-<div class="alert-box">Contact administration for deposits/withdrawals.</div>
+<div class="alert-box">Deposit, withdrawal, or account issues? Our professional admin team is always available to assist you.</div>
 <div class="user-box">Username: <span id="dashUser"></span> | Balance: Rs <span id="dashBalance">0</span> | Daily Profit: Rs <span id="dashProfit">0</span></div>
 <h2>Dashboard</h2>
-<p>VERBOSE - Secure & reliable platform for users with daily profits.</p>
-<button onclick="shareLink()">Share Link & Get 30Rs Bonus</button>
+<p style="text-align:center;">Welcome to VERBOSE! A secure, trusted platform delivering daily profits with complete transparency. Your funds and growth are our priority.</p>
 <button class="logout-btn" onclick="logout()">Logout</button>
 </div>
 
@@ -193,6 +189,7 @@ body{
 <!-- SUPPORT -->
 <div id="support" class="page hidden">
 <h2>Contact Administration</h2>
+<p>Our dedicated administration team is available 24/7 to help with deposits, withdrawals, or account inquiries. Reach out anytime for professional support.</p>
 <p>WhatsApp: <a href="https://chat.whatsapp.com/Kmaiv3VdSo09rio4qcRTRM" target="_blank">Join WhatsApp Group</a></p>
 <p>Email: <a href="mailto:rock.earn92@gmail.com">rock.earn92@gmail.com</a></p>
 </div>
@@ -210,12 +207,11 @@ body{
 // USERS & LOCAL STORAGE
 let currentUser = localStorage.getItem('verbose_user') || null;
 let balance = parseFloat(localStorage.getItem('verbose_balance')) || 0;
-let userProfit = parseFloat(localStorage.getItem('verbose_dailyProfit')) || 0;
+let dailyProfit = parseFloat(localStorage.getItem('verbose_dailyProfit')) || 0;
 let plansData = [];
 let userPlans = JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');
-let referrals = JSON.parse(localStorage.getItem('verbose_referrals')||'{}');
 
-// CREATE 25 PLANS
+// CREATE 25 PLANS 200-30000, days 20-70, 7 special 24h offer
 for(let i=1;i<=25;i++){
     let invest = Math.round(200 + (i-1)*(30000-200)/24);
     let days = 20 + Math.floor((i-1)*(70-20)/24);
@@ -233,10 +229,10 @@ function login(){
     if(!localStorage.getItem('verbose_balance')) localStorage.setItem('verbose_balance','0');
     if(!localStorage.getItem('verbose_dailyProfit')) localStorage.setItem('verbose_dailyProfit','0');
     balance=parseFloat(localStorage.getItem('verbose_balance'));
-    userProfit=parseFloat(localStorage.getItem('verbose_dailyProfit'));
+    dailyProfit=parseFloat(localStorage.getItem('verbose_dailyProfit'));
     document.getElementById("dashUser").innerText=currentUser;
     document.getElementById("dashBalance").innerText=balance;
-    document.getElementById("dashProfit").innerText=userProfit;
+    document.getElementById("dashProfit").innerText=dailyProfit;
     document.getElementById("loginPage").classList.add("hidden");
     document.getElementById("dashboard").classList.remove("hidden");
     document.getElementById("bottomNav").classList.remove("hidden");
@@ -272,15 +268,6 @@ function copyDepositNumber(){
     alert("Deposit number copied!");
 }
 
-// SHARE LINK BONUS
-function shareLink(){
-    if(!currentUser) return;
-    let link=location.href+"?ref="+currentUser;
-    let bonusGiven = referrals[currentUser] && referrals[currentUser].bonusGiven;
-    if(bonusGiven) { alert("You already got bonus from referral."); return;}
-    prompt("Share this link to get 30Rs bonus when someone deposits:", link);
-}
-
 // PLANS
 function renderPlans(){
     let list=document.getElementById("plansList");
@@ -304,10 +291,12 @@ function renderPlans(){
 let countdownIntervals={};
 function startCountdown(id,seconds){
     let display=document.getElementById(`countdown${id}`);
-    let endTime=Date.now()+seconds*1000;
+    let endTime = localStorage.getItem(`offerEnd${id}`);
+    let finalTime = endTime ? parseInt(endTime) : Date.now()+seconds*1000;
+    localStorage.setItem(`offerEnd${id}`, finalTime);
     clearInterval(countdownIntervals[id]);
     countdownIntervals[id]=setInterval(()=>{
-        let diff=Math.floor((endTime-Date.now())/1000);
+        let diff=Math.floor((finalTime-Date.now())/1000);
         if(diff<=0){display.innerText="Offer Expired"; clearInterval(countdownIntervals[id]); return;}
         let h=Math.floor(diff/3600);
         let m=Math.floor((diff%3600)/60);
@@ -340,13 +329,12 @@ function submitDeposit(){
     let proof=document.getElementById('depositProof').files[0];
     let amount=parseFloat(document.getElementById('depositAmount').value);
     if(!tx||!proof){alert("Fill TX ID & upload proof");return;}
-    balance += amount;
-    let plan = userPlans[userPlans.length-1];
-    userProfit = plan ? plan.dailyProfit : 0;
+    balance+=amount;
+    dailyProfit += Math.round(amount*0.05); // 5% daily profit example
     localStorage.setItem('verbose_balance',balance);
-    localStorage.setItem('verbose_dailyProfit',userProfit);
+    localStorage.setItem('verbose_dailyProfit',dailyProfit);
     document.getElementById('dashBalance').innerText=balance;
-    document.getElementById('dashProfit').innerText=userProfit;
+    document.getElementById('dashProfit').innerText=dailyProfit;
     alert("Deposit submitted! Admin will verify.");
     document.getElementById('depositTxId').value='';
     document.getElementById('depositProof').value='';
@@ -376,15 +364,15 @@ function addDailyProfit(){
         let last=p.lastUpdate||now;
         let daysPassed=Math.floor((now-last)/(1000*60*60*24));
         if(daysPassed>0){
-            balance+=p.dailyProfit*daysPassed;
-            userProfit = p.dailyProfit;
-            p.lastUpdate=now;
+            balance += p.dailyProfit*daysPassed;
+            dailyProfit += p.dailyProfit*daysPassed;
+            p.lastUpdate = now;
         }
     });
     localStorage.setItem('verbose_balance',balance);
-    localStorage.setItem('verbose_dailyProfit',userProfit);
+    localStorage.setItem('verbose_dailyProfit',dailyProfit);
     document.getElementById('dashBalance').innerText=balance;
-    document.getElementById('dashProfit').innerText=userProfit;
+    document.getElementById('dashProfit').innerText=dailyProfit;
     localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));
 }
 
@@ -393,9 +381,9 @@ window.onload=function(){
     if(currentUser){
         document.getElementById("dashUser").innerText=currentUser;
         balance=parseFloat(localStorage.getItem('verbose_balance'));
-        userProfit=parseFloat(localStorage.getItem('verbose_dailyProfit'));
+        dailyProfit=parseFloat(localStorage.getItem('verbose_dailyProfit'));
         document.getElementById("dashBalance").innerText=balance;
-        document.getElementById("dashProfit").innerText=userProfit;
+        document.getElementById("dashProfit").innerText=dailyProfit;
         document.getElementById("loginPage").classList.add("hidden");
         document.getElementById("dashboard").classList.remove("hidden");
         document.getElementById("bottomNav").classList.remove("hidden");
