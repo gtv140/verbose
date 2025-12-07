@@ -4,113 +4,111 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VERBOSE</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <style>
-body{margin:0;font-family:Arial,sans-serif;background:#f5f5f5;color:#333;}
-header{padding:20px;text-align:center;background:#0077cc;color:#fff;font-size:24px;font-weight:bold;}
-.wrap{max-width:600px;margin:20px auto;padding:10px;}
-.card{background:#fff;padding:15px;margin-bottom:15px;border-radius:8px;box-shadow:0 0 5px rgba(0,0,0,0.1);}
-input,select,button{width:100%;padding:10px;margin-top:5px;border-radius:5px;border:1px solid #ccc;font-size:14px;}
-button{background:#0077cc;color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;}
-button:hover{background:#005fa3;}
-.nav{display:flex;justify-content:space-around;position:fixed;bottom:0;left:0;right:0;background:#eee;padding:10px;border-top:1px solid #ccc;}
-.nav div{text-align:center;font-size:14px;cursor:pointer;display:flex;flex-direction:column;align-items:center;}
-.plan{border:1px solid #ddd;padding:10px;margin-bottom:10px;border-radius:5px;display:flex;justify-content:space-between;align-items:center;}
-.plan button{width:auto;padding:6px 12px;font-size:13px;}
-.muted{color:#666;font-size:13px;}
-.alert-note{background:#ffe0e0;color:#a00;padding:10px;margin-bottom:12px;border-radius:5px;text-align:center;}
-.success-note{background:#e0ffe0;color:#0a0;padding:10px;margin-bottom:12px;border-radius:5px;text-align:center;}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f4f4;color:#333;}
+header{padding:20px;text-align:center;font-weight:900;font-size:24px;background:#222;color:#fff;}
+.wrap{max-width:480px;margin:12px auto;padding:12px;background:#fff;border-radius:8px;box-shadow:0 0 8px rgba(0,0,0,0.1);}
+.card{padding:12px;margin-bottom:12px;border-radius:8px;border:1px solid #ccc;background:#fafafa;}
+input,select,button{width:100%;padding:10px;margin-top:6px;border-radius:6px;border:1px solid #ccc;font-size:14px;}
+button{cursor:pointer;background:#007bff;color:#fff;border:none;}
+button:hover{background:#0056b3;}
+.nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:10px;background:#eee;border-top:1px solid #ccc;}
+.nav div{text-align:center;font-size:13px;cursor:pointer;}
+.plan{display:flex;justify-content:space-between;align-items:center;padding:10px;margin-bottom:6px;border:1px solid #ccc;border-radius:6px;background:#fefefe;}
+.plan button{width:auto;padding:6px 12px;margin-left:6px;}
+.alert{background:#ffe0e0;padding:10px;margin-bottom:12px;border-radius:6px;color:#a00;}
+.success{background:#e0ffe0;padding:10px;margin-bottom:12px;border-radius:6px;color:#070;}
+.referral-box{display:flex;gap:6px;margin-bottom:12px;}
+.referral-box input{flex:1;}
 </style>
 </head>
 <body>
-<header><i class="fas fa-bolt"></i> VERBOSE</header>
+<header>VERBOSE</header>
 <div class="wrap">
 
-<!-- LOGIN -->
+<!-- LOGIN / SIGNUP -->
 <div id="loginCard" class="card">
-<h3><i class="fas fa-user"></i> Login / Signup</h3>
-<p style="margin:0 0 8px 0;"><em>VERBOSE — Rock.Earn branch, serving <strong>1,000,000+ users</strong></em></p>
+<h3>Login / Signup</h3>
 <select id="authMode">
 <option value="login">Login</option>
 <option value="signup">New User</option>
 </select>
-<input id="inputUser" placeholder="Username">
-<input id="inputPass" placeholder="Password" type="password">
-<button onclick="doAuth()"><i class="fas fa-sign-in-alt"></i> Submit</button>
-<p class="muted">Use same device/browser. Data stored locally. Refresh will NOT reset your data.</p>
+<input id="inputUser" placeholder="Username"/>
+<input id="inputPass" placeholder="Password" type="password"/>
+<input id="referralInput" placeholder="Referral Code (optional)"/>
+<button onclick="doAuth()">Submit</button>
+<p style="font-size:13px;color:#555;">Tip: Use same device & browser. Data stored locally.</p>
 </div>
 
 <!-- DASHBOARD -->
 <div id="dashboardCard" class="card" style="display:none;">
-<div class="alert-note"><i class="fas fa-exclamation-triangle"></i> All transactions are manually approved. Contact admin below.</div>
+<div class="alert">⚠️ All transactions are manually approved. Deposit/Withdrawal issues? Contact Administration.</div>
 <div>
-<p><strong>Welcome: </strong><span id="welcomeText"></span></p>
-<p><strong>Member since: </strong><span id="memberSince"></span></p>
-<p><strong>Balance: </strong>Rs <span id="balanceText">0</span></p>
-<p><strong>Daily Earnings: </strong>Rs <span id="dailyText">0</span></p>
-<button onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+<strong id="welcomeText">Welcome —</strong>
+<p id="memberSince">Member since —</p>
+<p>Balance: Rs <span id="balanceText">0</span></p>
+<p>Daily: Rs <span id="dailyText">0</span></p>
+<button onclick="doLogout()">Logout</button>
 </div>
 
-<div class="card">
-<h4><i class="fas fa-user-shield"></i> Administration Contact</h4>
-<p><i class="fab fa-whatsapp"></i> WhatsApp: <strong>03705519562</strong></p>
-<p><i class="fas fa-envelope"></i> Email: <strong>Rock.earn92@gmail.com</strong></p>
-<p class="muted">Contact for deposit/withdraw or support issues.</p>
+<div class="referral-box">
+<input id="referralLink" readonly/>
+<button onclick="copyReferral()">Copy Referral</button>
+</div>
+
+<div>
+<h4>Support / Admin</h4>
+<p>Email: <strong>Rock.earn92@gmail.com</strong></p>
+<p>Whatsapp: <strong>03705519562</strong></p>
+<p>VERBOSE is a branch of Rock Earn. Millions of users are working globally.</p>
 </div>
 </div>
 
 <!-- PLANS -->
 <div id="plansCard" class="card" style="display:none;">
-<h3><i class="fas fa-gift"></i> Available Plans</h3>
+<h3>Plans</h3>
+<p>Special Offers: 7 plans (24h timer). Normal plans: 25 plans.</p>
 <div id="plansList"></div>
 </div>
 
 <!-- DEPOSIT -->
 <div id="depositCard" class="card" style="display:none;">
-<h3><i class="fas fa-wallet"></i> Deposit</h3>
+<h3>Deposit</h3>
 <label>Method</label>
 <select id="depositMethod">
 <option value="jazzcash">JazzCash — 03705519562</option>
 <option value="easypaisa">EasyPaisa — 03379827882</option>
 </select>
-<label>Amount (PKR)</label>
-<input id="depositAmount" placeholder="Enter amount">
-<label>Transaction ID</label>
-<input id="depositTx" placeholder="Enter TX ID">
-<button onclick="submitDeposit()"><i class="fas fa-paper-plane"></i> Submit Deposit</button>
+<label>Amount</label>
+<input id="depositAmount" readonly/>
+<label>TX ID</label>
+<input id="depositTx" placeholder="Enter TX ID"/>
+<button onclick="submitDeposit()">Submit Deposit</button>
 </div>
 
 <!-- WITHDRAW -->
 <div id="withdrawCard" class="card" style="display:none;">
-<h3><i class="fas fa-money-bill-wave"></i> Withdrawal</h3>
-<label>Method</label>
-<select id="withdrawMethod">
-<option value="jazzcash">JazzCash</option>
-<option value="easypaisa">EasyPaisa</option>
-<option value="bank">Bank</option>
-</select>
+<h3>Withdrawal</h3>
 <label>Username</label>
-<input id="withdrawUsername" readonly>
+<input id="withdrawUsername" readonly/>
 <label>Account / Mobile Number</label>
-<input id="withdrawAccount" placeholder="Enter account/mobile">
-<label>Amount (PKR)</label>
-<input id="withdrawAmount" placeholder="Enter amount">
-<button onclick="submitWithdraw()"><i class="fas fa-paper-plane"></i> Request Withdrawal</button>
+<input id="withdrawAccount" placeholder="Enter account or mobile number"/>
+<label>Amount</label>
+<input id="withdrawAmount" placeholder="Enter amount"/>
+<button onclick="submitWithdraw()">Request Withdrawal</button>
+<p>Withdrawal is manually approved. Contact admin for urgent issues.</p>
 </div>
 
 </div>
 
-<!-- NAV -->
 <div class="nav">
-<div onclick="nav('dashboardCard')"><i class="fas fa-home"></i> Home</div>
-<div onclick="nav('plansCard')"><i class="fas fa-gift"></i> Plans</div>
-<div onclick="nav('depositCard')"><i class="fas fa-wallet"></i> Deposit</div>
-<div onclick="nav('withdrawCard')"><i class="fas fa-hand-holding-usd"></i> Withdraw</div>
-<div onclick="nav('dashboardCard')"><i class="fas fa-headset"></i> Support</div>
+<div onclick="nav('dashboardCard')">Home</div>
+<div onclick="nav('plansCard')">Plans</div>
+<div onclick="nav('depositCard')">Deposit</div>
+<div onclick="nav('withdrawCard')">Withdraw</div>
 </div>
 
 <script>
-// STORAGE KEYS
 const KEY_USER='verbose_user';
 const KEY_BAL='verbose_balance_';
 const KEY_DAILY='verbose_daily_';
@@ -119,17 +117,13 @@ const KEY_DEPOSITS='verbose_deposits';
 const KEY_WITHDRAWS='verbose_withdraws';
 let currentUser=localStorage.getItem(KEY_USER)||null;
 
-// SAMPLE PLANS
+// 7 Special Offers
 let plans=[];
 for(let i=1;i<=7;i++){
 let invest=200*i;
+if(invest>3000) invest=3000;
 let days=20+Math.floor(Math.random()*51);
 plans.push({id:i,name:'Special Plan '+i,invest:invest,total:invest*3,days:days});
-}
-for(let i=8;i<=32;i++){
-let invest=3000 + (i-8)*1000;
-let days=20+Math.floor(Math.random()*51);
-plans.push({id:i,name:'Plan '+(i-7),invest:invest,total:invest*2.5,days:days});
 }
 
 function fmt(n){return Number(n).toLocaleString();}
@@ -139,104 +133,97 @@ function doAuth(){
 const mode=document.getElementById('authMode').value;
 const u=document.getElementById('inputUser').value.trim();
 const p=document.getElementById('inputPass').value.trim();
+const ref=document.getElementById('referralInput').value.trim();
 if(!u||!p){alert('Enter username & password');return;}
 const credKey='verbose_cred_'+u;
 if(mode==='signup'){
 if(localStorage.getItem(credKey)){alert('Username exists');return;}
 localStorage.setItem(credKey,p);
-if(!localStorage.getItem(KEY_BAL+u)) localStorage.setItem(KEY_BAL+u,'0');
-if(!localStorage.getItem(KEY_DAILY+u)) localStorage.setItem(KEY_DAILY+u,'0');
-if(!localStorage.getItem(KEY_USER_PLANS+u)) localStorage.setItem(KEY_USER_PLANS+u,'[]');
+localStorage.setItem(KEY_BAL+u,'0');
+localStorage.setItem(KEY_DAILY+u,'0');
+localStorage.setItem(KEY_USER_PLANS+u,'[]');
+if(ref && localStorage.getItem('verbose_cred_'+ref)){
+let bal=Number(localStorage.getItem(KEY_BAL+ref)||0);bal+=30;
+localStorage.setItem(KEY_BAL+ref,bal);
+alert(`Referral bonus Rs 30 added to ${ref}`);
+}
 }else{
 if(localStorage.getItem(credKey)!==p){alert('Wrong username/password');return;}
 }
-localStorage.setItem(KEY_USER,u);
-currentUser=u;
+localStorage.setItem(KEY_USER,u);currentUser=u;
 afterLoginUI();
 }
 
-function afterLoginUI(){nav('dashboardCard');renderDashboard();renderPlans();fillWithdrawUser();}
+function afterLoginUI(){nav('dashboardCard');renderPlans();updateReferralLink();}
+function updateReferralLink(){if(!currentUser) return;document.getElementById('referralLink').value=window.location.href+'?ref='+currentUser;}
+function copyReferral(){const link=document.getElementById('referralLink');link.select();document.execCommand('copy');alert('Referral link copied!');}
+function doLogout(){localStorage.removeItem(KEY_USER);currentUser=null;nav('loginCard');}
 
 // NAV
 function nav(cardId){
 ['loginCard','dashboardCard','plansCard','depositCard','withdrawCard'].forEach(id=>document.getElementById(id).style.display='none');
 document.getElementById(cardId).style.display='block';
+renderDashboard();
+fillWithdrawUser();
 }
 
 // DASHBOARD
 function renderDashboard(){
 if(!currentUser) return;
-document.getElementById('welcomeText').innerText=currentUser;
-document.getElementById('memberSince').innerText=new Date().toLocaleDateString();
+document.getElementById('welcomeText').innerText='Welcome, '+currentUser;
+document.getElementById('memberSince').innerText='Member since: '+new Date().toLocaleDateString();
 document.getElementById('balanceText').innerText=fmt(Number(localStorage.getItem(KEY_BAL+currentUser)||0));
 document.getElementById('dailyText').innerText=fmt(Number(localStorage.getItem(KEY_DAILY+currentUser)||0));
 }
 
-function doLogout(){
-localStorage.removeItem(KEY_USER);
-currentUser=null;
-nav('loginCard');
-}
-
 // PLANS
 function renderPlans(){
-const container=document.getElementById('plansList');
-container.innerHTML='';
+const container=document.getElementById('plansList');container.innerHTML='';
 plans.forEach(plan=>{
-let div=document.createElement('div');
-div.className='plan';
-div.innerHTML=`<div>
-<strong>${plan.name}</strong><br>
-Invest: Rs ${fmt(plan.invest)} · Total: Rs ${fmt(plan.total)} · Days: ${plan.days}
-</div>
-<button onclick="buyPlan(${plan.id})"><i class="fas fa-cart-plus"></i> Buy</button>`;
+const div=document.createElement('div');div.className='plan';
+div.innerHTML=`<div><strong>${plan.name}</strong><br>Invest: Rs ${fmt(plan.invest)} · Total: Rs ${fmt(plan.total)} · Days: ${plan.days}</div>
+<button onclick="buyPlan(${plan.id})">Buy Now</button>`;
 container.appendChild(div);
 });
 }
-
 function buyPlan(id){
 if(!currentUser){alert('Login first');return;}
-let plan=plans.find(p=>p.id===id);
+const plan=plans.find(p=>p.id===id);
 if(!plan){alert('Plan not found');return;}
+let userPlans=JSON.parse(localStorage.getItem(KEY_USER_PLANS+currentUser)||'[]');
+userPlans.push({planId:plan.id,dailyProfit:Math.round(plan.total/plan.days),lastCredit:Date.now()});
+localStorage.setItem(KEY_USER_PLANS+currentUser,JSON.stringify(userPlans));
 document.getElementById('depositAmount').value=plan.invest;
 nav('depositCard');
-alert(`Plan ${plan.name} selected. Submit deposit. Admin will approve.`);
+alert(`Plan ${plan.name} selected. Submit your deposit. Admin will manually approve.`);
 }
 
 // DEPOSIT
 function submitDeposit(){
 if(!currentUser){alert('Login first');return;}
-const method=document.getElementById('depositMethod').value;
 const amount=Number(document.getElementById('depositAmount').value);
 const tx=document.getElementById('depositTx').value.trim();
-if(!amount||!tx){alert('Enter amount & TX ID');return;}
-let deposits=JSON.parse(localStorage.getItem(KEY_DEPOSITS)||'[]');
-deposits.push({user:currentUser,method,amount,tx,time:Date.now(),approved:false});
+if(!tx||!amount){alert('All fields required');return;}
+const deposits=JSON.parse(localStorage.getItem(KEY_DEPOSITS)||'[]');
+deposits.push({user:currentUser,amount,tx,approved:false});
 localStorage.setItem(KEY_DEPOSITS,JSON.stringify(deposits));
 alert('Deposit submitted! Admin will approve manually.');
-document.getElementById('depositAmount').value='';
 document.getElementById('depositTx').value='';
 nav('dashboardCard');
 }
 
 // WITHDRAW
-function fillWithdrawUser(){
-if(!currentUser) return;
-document.getElementById('withdrawUsername').value=currentUser;
-}
-
+function fillWithdrawUser(){if(!currentUser) return;document.getElementById('withdrawUsername').value=currentUser;}
 function submitWithdraw(){
 if(!currentUser){alert('Login first');return;}
-const method=document.getElementById('withdrawMethod').value;
 const account=document.getElementById('withdrawAccount').value.trim();
 const amount=Number(document.getElementById('withdrawAmount').value);
 if(!account||!amount){alert('Enter account & amount');return;}
-let withdraws=JSON.parse(localStorage.getItem(KEY_WITHDRAWS)||'[]');
-withdraws.push({user:currentUser,method,account,amount,time:Date.now(),approved:false});
+const withdraws=JSON.parse(localStorage.getItem(KEY_WITHDRAWS)||'[]');
+withdraws.push({user:currentUser,account,amount,approved:false});
 localStorage.setItem(KEY_WITHDRAWS,JSON.stringify(withdraws));
 alert('Withdrawal requested! Admin will approve manually.');
-document.getElementById('withdrawAccount').value='';
-document.getElementById('withdrawAmount').value='';
+document.getElementById('withdrawAccount').value='';document.getElementById('withdrawAmount').value='';
 nav('dashboardCard');
 }
 </script>
