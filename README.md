@@ -17,9 +17,10 @@ button:hover {background:#1d4ed8;}
 .nav div {text-align:center; font-size:14px; cursor:pointer; color:#2563eb;}
 .plan {border:1px solid #e5e7eb; border-radius:10px; padding:12px; margin-bottom:10px; background:#f9fafb; display:flex; justify-content:space-between; align-items:center;}
 .plan button {width:auto; padding:6px 14px; border-radius:8px;}
+.progress-container {background:#e5e7eb; border-radius:8px; height:10px; width:100%; margin-top:6px;}
+.progress-bar {background:#2563eb; height:100%; border-radius:8px; width:0%;}
 .alert-note {background:#fef3c7; color:#b45309; padding:12px; border-radius:8px; margin-bottom:14px; font-weight:600; text-align:center;}
 .user-box {display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;}
-.referral-box {display:flex; gap:6px; margin-bottom:12px;}
 .hidden {display:none;}
 </style>
 </head>
@@ -51,6 +52,7 @@ button:hover {background:#1d4ed8;}
 <div style="font-weight:700; font-size:18px;">Balance: Rs <span id="balanceText">0</span></div>
 </div>
 </div>
+<div id="progressGraphs"></div>
 </div>
 
 <!-- PLANS -->
@@ -153,6 +155,19 @@ if(!currentUser) return;
 document.getElementById('welcomeText').innerText='Welcome, '+currentUser;
 document.getElementById('memberSince').innerText='Member since: '+new Date().toLocaleDateString();
 document.getElementById('balanceText').innerText=localStorage.getItem(KEY_BAL+currentUser)||'0';
+renderProgressGraphs();
+}
+
+// PROGRESS GRAPHS
+function renderProgressGraphs(){
+const container=document.getElementById('progressGraphs'); container.innerHTML='';
+plans.slice(0,5).forEach(plan=>{
+let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);
+let percent=Math.min(100,Math.round((bal/plan.total)*100));
+const div=document.createElement('div'); div.className='card';
+div.innerHTML=`<strong>${plan.name}</strong><br>Daily: Rs ${plan.daily} | Total: Rs ${plan.total}<div class="progress-container"><div class="progress-bar" style="width:${percent}%"></div></div>`;
+container.appendChild(div);
+});
 }
 
 // PLANS
