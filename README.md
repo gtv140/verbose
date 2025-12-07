@@ -62,18 +62,18 @@ input,select,button{width:100%;padding:10px;margin-top:6px;border-radius:8px;bor
 </div>
 </div>
 
-<!-- ADMIN / SUPPORT / ACTIVITY -->
+<!-- ADMIN / SUPPORT / CONTACT -->
 <div class="admin-box">
-<div onclick="alert('Admin panel coming soon')"><i class="fas fa-user-shield"></i>Admin</div>
-<div onclick="alert('Support panel coming soon')"><i class="fas fa-headset"></i>Support</div>
-<div onclick="alert('Activity log coming soon')"><i class="fas fa-chart-line"></i>Activity</div>
+<div onclick="alert('Admin: 03705519562\nEmail: rock.earn92@gmail.com\nWhatsApp Group link opened')"><i class="fas fa-user-shield"></i>Admin</div>
+<div onclick="alert('Support: Chat on WhatsApp Group or Email')"><i class="fas fa-headset"></i>Support</div>
+<div onclick="alert('Activity Log coming soon')"><i class="fas fa-chart-line"></i>Activity</div>
 </div>
 </div>
 
 <!-- PLANS -->
 <div id="plansCard" class="card hidden">
-<h3 style="color:var(--neon);margin-top:0"><i class="fas fa-gift icon"></i>Special & Normal Plans</h3>
-<div class="muted" style="margin-bottom:8px;">Special Offers: 7 plans (24h countdown). Normal: 25 plans + 5 Coming Soon.</div>
+<h3 style="color:var(--neon);margin-top:0"><i class="fas fa-gift icon"></i>Plans</h3>
+<div class="muted" style="margin-bottom:8px;">Special Offers: 7 plans (24h countdown). Normal: 25 plans (20-70 days) + 5 Coming Soon.</div>
 <div id="plansList"></div>
 </div>
 
@@ -139,18 +139,23 @@ let currentUser=localStorage.getItem(KEY_USER)||null;
 let plans=[];
 let offerIntervals={};
 
-// SPECIAL OFFERS (7 plans 200→3000, 3x profit)
+// SPECIAL OFFERS 7 plans (200→3000, 3x)
 for(let i=1;i<=7;i++){
 let invest=200*i; if(invest>3000) invest=3000;
-plans.push({id:i,name:'Special Plan '+i,invest:invest, multiplier:3, total:invest*3, offer:true});
+plans.push({id:i,name:'Special Plan '+i,invest:invest,multiplier:3,total:invest*3,days:7,offer:true});
 }
 
-// NORMAL PLANS (25 plans 200→30000, 2.5x profit) + 5 Coming Soon
-for(let i=8;i<=37;i++){
+// NORMAL PLANS 25 plans (200→30000, 2.5x, 20→70 days)
+for(let i=8;i<=32;i++){
 let invest=Math.round(200 + (i-8)*(30000-200)/24);
-let multiplier=2.5;
-let name=(i<=32)?'Plan '+(i-7):'Coming Soon';
-plans.push({id:i,name:name,invest:invest,multiplier:multiplier,total:Math.round(invest*multiplier),offer:false});
+let duration=Math.floor(20 + (i-8)*(70-20)/24);
+let total=Math.round(invest*2.5);
+plans.push({id:i,name:'Plan '+(i-7),invest:invest,multiplier:2.5,total:total,days:duration,offer:false});
+}
+
+// Coming Soon 5 plans
+for(let i=33;i<=37;i++){
+plans.push({id:i,name:'Coming Soon',invest:0,multiplier:0,total:0,days:0,offer:false});
 }
 
 function fmt(n){return Number(n).toLocaleString('en-US');}
@@ -187,8 +192,12 @@ const container=document.getElementById('plansList');container.innerHTML='';
 plans.forEach(plan=>{
 const div=document.createElement('div');div.className='plan';
 if(plan.name==='Coming Soon') div.className+=' coming-soon';
-div.innerHTML=`<div class="meta"><div style="font-weight:800"><i class="fas fa-gift icon"></i>${plan.name}</div><div class="muted" style="margin-top:4px">Invest: Rs ${fmt(plan.invest)} · Total: Rs ${fmt(plan.total)}</div>${plan.offer?`<div class="countdown" id="countdown_${plan.id}">Loading timer...</div>`:''}</div>
-<div class="actions">${plan.offer?'<button class="btn" onclick="buyPlan('+plan.id+')"><i class="fas fa-shopping-cart icon"></i>Buy Now</button>':''}</div>`;container.appendChild(div);
+let dailyProfit=plan.days>0?Math.round(plan.total/plan.days):0;
+div.innerHTML=`<div class="meta"><div style="font-weight:800"><i class="fas fa-gift icon"></i>${plan.name}</div>
+<div class="muted" style="margin-top:4px">Invest: Rs ${fmt(plan.invest)} · Total: Rs ${fmt(plan.total)} · Days: ${plan.days} · Daily: Rs ${fmt(dailyProfit)}</div>
+${plan.offer?`<div class="countdown" id="countdown_${plan.id}">Loading timer...</div>`:''}</div>
+<div class="actions">${plan.offer||plan.name!=='Coming Soon'?'<button class="btn" onclick="buyPlan('+plan.id+')"><i class="fas fa-shopping-cart icon"></i>Buy Now</button>':''}</div>`;
+container.appendChild(div);
 });
 }
 
@@ -200,9 +209,9 @@ const h=Math.floor(diff/3600),m=Math.floor((diff%3600)/60),s=diff%60;el.innerTex
 
 // BUY PLAN
 function buyPlan(id){if(!currentUser){alert('Login first');return;}
-const plan=plans.find(p=>p.id===id);if(!plan)return;
+const plan=plans.find(p=>p.id===id);if(!plan || plan.name==='Coming Soon'){alert('Plan not available');return;}
 let userPlans=JSON.parse(localStorage.getItem(KEY_USER_PLANS+currentUser)||'[]');
-const dailyProfit=Math.round(plan.total/7);
+const dailyProfit=Math.round(plan.total/plan.days);
 userPlans.push({planId:plan.id,dailyProfit,lastCredit:Date.now()});
 localStorage.setItem(KEY_USER_PLANS+currentUser,JSON.stringify(userPlans));
 let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);bal+=plan.invest;localStorage.setItem(KEY_BAL+currentUser,bal);alert(`Plan ${plan.name} purchased! Rs ${fmt(plan.invest)} added.`);renderDashboard();nav('depositCard');document.getElementById('depositAmount').value=plan.invest;updateDepositNumber();}
@@ -213,9 +222,11 @@ function submitDeposit(){
 if(!currentUser){alert('Login first');return;}
 const tx=(document.getElementById('depositTx').value||'').trim();const proof=document.getElementById('depositProof').files[0];const amount=Number(document.getElementById('depositAmount').value)||0;
 if(!tx||!proof||!amount){alert('All fields required');return;}
+// Admin notification
+alert(`Deposit submitted!\nUser: ${currentUser}\nAmount: Rs ${amount}\nMethod: ${document.getElementById('depositMethod').value}\nTX ID: ${tx}\nProof: ${proof.name}\nContact Admin if any issue.`);
 let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);bal+=amount;localStorage.setItem(KEY_BAL+currentUser,bal);
 const deposits=JSON.parse(localStorage.getItem(KEY_DEPOSITS)||'[]');deposits.push({user:currentUser,method:document.getElementById('depositMethod').value,amount,tx,proof:proof.name,time:Date.now()});
-localStorage.setItem(KEY_DEPOSITS,JSON.stringify(deposits));renderDashboard();alert('Deposit submitted & balance updated!');document.getElementById('depositTx').value='';document.getElementById('depositProof').value='';nav('dashboardCard');}
+localStorage.setItem(KEY_DEPOSITS,JSON.stringify(deposits));renderDashboard();document.getElementById('depositTx').value='';document.getElementById('depositProof').value='';nav('dashboardCard');}
 
 // WITHDRAW
 function fillWithdrawUser(){document.getElementById('withdrawUsername').value=currentUser||'';}
@@ -226,24 +237,44 @@ const acc=(document.getElementById('withdrawAccount').value||'').trim();
 const amt=Number(document.getElementById('withdrawAmount').value)||0;
 if(!acc||!amt){alert('Enter account & amount');return;}
 let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);if(amt>bal){alert('Insufficient balance');return;}
+// Admin notification
+alert(`Withdrawal request submitted!\nUser: ${currentUser}\nAmount: Rs ${amt}\nMethod: ${method}\nAccount: ${acc}\nContact Admin if any issue.`);
 bal-=amt;localStorage.setItem(KEY_BAL+currentUser,bal);
-const withdraws=JSON.parse(localStorage.getItem(KEY_WITHDRAWS)||'[]');withdraws.push({user:currentUser,method,account:acc,amount:amt,time:Date.now(),status:'pending'});
-localStorage.setItem(KEY_WITHDRAWS,JSON.stringify(withdraws));renderDashboard();alert('Withdrawal request submitted!');nav('dashboardCard');}
-
-// DAILY PROFIT
-function computeDailyCredits(){
-if(!currentUser)return;
-let userPlans=JSON.parse(localStorage.getItem(KEY_USER_PLANS+currentUser)||'[]');
-let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);
-let dailyTotal=Number(localStorage.getItem(KEY_DAILY+currentUser)||0);
-const now=Date.now();
-userPlans.forEach(p=>{
-const days=Math.floor((now-p.lastCredit)/86400000);
-if(days>0){bal+=p.dailyProfit*days;dailyTotal+=p.dailyProfit*days;p.lastCredit+=days*86400000;}
-});
-localStorage.setItem(KEY_BAL+currentUser,bal);localStorage.setItem(KEY_DAILY+currentUser,dailyTotal);localStorage.setItem(KEY_USER_PLANS+currentUser,JSON.stringify(userPlans));renderDashboard();
+const withdraws=JSON.parse(localStorage.getItem(KEY_WITHDRAWS)||'[]');withdraws.push({user:currentUser,user:currentUser,method:method,account:acc,amount:amt,time:Date.now()});
+localStorage.setItem(KEY_WITHDRAWS,JSON.stringify(withdraws));
+renderDashboard();
+document.getElementById('withdrawAccount').value='';
+document.getElementById('withdrawAmount').value='';
+nav('dashboardCard');
 }
-setInterval(computeDailyCredits,60000); 
+
+// DAILY CREDIT CALCULATION (user plans)
+function computeDailyCredits(){
+if(!currentUser) return;
+let userPlans=JSON.parse(localStorage.getItem(KEY_USER_PLANS+currentUser)||'[]');
+let dailyTotal=0;
+const now=Date.now();
+userPlans.forEach(plan=>{
+// Add daily profit if 24h passed since last credit
+if(now-plan.lastCredit>=24*3600*1000){
+dailyTotal+=plan.dailyProfit;
+plan.lastCredit=now;
+}
+});
+localStorage.setItem(KEY_USER_PLANS+currentUser,JSON.stringify(userPlans));
+let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);
+bal+=dailyTotal;
+localStorage.setItem(KEY_BAL+currentUser,bal);
+localStorage.setItem(KEY_DAILY+currentUser,dailyTotal);
+renderDashboard();
+}
+
+// AUTO DAILY CREDIT EVERY REFRESH (simulate 24h)
+setInterval(computeDailyCredits,60*1000); // every 1 min for demo
+
+// INIT
+if(currentUser){afterLoginUI();}
 </script>
+
 </body>
 </html>
