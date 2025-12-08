@@ -116,22 +116,6 @@ button:hover{ transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,0,0,0.5)
 .plan-box .meta .small {margin-top:6px}
 .plan-box .actions {width:120px;text-align:right}
 .plan-box:hover{box-shadow:0 12px 30px rgba(0,255,240,0.06); transform:translateY(-4px)}
-.offer{color:var(--neon);font-weight:800;}
-.referral-box{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.03));padding:12px;border-radius:10px;margin:10px 0;border:1px solid rgba(0,255,240,0.04)}
-.referral-box input{background:transparent;border:1px dashed rgba(255,255,255,0.03);padding:8px;border-radius:8px}
-.support-box{
-    background:linear-gradient(90deg, rgba(0,0,0,0.35), rgba(0,0,0,0.45));
-    padding:14px;
-    border-radius:12px;
-    border:1px solid rgba(255,0,136,0.06);
-    box-shadow:0 10px 30px rgba(255,0,136,0.03) inset;
-}
-.support-box h2{margin:0 0 8px 0;font-size:18px;background:linear-gradient(90deg,var(--neon),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.support-grid{display:flex;gap:12px;flex-direction:column}
-.support-item{display:flex;gap:10px;align-items:center}
-.support-item .icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(0,255,240,0.04);color:var(--neon);font-weight:800}
-.support-item p{margin:0;font-size:14px}
-.support-note{font-size:13px;color:rgba(230,247,251,0.75);margin-top:8px}
 .countdown {font-weight:700;color:var(--neon)}
 @media (max-width:480px){
   .login-box,.page{margin:12px;padding:14px}
@@ -158,7 +142,7 @@ button:hover{ transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,0,0,0.5)
 </div>
 
 <div id="dashboard" class="page hidden">
-  <div class="alert-box">Warning: Only use official VERBOSE channels for deposits and communications. Never share sensitive passwords.</div>
+  <div class="alert-box">Warning: Only use official VERBOSE channels for deposits and communications.</div>
 
   <div class="user-box">
     <div class="left">
@@ -178,15 +162,6 @@ button:hover{ transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,0,0,0.5)
   </div>
 
   <h2 style="text-align:center;color:var(--neon);margin:6px 0 10px 0">Dashboard Overview</h2>
-  <p class="small" style="text-align:center;margin-top:-6px">Track your plans, deposits and withdrawals securely. Our support team is available 24/7.</p>
-
-  <div class="referral-box">
-    <div style="display:flex;gap:8px;align-items:center">
-      <input id="refLink" readonly style="flex:1" />
-      <button onclick="copyReferral()" style="width:110px">Copy Link</button>
-    </div>
-    <div class="small" style="margin-top:8px">Share this link to invite friends. When they deposit, you get bonus credits automatically.</div>
-  </div>
 
   <div style="margin-top:8px; text-align:center">
     <button class="logout-btn" onclick="logout()" title="Logout">Logout</button>
@@ -216,7 +191,6 @@ button:hover{ transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,0,0,0.5)
   <label>Upload Proof</label>
   <input type="file" id="depositProof" />
   <button onclick="submitDeposit()">Submit Deposit</button>
-  <p class="small" style="margin-top:8px">After submitting, share proof with admin on WhatsApp or Email for verification.</p>
 </div>
 
 <div id="withdrawal" class="page hidden">
@@ -227,37 +201,9 @@ button:hover{ transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,0,0,0.5)
     <option value="easypaisa">EasyPaisa</option>
     <option value="bank">Bank</option>
   </select>
-  <input id="withdrawUsername" readonly placeholder="Username" />
-  <input id="withdrawAccount" placeholder="Account Number (manual)" />
+  <input id="withdrawAccount" placeholder="Account Number" />
   <input id="withdrawAmount" placeholder="Amount" />
   <button onclick="submitWithdraw()">Request Withdrawal</button>
-  <p class="small" style="margin-top:8px">Requests are reviewed by admin. Keep your proof ready.</p>
-</div>
-
-<div id="support" class="page hidden">
-  <div class="support-box">
-    <h2>Contact Administration</h2>
-    <div class="support-grid">
-      <div class="support-item">
-        <div class="icon">💬</div>
-        <div>
-          <p><strong>WhatsApp Support</strong></p>
-          <p class="small">Fastest support — join our group or message the admin directly.</p>
-          <p style="margin-top:6px"><a href="https://chat.whatsapp.com/Kmaiv3VdSo09rio4qcRTRM" target="_blank">Join WhatsApp Group</a></p>
-        </div>
-      </div>
-      <div class="support-item">
-        <div class="icon">📧</div>
-        <div>
-          <p><strong>Email Support</strong></p>
-          <p class="small">For formal queries and proofs, email our support team.</p>
-          <p style="margin-top:6px"><a href="mailto:rock.earn92@gmail.com">rock.earn92@gmail.com</a></p>
-        </div>
-      </div>
-    </div>
-    <p class="support-note">Important: Always use the official support channels above to verify deposits/withdrawals. Avoid sharing sensitive information publicly.</p>
-    <p style="color:var(--neon);font-weight:800;text-align:center;margin-top:10px">VERBOSE — Secure. Transparent. Professional.</p>
-  </div>
 </div>
 
 <div id="bottomNav" class="nav hidden">
@@ -265,17 +211,15 @@ button:hover{ transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,0,0,0.5)
   <div onclick="showPage('plans')"><span class="ico">📦</span>Plans</div>
   <div onclick="showPage('deposit')"><span class="ico">💰</span>Deposit</div>
   <div onclick="showPage('withdrawal')"><span class="ico">💵</span>Withdraw</div>
-  <div onclick="showPage('support')"><span class="ico">📞</span>Support</div>
 </div>
 
 <script>
-// === USERS & LOCAL STORAGE ===
+// USERS & STORAGE
 let currentUser = localStorage.getItem('verbose_user') || null;
 let balance = parseFloat(localStorage.getItem('verbose_balance')) || 0;
 let dailyProfit = parseFloat(localStorage.getItem('verbose_daily')) || 0;
 let plansData = [];
 let userPlans = JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');
-let referralCode = localStorage.getItem('verbose_referral') || '';
 
 // CREATE PLANS
 for(let i=1;i<=25;i++){
@@ -290,12 +234,11 @@ for(let i=1;i<=25;i++){
       days:days,
       total:Math.round(invest*multiplier),
       multiplier:multiplier,
-      offer:i<=7,
       coming:comingSoon
     });
 }
 
-// === AUTH (login/signup) ===
+// AUTH
 function login(){
     const option = document.getElementById('userOption').value;
     const u = document.getElementById('user').value.trim();
@@ -303,8 +246,6 @@ function login(){
     if(!u||!p){ alert("Enter username & password"); return; }
     currentUser = u;
     localStorage.setItem('verbose_user', currentUser);
-    referralCode = referralCode || Math.random().toString(36).substring(2,10);
-    localStorage.setItem('verbose_referral', referralCode);
     if(option==='signup'){
         localStorage.setItem('verbose_balance','0');
         localStorage.setItem('verbose_daily','0');
@@ -317,18 +258,14 @@ function login(){
     document.getElementById('dashBalance').innerText = balance;
     document.getElementById('dashDaily').innerText = dailyProfit;
     document.getElementById('dashSince').innerText = new Date().toLocaleDateString();
-    document.getElementById('refLink').value = `https://gtv140.github.io/verbose/?ref=${referralCode}`;
     document.getElementById('loginPage').classList.add('hidden');
     document.getElementById('dashboard').classList.remove('hidden');
     document.getElementById('bottomNav').classList.remove('hidden');
     updateDepositNumber();
     renderPlans();
-    if(document.getElementById('withdrawUsername')){
-        document.getElementById('withdrawUsername').value = currentUser;
-    }
 }
 
-// === LOGOUT ===
+// LOGOUT
 function logout(){
     currentUser = null;
     localStorage.removeItem('verbose_user');
@@ -337,30 +274,21 @@ function logout(){
     document.getElementById('bottomNav').classList.add('hidden');
 }
 
-// === NAVIGATION ===
+// NAVIGATION
 function showPage(pageId){
     const pages = document.querySelectorAll('.page');
     pages.forEach(p=>p.classList.add('hidden'));
     document.getElementById(pageId).classList.remove('hidden');
 }
 
-// === COPY REFERRAL ===
-function copyReferral(){
-    const ref = document.getElementById('refLink');
-    ref.select();
-    ref.setSelectionRange(0, 99999);
-    navigator.clipboard.writeText(ref.value);
-    alert("Referral link copied!");
-}
-
-// === DEPOSIT NUMBER ===
+// DEPOSIT
 function updateDepositNumber(){
     const method = document.getElementById('depositMethod').value;
     const number = method==='jazzcash' ? '03705519562' : '03379827882';
     document.getElementById('depositNumber').value = number;
+    const selectedPlan = plansData[0]; // first plan as default
+    document.getElementById('depositAmount').value = selectedPlan.invest;
 }
-
-// === COPY DEPOSIT ===
 function copyDepositNumber(){
     const dep = document.getElementById('depositNumber');
     dep.select();
@@ -368,24 +296,29 @@ function copyDepositNumber(){
     navigator.clipboard.writeText(dep.value);
     alert("Deposit number copied!");
 }
-
-// === SUBMIT DEPOSIT ===
 function submitDeposit(){
-    const amount = document.getElementById('depositAmount').value;
     const txid = document.getElementById('depositTxId').value.trim();
-    if(!txid){ alert("Enter Transaction ID"); return; }
-    alert("Deposit submitted. Admin will verify soon.");
+    if(!txid){ alert("Enter TX ID"); return; }
+    // Auto update balance
+    const amount = parseFloat(document.getElementById('depositAmount').value);
+    balance += amount;
+    localStorage.setItem('verbose_balance', balance);
+    document.getElementById('dashBalance').innerText = balance;
+    alert("Deposit recorded. Admin will verify actual payment manually.");
 }
 
-// === WITHDRAW ===
+// WITHDRAWAL
 function submitWithdraw(){
-    const acc = document.getElementById('withdrawAccount').value.trim();
-    const amt = document.getElementById('withdrawAmount').value.trim();
-    if(!acc||!amt){ alert("Enter account & amount"); return; }
-    alert("Withdrawal request submitted. Admin will process soon.");
+    const amt = parseFloat(document.getElementById('withdrawAmount').value.trim());
+    if(!amt){ alert("Enter amount"); return; }
+    if(amt>balance){ alert("Insufficient balance"); return; }
+    balance -= amt;
+    localStorage.setItem('verbose_balance', balance);
+    document.getElementById('dashBalance').innerText = balance;
+    alert("Withdrawal recorded. Admin will process actual payment manually.");
 }
 
-// === RENDER PLANS ===
+// PLANS
 function renderPlans(){
     const container = document.getElementById('plansList');
     container.innerHTML='';
@@ -394,22 +327,18 @@ function renderPlans(){
         div.className='plan-box';
         div.innerHTML=`
             <div class="meta">
-                <b>${plan.name} ${plan.offer ? '<span class="offer">Special Offer</span>':''}</b>
+                <b>${plan.name}</b>
                 <div>Invest: Rs ${plan.invest}</div>
                 <div>Duration: ${plan.days} days</div>
                 <div>Total Return: Rs ${plan.total}</div>
-                <div class="countdown" id="cd${plan.id}"></div>
             </div>
             <div class="actions">
                 <button onclick="buyPlan(${plan.id})" ${plan.coming ? 'disabled':''}>Buy</button>
             </div>
         `;
         container.appendChild(div);
-        updateCountdown(plan.id);
     });
 }
-
-// === BUY PLAN ===
 function buyPlan(id){
     const plan = plansData.find(p=>p.id===id);
     if(!plan) return;
@@ -417,41 +346,24 @@ function buyPlan(id){
     const end = start + plan.days*24*60*60*1000;
     userPlans.push({id:id,start:start,end:end});
     localStorage.setItem('verbose_userPlans', JSON.stringify(userPlans));
-    alert(`You bought ${plan.name} for Rs ${plan.invest}`);
-    renderPlans();
+    balance += plan.invest; // auto add for display
+    localStorage.setItem('verbose_balance', balance);
+    document.getElementById('dashBalance').innerText = balance;
+    alert(`Plan ${plan.name} bought! Balance updated for display only.`);
 }
 
-// === UPDATE COUNTDOWN ===
-function updateCountdown(id){
-    const planBox = userPlans.find(p=>p.id===id);
-    if(!planBox) return;
-    const cd = document.getElementById('cd'+id);
-    function tick(){
-        const now = Date.now();
-        let diff = planBox.end - now;
-        if(diff<=0){ cd.innerText='Completed'; return; }
-        const days = Math.floor(diff/(24*3600*1000));
-        diff -= days*24*3600*1000;
-        const hrs = Math.floor(diff/(3600*1000));
-        diff -= hrs*3600*1000;
-        const min = Math.floor(diff/(60*1000));
-        diff -= min*60*1000;
-        const sec = Math.floor(diff/1000);
-        cd.innerText=`${days}d ${hrs}h ${min}m ${sec}s`;
-        setTimeout(tick,1000);
-    }
-    tick();
+// DAILY PROFIT AUTO UPDATE
+function addDailyProfit(){
+    const profit = Math.round(balance*0.01); // 1% daily
+    dailyProfit += profit;
+    balance += profit;
+    localStorage.setItem('verbose_daily', dailyProfit);
+    localStorage.setItem('verbose_balance', balance);
+    document.getElementById('dashDaily').innerText = dailyProfit;
+    document.getElementById('dashBalance').innerText = balance;
 }
+setInterval(addDailyProfit, 24*60*60*1000); // daily update
 
-// Update all countdowns every second
-function refreshCountdowns(){
-    userPlans.forEach(p=>{
-        updateCountdown(p.id);
-    });
-}
-setInterval(refreshCountdowns,1000);
-
-// === ON LOAD ===
 if(currentUser){
     login();
 }
