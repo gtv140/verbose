@@ -12,117 +12,32 @@
   --panel:#0f1114;
 }
 *{box-sizing:border-box}
-body {
-    margin:0;
-    font-family:Inter, Arial, sans-serif;
-    background:var(--dark);
-    color:#fff;
-    overflow-x:hidden;
-}
-header {
-    text-align:center;
-    padding:24px 12px;
-    font-size:28px;
-    font-weight:800;
-    letter-spacing:2px;
-    background:linear-gradient(90deg,var(--neon),var(--accent));
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-}
-.login-box, .page {
-    max-width:430px;
-    margin:18px auto;
-    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    padding:18px;
-    border-radius:12px;
-    border:1px solid rgba(0,255,240,0.06);
-    box-shadow:0 8px 30px rgba(0,0,0,0.6);
-}
-input,button,select {
-    width:100%;
-    padding:10px;
-    margin-top:10px;
-    border-radius:8px;
-    border:1px solid rgba(0,255,240,0.08);
-    background:transparent;
-    color:#e6f7fb;
-    outline:none;
-    font-size:14px;
-}
+body {margin:0;font-family:Inter, Arial, sans-serif;background:var(--dark);color:#fff;overflow-x:hidden;}
+header{text-align:center;padding:24px 12px;font-size:28px;font-weight:800;letter-spacing:2px;background:linear-gradient(90deg,var(--neon),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.login-box, .page {max-width:430px;margin:18px auto;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:12px;border:1px solid rgba(0,255,240,0.06);box-shadow:0 8px 30px rgba(0,0,0,0.6);}
+input,button,select {width:100%;padding:10px;margin-top:10px;border-radius:8px;border:1px solid rgba(0,255,240,0.08);background:transparent;color:#e6f7fb;outline:none;font-size:14px;}
 input::placeholder{color:rgba(230,247,251,0.5)}
-button {
-    background:linear-gradient(90deg,var(--neon),var(--accent));
-    border:none;
-    color:#001;
-    font-weight:700;
-    cursor:pointer;
-    padding:11px;
-    border-radius:10px;
-    transition:transform .15s ease, box-shadow .15s;
-}
+button {background:linear-gradient(90deg,var(--neon),var(--accent));border:none;color:#001;font-weight:700;cursor:pointer;padding:11px;border-radius:10px;transition:transform .15s ease, box-shadow .15s;}
 button:hover{ transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,0,0,0.5); }
-.nav {
-    position:fixed;
-    bottom:0; left:0; right:0;
-    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    display:flex;
-    justify-content:space-around;
-    padding:12px 6px;
-    border-top:1px solid rgba(0,255,240,0.04);
-    font-size:14px;
-    gap:6px;
-}
+.nav {position:fixed;bottom:0;left:0;right:0;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));display:flex;justify-content:space-around;padding:12px 6px;border-top:1px solid rgba(0,255,240,0.04);font-size:14px;gap:6px;}
 .nav div{text-align:center;cursor:pointer; width:64px;}
 .nav div .ico{font-size:20px;display:block;margin-bottom:4px}
 .hidden{display:none;}
 .small {font-size:13px;color:rgba(230,247,251,0.8);}
-.user-box {
-    background:linear-gradient(90deg, rgba(0,255,240,0.06), rgba(255,92,255,0.02));
-    padding:14px;
-    border-radius:12px;
-    margin-bottom:12px;
-    font-weight:700;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
-    border:1px solid rgba(0,255,240,0.06);
-}
+.user-box {background:linear-gradient(90deg, rgba(0,255,240,0.06), rgba(255,92,255,0.02));padding:14px;border-radius:12px;margin-bottom:12px;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid rgba(0,255,240,0.06);}
 .user-box .left {display:flex;flex-direction:column;gap:6px}
 .user-box .right {text-align:right;font-size:13px}
 .badge {background:rgba(0,255,240,0.06);padding:6px 10px;border-radius:999px;color:var(--neon);font-weight:800}
-.alert-box {
-    background:linear-gradient(90deg, rgba(255,0,136,0.04), rgba(0,0,0,0.02));
-    padding:12px;
-    border-radius:10px;
-    margin-bottom:12px;
-    color:var(--accent);
-    border:1px solid rgba(255,0,136,0.06);
-    box-shadow:0 6px 20px rgba(255,0,136,0.03) inset;
-}
-.plan-box {
-    border:1px solid rgba(0,255,240,0.06);
-    padding:12px;
-    margin:10px 0;
-    border-radius:10px;
-    background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.04));
-    transition:box-shadow .2s ease, transform .12s ease;
-    display:flex;
-    gap:12px;
-    align-items:center;
-}
+.alert-box {background:linear-gradient(90deg, rgba(255,0,136,0.04), rgba(0,0,0,0.02));padding:12px;border-radius:10px;margin-bottom:12px;color:var(--accent);border:1px solid rgba(255,0,136,0.06);box-shadow:0 6px 20px rgba(255,0,136,0.03) inset;}
+.plan-box {border:1px solid rgba(0,255,240,0.06);padding:12px;margin:10px 0;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.04));transition:box-shadow .2s ease, transform .12s ease;display:flex;gap:12px;align-items:center;}
 .plan-box .meta {flex:1}
 .plan-box .meta b{display:block;margin-bottom:6px;font-size:15px}
 .plan-box .meta .small {margin-top:6px}
 .plan-box .actions {width:120px;text-align:right}
 .plan-box:hover{box-shadow:0 12px 30px rgba(0,255,240,0.06); transform:translateY(-4px)}
+.offer{color:var(--neon);font-weight:800;}
 .countdown {font-weight:700;color:var(--neon)}
-@media (max-width:480px){
-  .login-box,.page{margin:12px;padding:14px}
-  .nav div{width:48px}
-  header{font-size:22px}
-  .logout-btn{padding:10px 12px;font-size:14px}
-}
+@media (max-width:480px){.login-box,.page{margin:12px;padding:14px}.nav div{width:48px}header{font-size:22px}.logout-btn{padding:10px 12px;font-size:14px}}
 </style>
 </head>
 <body>
@@ -142,8 +57,7 @@ button:hover{ transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,0,0,0.5)
 </div>
 
 <div id="dashboard" class="page hidden">
-  <div class="alert-box">Warning: Only use official VERBOSE channels for deposits and communications.</div>
-
+  <div class="alert-box">Warning: Only use official VERBOSE channels. Balance auto updates, actual payment is manual.</div>
   <div class="user-box">
     <div class="left">
       <div style="display:flex;gap:12px;align-items:center">
@@ -157,14 +71,11 @@ button:hover{ transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,0,0,0.5)
     <div class="right">
       <div style="font-size:13px">Balance</div>
       <div style="font-size:18px;font-weight:900">Rs <span id="dashBalance">0</span></div>
-      <div style="margin-top:8px" class="badge">Daily Profit: Rs <span id="dashDaily">0</span> (<span id="dashPercent">1%</span>)</div>
-      <div style="margin-top:6px;font-size:13px" class="countdown">Next profit in: <span id="nextProfit">24:00:00</span></div>
-      <input type="number" id="adminProfitInput" placeholder="Admin % Profit" style="margin-top:6px;font-size:13px;padding:4px" oninput="updateProfitPercent()"/>
+      <div style="margin-top:8px" class="badge">Daily: Rs <span id="dashDaily">0</span></div>
     </div>
   </div>
-
   <h2 style="text-align:center;color:var(--neon);margin:6px 0 10px 0">Dashboard Overview</h2>
-
+  <p class="small" style="text-align:center;margin-top:-6px">Balance auto updates daily. Admin will manually pay users.</p>
   <div style="margin-top:8px; text-align:center">
     <button class="logout-btn" onclick="logout()" title="Logout">Logout</button>
   </div>
@@ -193,6 +104,7 @@ button:hover{ transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,0,0,0.5)
   <label>Upload Proof</label>
   <input type="file" id="depositProof" />
   <button onclick="submitDeposit()">Submit Deposit</button>
+  <p class="small" style="margin-top:8px">After submitting, share proof with admin for verification.</p>
 </div>
 
 <div id="withdrawal" class="page hidden">
@@ -203,9 +115,11 @@ button:hover{ transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,0,0,0.5)
     <option value="easypaisa">EasyPaisa</option>
     <option value="bank">Bank</option>
   </select>
-  <input id="withdrawAccount" placeholder="Account Number" />
+  <input id="withdrawUsername" readonly placeholder="Username" />
+  <input id="withdrawAccount" placeholder="Account Number (manual)" />
   <input id="withdrawAmount" placeholder="Amount" />
   <button onclick="submitWithdraw()">Request Withdrawal</button>
+  <p class="small" style="margin-top:8px">Requests are reviewed by admin. Balance will auto reduce after withdrawal.</p>
 </div>
 
 <div id="bottomNav" class="nav hidden">
@@ -216,29 +130,23 @@ button:hover{ transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,0,0,0.5)
 </div>
 
 <script>
+// USERS & LOCAL STORAGE
 let currentUser = localStorage.getItem('verbose_user') || null;
 let balance = parseFloat(localStorage.getItem('verbose_balance')) || 0;
 let dailyProfit = parseFloat(localStorage.getItem('verbose_daily')) || 0;
-let profitPercent = parseFloat(localStorage.getItem('verbose_profitPercent')) || 1;
 let plansData = [];
 let userPlans = JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');
+let referralCode = localStorage.getItem('verbose_referral') || '';
 
-for(let i=1;i<=25;i++){
-    const invest = Math.round( i<=7 ? 200 + (i-1)*(3000-200)/6 : 4000 + (i-8)*(30000-4000)/17 );
-    const days = 20 + Math.floor((i-1)*(70-20)/24);
-    const multiplier = i<=7 ? 3 : 2.5;
-    const comingSoon = i > 20;
-    plansData.push({
-      id:i,
-      name:`Plan ${i}`,
-      invest:invest,
-      days:days,
-      total:Math.round(invest*multiplier),
-      multiplier:multiplier,
-      coming:comingSoon
-    });
+// CREATE PLANS
+for(let i=1;i<=20;i++){
+    const invest = 200 + i*200;
+    const days = 20 + i*2;
+    const multiplier = 2.5;
+    plansData.push({id:i,name:`Plan ${i}`,invest:invest,days:days,total:Math.round(invest*multiplier),multiplier:multiplier});
 }
 
+// AUTH
 function login(){
     const option = document.getElementById('userOption').value;
     const u = document.getElementById('user').value.trim();
@@ -246,29 +154,40 @@ function login(){
     if(!u||!p){ alert("Enter username & password"); return; }
     currentUser = u;
     localStorage.setItem('verbose_user', currentUser);
+    referralCode = referralCode || Math.random().toString(36).substring(2,10);
+    localStorage.setItem('verbose_referral', referralCode);
     if(option==='signup'){
         localStorage.setItem('verbose_balance','0');
         localStorage.setItem('verbose_daily','0');
-        localStorage.setItem('verbose_profitPercent','1');
         userPlans = [];
         localStorage.setItem('verbose_userPlans', JSON.stringify(userPlans));
     }
     balance = parseFloat(localStorage.getItem('verbose_balance')) || 0;
     dailyProfit = parseFloat(localStorage.getItem('verbose_daily')) || 0;
-    profitPercent = parseFloat(localStorage.getItem('verbose_profitPercent')) || 1;
     document.getElementById('dashUser').innerText = currentUser;
     document.getElementById('dashBalance').innerText = balance;
     document.getElementById('dashDaily').innerText = dailyProfit;
-    document.getElementById('dashPercent').innerText = profitPercent + "%";
     document.getElementById('dashSince').innerText = new Date().toLocaleDateString();
     document.getElementById('loginPage').classList.add('hidden');
     document.getElementById('dashboard').classList.remove('hidden');
     document.getElementById('bottomNav').classList.remove('hidden');
     updateDepositNumber();
     renderPlans();
-    startProfitCountdown();
+    if(document.getElementById('withdrawUsername')){
+        document.getElementById('withdrawUsername').value = currentUser;
+    }
+    // AUTO ADD DAILY PROFIT
+    setInterval(()=>{ 
+        dailyProfit += balance*0.02; 
+        balance += balance*0.02; 
+        localStorage.setItem('verbose_balance',balance); 
+        localStorage.setItem('verbose_daily',dailyProfit); 
+        document.getElementById('dashBalance').innerText = Math.round(balance);
+        document.getElementById('dashDaily').innerText = Math.round(dailyProfit);
+    }, 24*60*60*1000); // every 24h
 }
 
+// LOGOUT
 function logout(){
     currentUser = null;
     localStorage.removeItem('verbose_user');
@@ -277,20 +196,18 @@ function logout(){
     document.getElementById('bottomNav').classList.add('hidden');
 }
 
+// NAVIGATION
 function showPage(pageId){
     const pages = document.querySelectorAll('.page');
     pages.forEach(p=>p.classList.add('hidden'));
     document.getElementById(pageId).classList.remove('hidden');
 }
 
+// DEPOSIT
 function updateDepositNumber(){
     const method = document.getElementById('depositMethod').value;
     const number = method==='jazzcash' ? '03705519562' : '03379827882';
     document.getElementById('depositNumber').value = number;
-    if(selectedPlanId){
-        const plan = plansData.find(p=>p.id===selectedPlanId);
-        if(plan) document.getElementById('depositAmount').value = plan.invest;
-    }
 }
 function copyDepositNumber(){
     const dep = document.getElementById('depositNumber');
@@ -301,25 +218,23 @@ function copyDepositNumber(){
 }
 function submitDeposit(){
     const txid = document.getElementById('depositTxId').value.trim();
-    if(!txid){ alert("Enter TX ID"); return; }
-    const amount = parseFloat(document.getElementById('depositAmount').value);
-    balance += amount;
-    localStorage.setItem('verbose_balance', balance);
-    document.getElementById('dashBalance').innerText = balance;
-    alert("Deposit recorded. Admin will verify actual payment manually.");
+    if(!txid){ alert("Enter Transaction ID"); return; }
+    alert("Deposit submitted. Admin will verify and update balance manually.");
 }
 
+// WITHDRAW
 function submitWithdraw(){
+    const acc = document.getElementById('withdrawAccount').value.trim();
     const amt = parseFloat(document.getElementById('withdrawAmount').value.trim());
-    if(!amt){ alert("Enter amount"); return; }
+    if(!acc||!amt){ alert("Enter account & amount"); return; }
     if(amt>balance){ alert("Insufficient balance"); return; }
     balance -= amt;
-    localStorage.setItem('verbose_balance', balance);
-    document.getElementById('dashBalance').innerText = balance;
-    alert("Withdrawal recorded. Admin will process actual payment manually.");
+    localStorage.setItem('verbose_balance',balance);
+    document.getElementById('dashBalance').innerText = Math.round(balance);
+    alert("Withdrawal request submitted. Balance updated automatically.");
 }
 
-let selectedPlanId = null;
+// RENDER PLANS
 function renderPlans(){
     const container = document.getElementById('plansList');
     container.innerHTML='';
@@ -334,59 +249,24 @@ function renderPlans(){
                 <div>Total Return: Rs ${plan.total}</div>
             </div>
             <div class="actions">
-                <button onclick="buyPlan(${plan.id})" ${plan.coming ? 'disabled':''}>Buy</button>
+                <button onclick="buyPlan(${plan.id})">Buy</button>
             </div>
         `;
         container.appendChild(div);
     });
 }
+
+// BUY PLAN
 function buyPlan(id){
-    selectedPlanId = id;
     const plan = plansData.find(p=>p.id===id);
     if(!plan) return;
-    showPage('deposit');
-    document.getElementById('depositAmount').value = plan.invest;
-    alert(`Plan ${plan.name} selected. Deposit amount auto-filled.`);
-}
-
-// DAILY PROFIT AUTO UPDATE
-function addDailyProfit(){
-    const profit = Math.round(balance*profitPercent/100);
-    dailyProfit += profit;
-    balance += profit;
-    localStorage.setItem('verbose_daily', dailyProfit);
-    localStorage.setItem('verbose_balance', balance);
-    document.getElementById('dashDaily').innerText = dailyProfit;
-    document.getElementById('dashBalance').innerText = balance;
-    resetCountdown();
-}
-
-// COUNTDOWN
-let countdownSeconds = 24*60*60;
-let countdownInterval;
-function startProfitCountdown(){
-    countdownInterval = setInterval(()=>{
-        if(countdownSeconds<=0){
-            addDailyProfit();
-            countdownSeconds = 24*60*60;
-        }
-        countdownSeconds--;
-        let h = Math.floor(countdownSeconds/3600);
-        let m = Math.floor((countdownSeconds%3600)/60);
-        let s = countdownSeconds%60;
-        document.getElementById('nextProfit').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-    },1000);
-}
-function resetCountdown(){ countdownSeconds = 24*60*60; }
-
-// ADMIN PROFIT %
-function updateProfitPercent(){
-    let val = parseFloat(document.getElementById('adminProfitInput').value);
-    if(!isNaN(val)&&val>0){
-        profitPercent = val;
-        localStorage.setItem('verbose_profitPercent', profitPercent);
-        document.getElementById('dashPercent').innerText = profitPercent + "%";
-    }
+    balance += plan.invest;
+    dailyProfit += plan.invest*0.02;
+    localStorage.setItem('verbose_balance',balance);
+    localStorage.setItem('verbose_daily',dailyProfit);
+    alert(`You bought ${plan.name}. Balance auto updated for display only.`);
+    document.getElementById('dashBalance').innerText = Math.round(balance);
+    document.getElementById('dashDaily').innerText = Math.round(dailyProfit);
 }
 
 if(currentUser){ login(); }
