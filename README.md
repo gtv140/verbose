@@ -1,9 +1,9 @@
-<VERBOSE>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VERBOSE Premium</title>
+<title>VERBOSE Premium Advanced</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <style>
 :root{
@@ -48,6 +48,7 @@ content:"";position:fixed;top:0;left:0;width:100%;height:100%;background:linear-
 50%{background-position:100% 50%}
 100%{background-position:0% 50%}
 }
+.hidden{display:none;}
 </style>
 </head>
 <body>
@@ -94,6 +95,7 @@ content:"";position:fixed;top:0;left:0;width:100%;height:100%;background:linear-
 <div class="admin-box">
 <div onclick="openSupport()"><i class="fas fa-headset"></i>Support</div>
 <div onclick="alert('Activity Log coming soon')"><i class="fas fa-chart-line"></i>Activity</div>
+<div onclick="nav('adminCard')"><i class="fas fa-user-shield"></i>Admin</div>
 </div>
 
 <!-- PLANS -->
@@ -150,6 +152,19 @@ content:"";position:fixed;top:0;left:0;width:100%;height:100%;background:linear-
 <p>For any deposit or withdrawal issue contact administration. Our team is available 24/7.</p>
 </div>
 
+<!-- ADMIN PANEL -->
+<div id="adminCard" class="card hidden">
+<h3 style="color:var(--primary)"><i class="fas fa-user-shield"></i> Admin Panel</h3>
+<div style="margin-bottom:12px;">
+<h4>Pending Deposits</h4>
+<div id="adminDeposits"></div>
+</div>
+<div>
+<h4>Pending Withdrawals</h4>
+<div id="adminWithdraws"></div>
+</div>
+</div>
+
 </div>
 
 <!-- NAV -->
@@ -184,6 +199,7 @@ let total=Math.round(invest*2.5);
 plans.push({id:i,name:'Plan '+(i-7),invest:invest,multiplier:2.5,total:total,days:duration,offer:false});}
 for(let i=33;i<=37;i++){plans.push({id:i,name:'Coming Soon',invest:0,multiplier:0,total:0,days:0,offer:false});}
 
+// UTILS
 function fmt(n){return Number(n).toLocaleString('en-US');}
 
 // AUTH
@@ -202,13 +218,15 @@ if(ref && localStorage.getItem('verbose_cred_'+ref)){let bal=Number(localStorage
 }else{if(localStorage.getItem(credKey)!==p){alert('Wrong username/password');return;}}
 localStorage.setItem(KEY_USER,u);currentUser=u;afterLoginUI();
 }
-function afterLoginUI(){nav('dashboardCard');renderPlans();startOffers();updateReferralLink();}
+function afterLoginUI(){nav('dashboardCard');renderPlans();startOffers();updateReferralLink();updateAdminPanel();}
 function updateReferralLink(){if(!currentUser) return;document.getElementById('referralLink').value=window.location.href+'?ref='+currentUser;}
 function copyReferral(){const link=document.getElementById('referralLink');link.select();document.execCommand('copy');alert('Referral link copied!');}
 function doLogout(){localStorage.removeItem(KEY_USER);currentUser=null;nav('loginCard');Object.values(offerIntervals).forEach(i=>clearInterval(i));}
 
-// NAV
-function nav(cardId){['loginCard','dashboardCard','plansCard','depositCard','withdrawCard','supportBox'].forEach(id=>document.getElementById(id).classList.add('hidden'));document.getElementById(cardId).classList.remove('hidden');renderDashboard();fillWithdrawUser();updateReferralLink();}
+// NAVIGATION
+function nav(cardId){['loginCard','dashboardCard','plansCard','depositCard','withdrawCard','supportBox','adminCard'].forEach(id=>document.getElementById(id).classList.add('hidden'));document.getElementById(cardId).classList.remove('hidden');renderDashboard();fillWithdrawUser();updateReferralLink();updateAdminPanel();}
+
+// DASHBOARD
 function renderDashboard(){if(!currentUser)return;
 document.getElementById('welcomeText').innerText='Welcome, '+currentUser;
 document.getElementById('memberSince').innerText='Member since: '+new Date().toLocaleDateString();
@@ -250,41 +268,99 @@ nav('depositCard');alert(`Plan ${plan.name} selected. Submit your deposit. Admin
 
 // DEPOSIT
 function updateDepositNumber(){const method=document.getElementById('depositMethod').value;document.getElementById('depositNumber').value=method==='jazzcash'?'03705519562':'03379827882';}
-function submitDeposit(){if(!currentUser){alert('Login first');return;}
-const tx=(document.getElementById('depositTx').value||'').trim();
-const proof=document.getElementById('depositProof').files[0];
-const amount=Number(document.getElementById('depositAmount').value)||0;
-if(!tx||!proof||!amount){alert('All fields required');return;}
-let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);bal+=amount;localStorage.setItem(KEY_BAL+currentUser,bal);
-const deposits=JSON.parse(localStorage.getItem(KEY_DEPOSITS)||'[]');
-deposits.push({user:currentUser,method:document.getElementById('depositMethod').value,amount,tx,proof:proof.name,time:Date.now(),approved:true});
+function submitDeposit(){
+if(!currentUser){alert('Login first');return;}
+const amount=Number(document.getElementById('depositAmount').value||0);
+const tx=document.getElementById('depositTx').value.trim();
+if(!amount||!tx){alert('Enter deposit amount and transaction ID');return;}
+let deposits=JSON.parse(localStorage.getItem(KEY_DEPOSITS)||'[]');
+deposits.push({user:currentUser,amount,tx,method:document.getElementById('depositMethod').value,status:'pending',time:Date.now()});
 localStorage.setItem(KEY_DEPOSITS,JSON.stringify(deposits));
-alert('Deposit submitted!');document.getElementById('depositTx').value='';document.getElementById('depositProof').value='';renderDashboard();nav('dashboardCard');}
+alert('Deposit submitted. Admin will approve it.');nav('dashboardCard');
+updateAdminPanel();
+}
 
 // WITHDRAW
-function fillWithdrawUser(){if(!currentUser)return;document.getElementById('withdrawUsername').value=currentUser;}
-function submitWithdraw(){if(!currentUser){alert('Login first');return;}
-const method=document.getElementById('withdrawMethod').value;
+function fillWithdrawUser(){if(currentUser) document.getElementById('withdrawUsername').value=currentUser;}
+function submitWithdraw(){
+if(!currentUser){alert('Login first');return;}
+const amt=Number(document.getElementById('withdrawAmount').value||0);
 const acc=document.getElementById('withdrawAccount').value.trim();
-let amount=Number(document.getElementById('withdrawAmount').value)||0;
-if(!acc||amount<=0){alert('Enter account and valid amount');return;}
-let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);
-if(amount>bal){alert('Insufficient balance');return;}
-bal-=amount;localStorage.setItem(KEY_BAL+currentUser,bal);
-const withdraws=JSON.parse(localStorage.getItem(KEY_WITHDRAWS)||'[]');
-withdraws.push({user:currentUser,method,account:acc,amount,time:Date.now(),approved:false});
+if(!amt||!acc){alert('Enter amount & account');return;}
+let withdraws=JSON.parse(localStorage.getItem(KEY_WITHDRAWS)||'[]');
+withdraws.push({user:currentUser,amount:amt,account:acc,method:document.getElementById('withdrawMethod').value,status:'pending',time:Date.now()});
 localStorage.setItem(KEY_WITHDRAWS,JSON.stringify(withdraws));
-alert('Withdrawal request submitted! Admin will approve.');renderDashboard();document.getElementById('withdrawAccount').value='';document.getElementById('withdrawAmount').value='';nav('dashboardCard');}
+alert('Withdrawal request submitted. Admin will approve it.');
+updateAdminPanel();
+nav('dashboardCard');
+}
+
+// ADMIN PANEL
+function updateAdminPanel(){
+let deposits=JSON.parse(localStorage.getItem(KEY_DEPOSITS)||'[]');
+let withdraws=JSON.parse(localStorage.getItem(KEY_WITHDRAWS)||'[]');
+const depDiv=document.getElementById('adminDeposits');depDiv.innerHTML='';
+deposits.forEach((d,i)=>{if(d.status==='pending'){
+const div=document.createElement('div');div.className='plan';
+div.innerHTML=`<div class="meta">User: ${d.user} · Rs ${fmt(d.amount)} · Tx: ${d.tx} · ${d.method}</div>
+<div class="actions">
+<button class="btn" onclick="approveDeposit(${i})">Approve</button>
+</div>`;depDiv.appendChild(div);
+}});
+const withDiv=document.getElementById('adminWithdraws');withDiv.innerHTML='';
+withdraws.forEach((w,i)=>{if(w.status==='pending'){
+const div=document.createElement('div');div.className='plan';
+div.innerHTML=`<div class="meta">User: ${w.user} · Rs ${fmt(w.amount)} · Acc: ${w.account} · ${w.method}</div>
+<div class="actions">
+<button class="btn" onclick="approveWithdraw(${i})">Approve</button>
+</div>`;withDiv.appendChild(div);
+}});
+}
+
+// APPROVE FUNCTIONS
+function approveDeposit(idx){
+let deposits=JSON.parse(localStorage.getItem(KEY_DEPOSITS)||'[]');
+let d=deposits[idx];if(!d||d.status!=='pending') return;
+d.status='approved';localStorage.setItem(KEY_DEPOSITS,JSON.stringify(deposits));
+let bal=Number(localStorage.getItem(KEY_BAL+d.user)||0);bal+=d.amount;localStorage.setItem(KEY_BAL+d.user,bal);
+let daily=Number(localStorage.getItem(KEY_DAILY+d.user)||0);daily+=Math.round(d.amount*0.02);localStorage.setItem(KEY_DAILY+d.user,daily);
+updateAdminPanel();alert(`Deposit for ${d.user} approved. Balance updated.`);renderDashboard();
+}
+
+function approveWithdraw(idx){
+let withdraws=JSON.parse(localStorage.getItem(KEY_WITHDRAWS)||'[]');
+let w=withdraws[idx];if(!w||w.status!=='pending') return;
+w.status='approved';localStorage.setItem(KEY_WITHDRAWS,JSON.stringify(withdraws));
+let bal=Number(localStorage.getItem(KEY_BAL+w.user)||0);bal-=w.amount;localStorage.setItem(KEY_BAL+w.user,bal);
+updateAdminPanel();alert(`Withdrawal for ${w.user} approved. Balance deducted.`);renderDashboard();
+}
 
 // SUPPORT
 function openSupport(){nav('supportBox');}
 
-// ON LOAD
-window.onload=function(){if(currentUser)afterLoginUI();}
+// DAILY PROFIT UPDATE
+function creditDailyProfit(){
+if(!currentUser) return;
+let userPlans=JSON.parse(localStorage.getItem(KEY_USER_PLANS+currentUser)||'[]');
+let totalDaily=0;
+userPlans.forEach((p,i)=>{
+const now=Date.now();const last=p.lastCredit||0;
+if(now-last>=24*3600*1000){
+totalDaily+=p.dailyProfit;
+p.lastCredit=now;
+}
+});
+if(totalDaily>0){
+let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);bal+=totalDaily;localStorage.setItem(KEY_BAL+currentUser,bal);
+let daily=Number(localStorage.getItem(KEY_DAILY+currentUser)||0);daily+=totalDaily;localStorage.setItem(KEY_DAILY+currentUser,daily);
+renderDashboard();
+}
+localStorage.setItem(KEY_USER_PLANS+currentUser,JSON.stringify(userPlans));
+}
+setInterval(creditDailyProfit,60*1000); // check every minute
 
+// INIT
+if(currentUser) afterLoginUI();
 </script>
-<style>
-.hidden{display:none;}
-</style>
 </body>
 </html>
