@@ -9,7 +9,7 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',sans-serif;}
 body,html{height:100%;background:#02010a;color:#fff;overflow-x:hidden;transition:all 0.3s;}
 .hidden{display:none;}
-.bg-gradient{position:fixed;inset:0;z-index:-2;background:linear-gradient(270deg,#01031f,#00102b,#020518);background-size:800% 800%;animation:grad 25s ease infinite;filter:blur(14px) saturate(110%);}
+.bg-gradient{position:fixed;inset:0;z-index:-2;background:linear-gradient(270deg,#01031f,#00102b,#020518);background-size:800% 800%;animation:grad 25s ease infinite;filter:blur(12px) saturate(110%);}
 @keyframes grad{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 .auth-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;}
 .auth-wrap input{width:250px;padding:12px;margin:8px 0;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.3);color:#fff;outline:none;}
@@ -115,11 +115,11 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px;
 </div>
 
 <div class="footer-menu">
-<div onclick="navigate('wallet')"><i class="fa fa-wallet"></i>Wallet</div>
 <div onclick="navigate('plans')"><i class="fa fa-briefcase"></i>Plans</div>
 <div onclick="navigate('deposit')"><i class="fa fa-money-bill-wave"></i>Deposit</div>
 <div onclick="navigate('withdraw')"><i class="fa fa-credit-card"></i>Withdraw</div>
 <div onclick="navigate('transactions')"><i class="fa fa-file-invoice"></i>Transactions</div>
+<div onclick="doLogout()"><i class="fa fa-right-from-bracket"></i>Logout</div>
 </div>
 
 <div id="toastRoot"></div>
@@ -137,15 +137,6 @@ drawParticles();
 const ADMIN={user:'AdminKhan',pass:'SuperSecret123'};
 const depositNumbers={jazzcash:'03705519562',easypaisa:'03379827882'};
 const plans=[]; for(let i=1;i<=20;i++){plans.push({id:i,name:`Plan ${i}`,days:20+i,invest:100*i,totalProfit:100*i*(1+i*0.5),dailyProfit:Math.round((100*i*(1+i*0.5))/(20+i))});}
-const dashboardIcons=[
-{icon:'fa-wallet',name:'Wallet',view:'wallet'},
-{icon:'fa-briefcase',name:'Plans',view:'plans'},
-{icon:'fa-money-bill-wave',name:'Deposit',view:'deposit'},
-{icon:'fa-credit-card',name:'Withdraw',view:'withdraw'},
-{icon:'fa-file-invoice',name:'transactions'},
-{icon:'fa-user',name:'Profile',view:'profile'}
-];
-
 function getUsers(){return JSON.parse(localStorage.getItem('verbose_users')||'[]');}
 function setUsers(u){localStorage.setItem('verbose_users',JSON.stringify(u));}
 function getCurrent(){return JSON.parse(localStorage.getItem('verbose_current')||'null');}
@@ -154,7 +145,7 @@ function showToast(txt){const n=document.createElement('div');n.className='notif
 (function(){let u=getUsers();if(!u.find(x=>x.user===ADMIN.user)){u.push({user:ADMIN.user,pass:ADMIN.pass,balance:0,profit:0,admin:true});setUsers(u);}})();
 
 // ---------- Auth ----------
-function afterLogin(){const cur=getCurrent();if(!cur)return;document.getElementById('loginPage').classList.add('hidden');document.getElementById('dashboardPage').classList.remove('hidden');document.getElementById('dashUser').innerText=cur.user;document.getElementById('dashBalance').innerText=cur.balance||0;document.getElementById('dashProfit').innerText=cur.profit||0;renderDashboard();renderPlans();renderDepositPlans();renderTransactions();renderProfile();}
+function afterLogin(){const cur=getCurrent();if(!cur)return;document.getElementById('loginPage').classList.add('hidden');document.getElementById('dashboardPage').classList.remove('hidden');document.getElementById('dashUser').innerText=cur.user;document.getElementById('dashBalance').innerText=cur.balance||0;document.getElementById('dashProfit').innerText=cur.profit||0;renderPlans();renderDepositPlans();renderTransactions();renderProfile();}
 function doSignup(){const u=document.getElementById('authUser').value.trim();const p=document.getElementById('authPass').value;if(!u||!p){showToast('Enter username & password');return;}const users=getUsers();if(users.find(x=>x.user===u)){showToast('Username exists');return;}users.push({user:u,pass:p,balance:0,profit:0,admin:false,withdraws:[],active:[]});setUsers(users);setCurrent({user:u,admin:false,balance:0,profit:0});showToast('Signup successful');afterLogin();}
 function doLogin(){const u=document.getElementById('authUser').value.trim();const p=document.getElementById('authPass').value;if(!u||!p){showToast('Enter username & password');return;}if(u===ADMIN.user&&p===ADMIN.pass){setCurrent({user:ADMIN.user,admin:true,balance:0,profit:0});showToast('Admin logged in');afterLogin();return;}const users=getUsers();const found=users.find(x=>x.user===u&&x.pass===p);if(!found){showToast('Invalid credentials');return;}setCurrent({user:found.user,admin:false,balance:found.balance||0,profit:found.profit||0});showToast('Login successful');afterLogin();}
 function doLogout(){localStorage.removeItem('verbose_current');document.getElementById('dashboardPage').classList.add('hidden');document.getElementById('loginPage').classList.remove('hidden');showToast('Logged out');}
@@ -170,9 +161,6 @@ if(view==='profile'){document.getElementById('profileView').classList.remove('hi
 showToast(`Navigated to ${view}`);
 }
 
-// ---------- Dashboard ----------
-function renderDashboard(){const grid=document.getElementById('dashboardIcons');if(!grid) return;grid.innerHTML='';dashboardIcons.forEach(d=>{const div=document.createElement('div');div.className='icon-box';div.innerHTML=`<i class="fa ${d.icon}"></i><p>${d.name}</p>`;div.onclick=()=>navigate(d.view);grid.appendChild(div);});}
-
 // ---------- Plans ----------
 function renderPlans(){const grid=document.getElementById('planGrid');grid.innerHTML='';plans.forEach(p=>{let div=document.createElement('div');div.className='plan';div.innerHTML=`<h4>${p.name}</h4><p>Invest: ${p.invest} PKR</p><p>Days: ${p.days}</p><p>Total: ${p.totalProfit}</p><div class="badge">24H OFFER</div>`;grid.appendChild(div);});}
 function renderDepositPlans(){const select=document.getElementById('depositPlan');select.innerHTML='';plans.forEach(p=>{const opt=document.createElement('option');opt.value=p.id;opt.text=`${p.name} - ${p.invest} PKR`;select.appendChild(opt);});updateDepositAmount();updateDepositNumber();}
@@ -187,15 +175,11 @@ function submitDeposit(){const planId=parseInt(document.getElementById('depositP
 function submitWithdraw(){const amount=parseInt(document.getElementById('withdrawAmount').value);const method=document.getElementById('withdrawMethod').value;if(!amount||amount<=0){showToast('Enter valid amount');return;}const cur=getCurrent();const users=getUsers();const user=users.find(u=>u.user===cur.user);if(!user.withdraws) user.withdraws=[];user.withdraws.push({amount,method,time:new Date().toLocaleString(),status:'Pending'});setUsers(users);showToast('Withdraw requested');document.getElementById('withdrawAmount').value='';}
 
 // ---------- Transactions ----------
-function renderTransactions(){const tbody=document.getElementById('txTableBody');tbody.innerHTML='';const cur=getCurrent();const users=getUsers();const user=users.find(u=>u.user===cur.user);if(user&&user.active) user.active.forEach(tx=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${tx.type}</td><td>${tx.amount||0}</td><td>${tx.plan||'-'}</td><td>${tx.days||'-'}</td><td>${tx.totalProfit||'-'}</td><td>${tx.time}</td><td>${tx.status}</td>`;tbody.appendChild(tr);});}
+function renderTransactions(){const tbody=document.getElementById('txTableBody');tbody.innerHTML='';const cur=getCurrent();const users=getUsers();const user=users.find(u=>u.user===cur.user);if(user&&user.active) user.active.forEach(tx=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${tx.type}</td><td>${tx.amount||0}</td><td>${tx.plan||'-'}</td><td>${tx.days||'-'}</td><td>${tx.totalProfit||'-'}</td><td>${tx.time||'-'}</td><td>${tx.status||'-'}</td>`;tbody.appendChild(tr);});}
 
 // ---------- Profile ----------
 function renderProfile(){const cur=getCurrent();if(!cur) return;document.getElementById('profileName').value=cur.user;}
-function updateProfile(){const name=document.getElementById('profileName').value.trim();if(!name){showToast('Enter display name');return;}const users=getUsers();const cur=getCurrent();const user=users.find(u=>u.user===cur.user);user.user=name;setUsers(users);setCurrent({...cur,user:name});document.getElementById('dashUser').innerText=name;showToast('Profile updated');}
-
-// ---------- Initialize ----------
-afterLogin();
+function updateProfile(){const cur=getCurrent();const name=document.getElementById('profileName').value.trim();if(!name){showToast('Enter a valid name');return;}const users=getUsers();const user=users.find(u=>u.user===cur.user);user.user=name;setUsers(users);setCurrent(cur);document.getElementById('dashUser').innerText=name;showToast('Profile updated');}
 </script>
-
 </body>
 </html>
