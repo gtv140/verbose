@@ -68,7 +68,7 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px;
 <input id="depositUser" readonly>
 <label>Account Number</label>
 <input id="depositAcc" readonly>
-<label>Amount</label>
+<label>Amount PKR</label>
 <input id="depositAmount" readonly>
 <label>Method</label>
 <select id="depositMethod">
@@ -178,25 +178,10 @@ function doLogout(){
 // ---------- Dashboard ----------
 const dashboardIcons=[
 {icon:'fas fa-wallet',name:'Wallet',view:'deposit'},
-{icon:'fas fa-briefcase',name:'Plans',view:'deposit'},
 {icon:'fas fa-money-bill-wave',name:'Deposit',view:'deposit'},
 {icon:'fas fa-credit-card',name:'Withdraw',view:'withdraw'},
 {icon:'fas fa-file-invoice',name:'Transactions',view:'transactions'},
-{icon:'fas fa-user',name:'Profile',view:'profile'},
-{icon:'fas fa-star',name:'VIP',view:'profile'},
-{icon:'fas fa-gift',name:'Rewards',view:'profile'},
-{icon:'fas fa-chart-line',name:'Stats',view:'profile'},
-{icon:'fas fa-headset',name:'Support',view:'profile'},
-{icon:'fas fa-envelope',name:'Messages',view:'profile'},
-{icon:'fas fa-bell',name:'Notifications',view:'profile'},
-{icon:'fas fa-shield-alt',name:'Security',view:'profile'},
-{icon:'fas fa-cogs',name:'Tools',view:'profile'},
-{icon:'fas fa-heart',name:'Favorites',view:'profile'},
-{icon:'fas fa-globe',name:'Global',view:'profile'},
-{icon:'fas fa-calendar',name:'Events',view:'profile'},
-{icon:'fas fa-user-shield',name:'Account',view:'profile'},
-{icon:'fas fa-bolt',name:'Bonus',view:'profile'},
-{icon:'fas fa-info-circle',name:'About',view:'profile'}
+{icon:'fas fa-user',name:'Profile',view:'profile'}
 ];
 function renderDashboard(){
  const grid=document.getElementById('dashboardIcons');grid.innerHTML='';
@@ -226,7 +211,7 @@ function updateDepositWithdrawFields(){
  document.getElementById('withdrawAcc').value=cur.acc;
 }
 function submitDeposit(){
- const amt=100; // Fixed for demo
+ const amt=100; // Fixed demo
  const cur=getCurrent(); const users=getUsers();
  const user=users.find(u=>u.user===cur.user);
  if(!user.active) user.active=[];
