@@ -286,8 +286,11 @@ function updateDepositNumber(){
     const method = document.getElementById('depositMethod').value;
     const number = method==='jazzcash' ? '03705519562' : '03379827882';
     document.getElementById('depositNumber').value = number;
-    const selectedPlan = plansData[0]; // first plan as default
-    document.getElementById('depositAmount').value = selectedPlan.invest;
+    // if a plan is selected, auto set deposit amount
+    if(selectedPlanId){
+        const plan = plansData.find(p=>p.id===selectedPlanId);
+        if(plan) document.getElementById('depositAmount').value = plan.invest;
+    }
 }
 function copyDepositNumber(){
     const dep = document.getElementById('depositNumber');
@@ -299,7 +302,6 @@ function copyDepositNumber(){
 function submitDeposit(){
     const txid = document.getElementById('depositTxId').value.trim();
     if(!txid){ alert("Enter TX ID"); return; }
-    // Auto update balance
     const amount = parseFloat(document.getElementById('depositAmount').value);
     balance += amount;
     localStorage.setItem('verbose_balance', balance);
@@ -319,6 +321,7 @@ function submitWithdraw(){
 }
 
 // PLANS
+let selectedPlanId = null;
 function renderPlans(){
     const container = document.getElementById('plansList');
     container.innerHTML='';
@@ -340,21 +343,18 @@ function renderPlans(){
     });
 }
 function buyPlan(id){
+    selectedPlanId = id;
     const plan = plansData.find(p=>p.id===id);
     if(!plan) return;
-    const start = Date.now();
-    const end = start + plan.days*24*60*60*1000;
-    userPlans.push({id:id,start:start,end:end});
-    localStorage.setItem('verbose_userPlans', JSON.stringify(userPlans));
-    balance += plan.invest; // auto add for display
-    localStorage.setItem('verbose_balance', balance);
-    document.getElementById('dashBalance').innerText = balance;
-    alert(`Plan ${plan.name} bought! Balance updated for display only.`);
+    // Auto fill deposit page
+    showPage('deposit');
+    document.getElementById('depositAmount').value = plan.invest;
+    alert(`Plan ${plan.name} selected. Deposit amount auto-filled.`);
 }
 
 // DAILY PROFIT AUTO UPDATE
 function addDailyProfit(){
-    const profit = Math.round(balance*0.01); // 1% daily
+    const profit = Math.round(balance*0.01);
     dailyProfit += profit;
     balance += profit;
     localStorage.setItem('verbose_daily', dailyProfit);
@@ -362,7 +362,7 @@ function addDailyProfit(){
     document.getElementById('dashDaily').innerText = dailyProfit;
     document.getElementById('dashBalance').innerText = balance;
 }
-setInterval(addDailyProfit, 24*60*60*1000); // daily update
+setInterval(addDailyProfit, 24*60*60*1000);
 
 if(currentUser){
     login();
