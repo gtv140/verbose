@@ -170,7 +170,7 @@ for(let i=8;i<=32;i++){let invest=Math.round(3000+(i-8)*(30000-3000)/24);let dur
 for(let i=33;i<=37;i++){plans.push({id:i,name:'Coming Soon',invest:0,multiplier:0,total:0,days:0,offer:false});}
 function fmt(n){return Number(n).toLocaleString('en-US');}
 
-// AUTH
+// AUTH FUNCTIONS
 function doAuth(){
 const mode=document.getElementById('authMode').value;
 const u=(document.getElementById('inputUser').value||'').trim();
@@ -191,12 +191,16 @@ function updateReferralLink(){if(!currentUser) return;document.getElementById('r
 function copyReferral(){const link=document.getElementById('referralLink');link.select();document.execCommand('copy');alert('Referral link copied!');}
 function doLogout(){localStorage.removeItem(KEY_USER);currentUser=null;nav('loginCard');Object.values(offerIntervals).forEach(i=>clearInterval(i));}
 
-// NAV
+// NAVIGATION
 function nav(cardId){['loginCard','dashboardCard','plansCard','depositCard','withdrawCard','supportBox'].forEach(id=>document.getElementById(id).classList.add('hidden'));document.getElementById(cardId).classList.remove('hidden');renderDashboard();fillWithdrawUser();updateReferralLink();}
 
 // DASHBOARD
-function renderDashboard(){if(!currentUser)return;document.getElementById('welcomeText').innerText='Welcome, '+currentUser;document.getElementById('memberSince').innerText='Member since: '+new Date().toLocaleDateString();
-document.getElementById('balanceText').innerText=fmt(Number(localStorage.getItem(KEY_BAL+currentUser)||0));document.getElementById('dailyText').innerText=fmt(Number(localStorage.getItem(KEY_DAILY+currentUser)||0));}
+function renderDashboard(){if(!currentUser)return;
+document.getElementById('welcomeText').innerText='Welcome, '+currentUser;
+document.getElementById('memberSince').innerText='Member since: '+new Date().toLocaleDateString();
+document.getElementById('balanceText').innerText=fmt(Number(localStorage.getItem(KEY_BAL+currentUser)||0));
+document.getElementById('dailyText').innerText=fmt(Number(localStorage.getItem(KEY_DAILY+currentUser)||0));
+}
 
 // PLANS
 function renderPlans(){
@@ -204,33 +208,46 @@ const container=document.getElementById('plansList');container.innerHTML='';
 plans.forEach(plan=>{
 const div=document.createElement('div');div.className='plan';if(plan.name==='Coming Soon') div.className+=' hidden';
 let dailyProfit=plan.days>0?Math.round(plan.total/plan.days):0;
-div.innerHTML=`<div class="meta"><div style="font-weight:800"><i class="fas fa-gift"></i>${plan.name}</div>
+div.innerHTML=`<div class="meta"><div style="font-weight:800"><i class="fas fa-gift"></i> ${plan.name}</div>
 <div class="muted" style="margin-top:4px">Invest: Rs ${fmt(plan.invest)} · Total: Rs ${fmt(plan.total)} · Days: ${plan.days} · Daily: Rs ${fmt(dailyProfit)}</div>
 ${plan.offer?`<div class="countdown" id="countdown_${plan.id}">Loading timer...</div>`:''}</div>
-<div class="actions">${plan.offer||plan.name!=='Coming Soon'?'<button class="btn" onclick="buyPlan('+plan.id+')"><i class="fas fa-shopping-cart"></i>Buy Now</button>':''}</div>`;container.appendChild(div);
+<div class="actions">${plan.offer||plan.name!=='Coming Soon'?'<button class="btn" onclick="buyPlan('+plan.id+')"><i class="fas fa-shopping-cart"></i> Buy Now</button>':''}</div>`;container.appendChild(div);
 });
 }
 
 // OFFER TIMER
 function startOffers(){plans.forEach(plan=>{if(!plan.offer)return;
 const key=KEY_OFFERS+plan.id;let endTs=Number(localStorage.getItem(key)||0);if(!endTs||endTs<Date.now()){endTs=Date.now()+24*3600*1000;localStorage.setItem(key,endTs);}
-const el=document.getElementById('countdown_'+plan.id);if(!el)return;function tick(){const diff=Math.floor((endTs-Date.now())/1000);if(diff<=0){el.innerText='Offer ended';clearInterval(offerIntervals[plan.id]);return;}
-const h=Math.floor(diff/3600),m=Math.floor((diff%3600)/60),s=diff%60;el.innerText=`${String(h).padStart(2,'0')}h:${String(m).padStart(2,'0')}m:${String(s).padStart(2,'0')}s`;}tick();offerIntervals[plan.id]=setInterval(tick,1000);});}
+const el=document.getElementById('countdown_'+plan.id);if(!el)return;
+function tick(){const diff=Math.floor((endTs-Date.now())/1000);if(diff<=0){el.innerText='Offer ended';clearInterval(offerIntervals[plan.id]);return;}
+const h=Math.floor(diff/3600),m=Math.floor((diff%3600)/60),s=diff%60;el.innerText=`${String(h).padStart(2,'0')}h:${String(m).padStart(2,'0')}m:${String(s).padStart(2,'0')}s`;}
+tick();offerIntervals[plan.id]=setInterval(tick,1000);
+});}
 
 // BUY PLAN
-function buyPlan(id){if(!currentUser){alert('Login first');return;}const plan=plans.find(p=>p.id===id);if(!plan || plan.name==='Coming Soon'){alert('Plan not available');return;}
+function buyPlan(id){if(!currentUser){alert('Login first');return;}
+const plan=plans.find(p=>p.id===id);if(!plan || plan.name==='Coming Soon'){alert('Plan not available');return;}
 let userPlans=JSON.parse(localStorage.getItem(KEY_USER_PLANS+currentUser)||'[]');
-const dailyProfit=Math.round(plan.total/plan.days);userPlans.push({planId:plan.id,dailyProfit,lastCredit:Date.now()});localStorage.setItem(KEY_USER_PLANS+currentUser,JSON.stringify(userPlans));
-document.getElementById('depositAmount').value=plan.invest;updateDepositNumber();nav('depositCard');alert(`Plan ${plan.name} selected. Submit your deposit. Admin will manually approve.`);}
+const dailyProfit=Math.round(plan.total/plan.days);
+userPlans.push({planId:plan.id,dailyProfit,lastCredit:Date.now()});
+localStorage.setItem(KEY_USER_PLANS+currentUser,JSON.stringify(userPlans));
+document.getElementById('depositAmount').value=plan.invest;updateDepositNumber();
+nav('depositCard');alert(`Plan ${plan.name} selected. Submit your deposit. Admin will manually approve.`);
+}
 
 // DEPOSIT
 function updateDepositNumber(){const method=document.getElementById('depositMethod').value;document.getElementById('depositNumber').value=method==='jazzcash'?'03705519562':'03379827882';}
 function submitDeposit(){if(!currentUser){alert('Login first');return;}
-const tx=(document.getElementById('depositTx').value||'').trim();const proof=document.getElementById('depositProof').files[0];const amount=Number(document.getElementById('depositAmount').value)||0;
+const tx=(document.getElementById('depositTx').value||'').trim();
+const proof=document.getElementById('depositProof').files[0];
+const amount=Number(document.getElementById('depositAmount').value)||0;
 if(!tx||!proof||!amount){alert('All fields required');return;}
 let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);bal+=amount;localStorage.setItem(KEY_BAL+currentUser,bal);
-const deposits=JSON.parse(localStorage.getItem(KEY_DEPOSITS)||'[]');deposits.push({user:currentUser,method:document.getElementById('depositMethod').value,amount,tx,proof:proof.name,time:Date.now(),approved:true});
-localStorage.setItem(KEY_DEPOSITS,JSON.stringify(deposits));alert('Deposit submitted!');document.getElementById('depositTx').value='';document.getElementById('depositProof').value='';renderDashboard();nav('dashboardCard');}
+const deposits=JSON.parse(localStorage.getItem(KEY_DEPOSITS)||'[]');
+deposits.push({user:currentUser,method:document.getElementById('depositMethod').value,amount,tx,proof:proof.name,time:Date.now(),approved:true});
+localStorage.setItem(KEY_DEPOSITS,JSON.stringify(deposits));
+alert('Deposit submitted!');document.getElementById('depositTx').value='';document.getElementById('depositProof').value='';renderDashboard();nav('dashboardCard');
+}
 
 // WITHDRAW
 function fillWithdrawUser(){if(!currentUser) return;document.getElementById('withdrawUsername').value=currentUser;}
@@ -241,11 +258,14 @@ const amount=Number(document.getElementById('withdrawAmount').value);
 if(!account||!amount){alert('Enter account and amount');return;}
 let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);
 if(amount>bal){alert('Insufficient balance');return;}
+// ...existing code upar tak same rahega
+
 bal-=amount;
 localStorage.setItem(KEY_BAL+currentUser,bal);
-const withdraws=JSON.parse(localStorage.getItem(KEY_WITHDRAWS)||[]);withdraws.push({user:currentUser,method,account,amount,time:Date.now(),approved:false});
+const withdraws=JSON.parse(localStorage.getItem(KEY_WITHDRAWS)||'[]');
+withdraws.push({user:currentUser,method,account,amount,time:Date.now(),approved:false});
 localStorage.setItem(KEY_WITHDRAWS,JSON.stringify(withdraws));
-alert('Withdrawal request submitted! Admin will approve manually.');
+alert('Withdrawal request submitted! Admin will approve it.');
 document.getElementById('withdrawAccount').value='';
 document.getElementById('withdrawAmount').value='';
 renderDashboard();
@@ -255,8 +275,13 @@ nav('dashboardCard');
 // SUPPORT
 function openSupport(){nav('supportBox');}
 
-// INIT
-if(currentUser) afterLoginUI();
+// INIT ON LOAD
+window.onload=function(){
+if(currentUser){afterLoginUI();}else{nav('loginCard');}
+updateDepositNumber();
+fillWithdrawUser();
+};
 </script>
+
 </body>
 </html>
