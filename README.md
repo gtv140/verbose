@@ -267,6 +267,9 @@ function buyPlan(id){
     alert(`You bought ${plan.name}. Balance auto updated for display only.`);
     document.getElementById('dashBalance').innerText = Math.round(balance);
     document.getElementById('dashDaily').innerText = Math.round(dailyProfit);
+    // AUTO FILL DEPOSIT AMOUNT
+    showPage('deposit');
+    document.getElementById('depositAmount').value = plan.invest;
 }
 
 if(currentUser){ login(); }
