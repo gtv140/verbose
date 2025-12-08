@@ -62,7 +62,7 @@ th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px;
 <div id="dashboardPage" class="hidden">
 <div class="app-header">
 <h1>VERBOSE</h1>
-<i class="fa fa-bars menu-btn"></i>
+<i class="fa fa-bars menu-btn" onclick="doLogout()"></i>
 </div>
 
 <div class="icon-grid" id="dashboardIcons"></div>
@@ -148,22 +148,8 @@ const dashboardIcons=[
 {icon:'fa-briefcase',name:'Plans',view:'plans'},
 {icon:'fa-money-bill-wave',name:'Deposit',view:'deposit'},
 {icon:'fa-credit-card',name:'Withdraw',view:'withdraw'},
-{icon:'fa-file-invoice',name:'Transactions',view:'transactions'},
-{icon:'fa-user',name:'Profile',view:'profile'},
-{icon:'fa-info-circle',name:'About',view:'about'},
-{icon:'fa-gift',name:'Rewards',view:'rewards'},
-{icon:'fa-chart-line',name:'Stats',view:'stats'},
-{icon:'fa-star',name:'VIP',view:'vip'},
-{icon:'fa-headset',name:'Support',view:'support'},
-{icon:'fa-envelope',name:'Messages',view:'messages'},
-{icon:'fa-bell',name:'Notifications',view:'notifications'},
-{icon:'fa-shield-alt',name:'Security',view:'security'},
-{icon:'fa-cogs',name:'Tools',view:'tools'},
-{icon:'fa-heart',name:'Favorites',view:'favorites'},
-{icon:'fa-globe',name:'Global',view:'global'},
-{icon:'fa-calendar',name:'Events',view:'events'},
-{icon:'fa-user-shield',name:'Account',view:'account'},
-{icon:'fa-bolt',name:'Bonus',view:'bonus'}
+{icon:'fa-file-invoice',name:'transactions'},
+{icon:'fa-user',name:'Profile',view:'profile'}
 ];
 
 // ---------- Storage & Toast ----------
@@ -178,7 +164,7 @@ function showToast(txt){const n=document.createElement('div');n.className='notif
 
 // ---------- Auth ----------
 function afterLogin(){const cur=getCurrent();if(!cur)return;document.getElementById('loginPage').classList.add('hidden');document.getElementById('dashboardPage').classList.remove('hidden');renderDashboard();renderPlans();renderDepositPlans();renderTransactions();renderProfile();}
-function doSignup(){const u=document.getElementById('authUser').value.trim();const p=document.getElementById('authPass').value;if(!u||!p){showToast('Enter username & password');return;}const users=getUsers();if(users.find(x=>x.user===u)){showToast('Username exists');return;}users.push({user:u,pass:p,balance:0,active:[],profit:0,admin:false});setUsers(users);setCurrent({user:u,admin:false});showToast('Signup successful');afterLogin();}
+function doSignup(){const u=document.getElementById('authUser').value.trim();const p=document.getElementById('authPass').value;if(!u||!p){showToast('Enter username & password');return;}const users=getUsers();if(users.find(x=>x.user===u)){showToast('Username exists');return;}users.push({user:u,pass:p,balance:0,active:[],profit:0,admin:false,withdraws:[]});setUsers(users);setCurrent({user:u,admin:false});showToast('Signup successful');afterLogin();}
 function doLogin(){const u=document.getElementById('authUser').value.trim();const p=document.getElementById('authPass').value;if(!u||!p){showToast('Enter username & password');return;}if(u===ADMIN.user&&p===ADMIN.pass){setCurrent({user:ADMIN.user,admin:true});showToast('Admin logged in');afterLogin();return;}const users=getUsers();const found=users.find(x=>x.user===u&&x.pass===p);if(!found){showToast('Invalid credentials');return;}setCurrent({user:found.user,admin:false});showToast('Login successful');afterLogin();}
 function doLogout(){localStorage.removeItem('verbose_current');document.getElementById('dashboardPage').classList.add('hidden');document.getElementById('loginPage').classList.remove('hidden');showToast('Logged out');}
 
@@ -228,61 +214,64 @@ function submitWithdraw(){
     if(!amount || amount <= 0){showToast('Enter valid amount'); return;}
     const cur = getCurrent();
     const users = getUsers();
-    const user = users.find(u=>u.user===cur.user);
+    const user = users.find(u => u.user === cur.user);
     if(!user.withdraws) user.withdraws=[];
+    if(amount > user.balance){showToast('Insufficient balance'); return;}
+    user.balance -= amount;
     user.withdraws.push({amount,method,time:new Date().toLocaleString(),status:'Pending'});
     setUsers(users);
-    showToast('Withdraw requested');
-    document.getElementById('withdrawAmount').value='';
+    showToast('Withdraw requested'); document.getElementById('withdrawAmount').value='';
 }
 
 // ---------- Transactions ----------
 function renderTransactions(){
     const cur = getCurrent();
     const users = getUsers();
-    const user = users.find(u=>u.user===cur.user);
+    const user = users.find(u => u.user === cur.user);
     const tbody = document.getElementById('txTableBody');
     tbody.innerHTML='';
-    if(user.active){
-        user.active.forEach(tx=>{
-            const tr = document.createElement('tr');
-            tr.innerHTML=`<td>Deposit</td><td>${tx.amount}</td><td>${plans.find(p=>p.id===tx.plan)?.name||''}</td><td>${plans.find(p=>p.id===tx.plan)?.days||''}</td><td>${plans.find(p=>p.id===tx.plan)?.totalProfit||''}</td><td>${tx.time}</td><td>${tx.status}</td>`;
-            tbody.appendChild(tr);
-        });
-    }
-    if(user.withdraws){
-        user.withdraws.forEach(tx=>{
-            const tr = document.createElement('tr');
-            tr.innerHTML=`<td>Withdraw</td><td>${tx.amount}</td><td>-</td><td>-</td><td>-</td><td>${tx.time}</td><td>${tx.status}</td>`;
-            tbody.appendChild(tr);
-        });
-    }
+    if(user.active) user.active.forEach(a=>{
+        const plan = plans.find(p=>p.id===a.plan);
+        const tr = document.createElement('tr');
+        tr.innerHTML=`<td>${a.type}</td>
+                      <td>${a.amount}</td>
+                      <td>${plan?plan.name:'-'}</td>
+                      <td>${plan?plan.days:'-'}</td>
+                      <td>${plan?plan.totalProfit:'-'}</td>
+                      <td>${a.time}</td>
+                      <td>${a.status}</td>`;
+        tbody.appendChild(tr);
+    });
+    if(user.withdraws) user.withdraws.forEach(w=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML=`<td>withdraw</td><td>${w.amount}</td><td>-</td><td>-</td><td>-</td><td>${w.time}</td><td>${w.status}</td>`;
+        tbody.appendChild(tr);
+    });
 }
 
 // ---------- Profile ----------
 function renderProfile(){
     const cur = getCurrent();
     const users = getUsers();
-    const user = users.find(u=>u.user===cur.user);
-    document.getElementById('profileName').value=user.user;
-    const stats = `Balance: ${user.balance||0} PKR | Active Deposits: ${user.active?.length||0} | Withdraw Requests: ${user.withdraws?.length||0}`;
-    document.getElementById('profileStats').innerText=stats;
+    const user = users.find(u => u.user === cur.user);
+    document.getElementById('profileName').value = user.user;
+    document.getElementById('profileStats').innerText = `Balance: ${user.balance || 0} PKR | Active Deposits: ${user.active?user.active.length:0}`;
 }
+
 function updateProfile(){
     const cur = getCurrent();
     const users = getUsers();
-    const user = users.find(u=>u.user===cur.user);
+    const user = users.find(u => u.user === cur.user);
     const newName = document.getElementById('profileName').value.trim();
-    if(newName) user.user = newName;
+    if(!newName){showToast('Enter a valid name'); return;}
+    user.user = newName;
     setUsers(users);
-    setCurrent(user);
+    setCurrent({user:newName,admin:cur.admin});
     showToast('Profile updated');
-    renderProfile();
 }
 
-// ---------- Initialize ----------
-afterLogin(); // auto-login if user is already logged in
-
+// ---------- Init ----------
+afterLogin(); // agar user already login hai
 </script>
 </body>
 </html>
