@@ -157,7 +157,9 @@ button:hover{ transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,0,0,0.5)
     <div class="right">
       <div style="font-size:13px">Balance</div>
       <div style="font-size:18px;font-weight:900">Rs <span id="dashBalance">0</span></div>
-      <div style="margin-top:8px" class="badge">Daily: Rs <span id="dashDaily">0</span></div>
+      <div style="margin-top:8px" class="badge">Daily Profit: Rs <span id="dashDaily">0</span> (<span id="dashPercent">1%</span>)</div>
+      <div style="margin-top:6px;font-size:13px" class="countdown">Next profit in: <span id="nextProfit">24:00:00</span></div>
+      <input type="number" id="adminProfitInput" placeholder="Admin % Profit" style="margin-top:6px;font-size:13px;padding:4px" oninput="updateProfitPercent()"/>
     </div>
   </div>
 
@@ -214,14 +216,13 @@ button:hover{ transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,0,0,0.5)
 </div>
 
 <script>
-// USERS & STORAGE
 let currentUser = localStorage.getItem('verbose_user') || null;
 let balance = parseFloat(localStorage.getItem('verbose_balance')) || 0;
 let dailyProfit = parseFloat(localStorage.getItem('verbose_daily')) || 0;
+let profitPercent = parseFloat(localStorage.getItem('verbose_profitPercent')) || 1;
 let plansData = [];
 let userPlans = JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');
 
-// CREATE PLANS
 for(let i=1;i<=25;i++){
     const invest = Math.round( i<=7 ? 200 + (i-1)*(3000-200)/6 : 4000 + (i-8)*(30000-4000)/17 );
     const days = 20 + Math.floor((i-1)*(70-20)/24);
@@ -238,7 +239,6 @@ for(let i=1;i<=25;i++){
     });
 }
 
-// AUTH
 function login(){
     const option = document.getElementById('userOption').value;
     const u = document.getElementById('user').value.trim();
@@ -249,23 +249,26 @@ function login(){
     if(option==='signup'){
         localStorage.setItem('verbose_balance','0');
         localStorage.setItem('verbose_daily','0');
+        localStorage.setItem('verbose_profitPercent','1');
         userPlans = [];
         localStorage.setItem('verbose_userPlans', JSON.stringify(userPlans));
     }
     balance = parseFloat(localStorage.getItem('verbose_balance')) || 0;
     dailyProfit = parseFloat(localStorage.getItem('verbose_daily')) || 0;
+    profitPercent = parseFloat(localStorage.getItem('verbose_profitPercent')) || 1;
     document.getElementById('dashUser').innerText = currentUser;
     document.getElementById('dashBalance').innerText = balance;
     document.getElementById('dashDaily').innerText = dailyProfit;
+    document.getElementById('dashPercent').innerText = profitPercent + "%";
     document.getElementById('dashSince').innerText = new Date().toLocaleDateString();
     document.getElementById('loginPage').classList.add('hidden');
     document.getElementById('dashboard').classList.remove('hidden');
     document.getElementById('bottomNav').classList.remove('hidden');
     updateDepositNumber();
     renderPlans();
+    startProfitCountdown();
 }
 
-// LOGOUT
 function logout(){
     currentUser = null;
     localStorage.removeItem('verbose_user');
@@ -274,19 +277,16 @@ function logout(){
     document.getElementById('bottomNav').classList.add('hidden');
 }
 
-// NAVIGATION
 function showPage(pageId){
     const pages = document.querySelectorAll('.page');
     pages.forEach(p=>p.classList.add('hidden'));
     document.getElementById(pageId).classList.remove('hidden');
 }
 
-// DEPOSIT
 function updateDepositNumber(){
     const method = document.getElementById('depositMethod').value;
     const number = method==='jazzcash' ? '03705519562' : '03379827882';
     document.getElementById('depositNumber').value = number;
-    // if a plan is selected, auto set deposit amount
     if(selectedPlanId){
         const plan = plansData.find(p=>p.id===selectedPlanId);
         if(plan) document.getElementById('depositAmount').value = plan.invest;
@@ -309,7 +309,6 @@ function submitDeposit(){
     alert("Deposit recorded. Admin will verify actual payment manually.");
 }
 
-// WITHDRAWAL
 function submitWithdraw(){
     const amt = parseFloat(document.getElementById('withdrawAmount').value.trim());
     if(!amt){ alert("Enter amount"); return; }
@@ -320,7 +319,6 @@ function submitWithdraw(){
     alert("Withdrawal recorded. Admin will process actual payment manually.");
 }
 
-// PLANS
 let selectedPlanId = null;
 function renderPlans(){
     const container = document.getElementById('plansList');
@@ -346,7 +344,6 @@ function buyPlan(id){
     selectedPlanId = id;
     const plan = plansData.find(p=>p.id===id);
     if(!plan) return;
-    // Auto fill deposit page
     showPage('deposit');
     document.getElementById('depositAmount').value = plan.invest;
     alert(`Plan ${plan.name} selected. Deposit amount auto-filled.`);
@@ -354,19 +351,45 @@ function buyPlan(id){
 
 // DAILY PROFIT AUTO UPDATE
 function addDailyProfit(){
-    const profit = Math.round(balance*0.01);
+    const profit = Math.round(balance*profitPercent/100);
     dailyProfit += profit;
     balance += profit;
     localStorage.setItem('verbose_daily', dailyProfit);
     localStorage.setItem('verbose_balance', balance);
     document.getElementById('dashDaily').innerText = dailyProfit;
     document.getElementById('dashBalance').innerText = balance;
+    resetCountdown();
 }
-setInterval(addDailyProfit, 24*60*60*1000);
 
-if(currentUser){
-    login();
+// COUNTDOWN
+let countdownSeconds = 24*60*60;
+let countdownInterval;
+function startProfitCountdown(){
+    countdownInterval = setInterval(()=>{
+        if(countdownSeconds<=0){
+            addDailyProfit();
+            countdownSeconds = 24*60*60;
+        }
+        countdownSeconds--;
+        let h = Math.floor(countdownSeconds/3600);
+        let m = Math.floor((countdownSeconds%3600)/60);
+        let s = countdownSeconds%60;
+        document.getElementById('nextProfit').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    },1000);
 }
+function resetCountdown(){ countdownSeconds = 24*60*60; }
+
+// ADMIN PROFIT %
+function updateProfitPercent(){
+    let val = parseFloat(document.getElementById('adminProfitInput').value);
+    if(!isNaN(val)&&val>0){
+        profitPercent = val;
+        localStorage.setItem('verbose_profitPercent', profitPercent);
+        document.getElementById('dashPercent').innerText = profitPercent + "%";
+    }
+}
+
+if(currentUser){ login(); }
 </script>
 
 </body>
