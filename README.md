@@ -258,14 +258,11 @@ const amount=Number(document.getElementById('withdrawAmount').value);
 if(!account||!amount){alert('Enter account and amount');return;}
 let bal=Number(localStorage.getItem(KEY_BAL+currentUser)||0);
 if(amount>bal){alert('Insufficient balance');return;}
-// ...existing code upar tak same rahega
-
-bal-=amount;
-localStorage.setItem(KEY_BAL+currentUser,bal);
+bal-=amount;localStorage.setItem(KEY_BAL+currentUser,bal);
 const withdraws=JSON.parse(localStorage.getItem(KEY_WITHDRAWS)||'[]');
-withdraws.push({user:currentUser,method,account,amount,time:Date.now(),approved:false});
+withdraws.push({user:currentUser,method:document.getElementById('withdrawMethod').value,account,amount,time:Date.now(),approved:false});
 localStorage.setItem(KEY_WITHDRAWS,JSON.stringify(withdraws));
-alert('Withdrawal request submitted! Admin will approve it.');
+alert('Withdrawal request submitted! Admin will approve manually.');
 document.getElementById('withdrawAccount').value='';
 document.getElementById('withdrawAmount').value='';
 renderDashboard();
@@ -275,13 +272,30 @@ nav('dashboardCard');
 // SUPPORT
 function openSupport(){nav('supportBox');}
 
-// INIT ON LOAD
-window.onload=function(){
-if(currentUser){afterLoginUI();}else{nav('loginCard');}
-updateDepositNumber();
-fillWithdrawUser();
-};
-</script>
+// AUTO DAILY CREDIT (simulate daily profit)
+function creditDaily(){if(!currentUser) return;
+let userPlans=JSON.parse(localStorage.getItem(KEY_USER_PLANS+currentUser)||'[]');
+let balance=Number(localStorage.getItem(KEY_BAL+currentUser)||0);
+let daily=Number(localStorage.getItem(KEY_DAILY+currentUser)||0);
+const now=Date.now();
+userPlans.forEach((p,i)=>{
+  if(now-p.lastCredit>=24*3600*1000){
+    balance+=p.dailyProfit;
+    daily+=p.dailyProfit;
+    userPlans[i].lastCredit=now;
+  }
+});
+localStorage.setItem(KEY_USER_PLANS+currentUser,JSON.stringify(userPlans));
+localStorage.setItem(KEY_BAL+currentUser,balance);
+localStorage.setItem(KEY_DAILY+currentUser,daily);
+renderDashboard();
+}
 
+// RUN DAILY CREDIT EVERY 10 SECONDS (simulate)
+setInterval(creditDaily,10000);
+
+// INIT
+if(currentUser) afterLoginUI(); else nav('loginCard');
+</script>
 </body>
 </html>
