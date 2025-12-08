@@ -362,7 +362,12 @@ function login(){
     document.getElementById('loginPage').classList.add('hidden');
     document.getElementById('dashboard').classList.remove('hidden');
     document.getElementById('bottomNav').classList.remove('hidden');
+    updateDepositNumber();
     renderPlans();
+    // fill withdraw username
+    if(document.getElementById('withdrawUsername')){
+        document.getElementById('withdrawUsername').value = currentUser;
+    }
 }
 
 // === LOGOUT ===
@@ -372,178 +377,119 @@ function logout(){
     document.getElementById('loginPage').classList.remove('hidden');
     document.getElementById('dashboard').classList.add('hidden');
     document.getElementById('bottomNav').classList.add('hidden');
-    document.getElementById('user').value='';
-    document.getElementById('pass').value='';
 }
 
-// === PAGES ===
-function showPage(id){
-    document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-    document.getElementById(id).classList.remove('hidden');
+// === NAVIGATION ===
+function showPage(pageId){
+    const pages = ['dashboard','plans','deposit','withdrawal','support'];
+    pages.forEach(p=>{
+        document.getElementById(p).classList.add('hidden');
+    });
+    document.getElementById(pageId).classList.remove('hidden');
 }
 
-// === COPY HELPERS ===
-function copyDepositNumber(){
-    const num = document.getElementById('depositNumber');
-    if(!num) return;
-    num.select();
-    num.setSelectionRange(0,99999);
-    document.execCommand('copy');
-    alert("Deposit number copied!");
-}
+// === REFERRAL COPY ===
 function copyReferral(){
     const ref = document.getElementById('refLink');
     ref.select();
-    ref.setSelectionRange(0,99999);
-    document.execCommand('copy');
-    alert("Referral link copied!");
+    ref.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(ref.value);
+    alert('Referral link copied!');
 }
 
-// === RENDER PLANS ===
-function renderPlans(){
-    const list = document.getElementById('plansList');
-    list.innerHTML = '';
-    plansData.forEach(p => {
-        const div = document.createElement('div');
-        div.className = 'plan-box';
-        const daily = Math.round(p.total / p.days);
-        div.innerHTML = `
-          <div class="meta">
-            <b>${p.name}</b>
-            <div class="small">${p.offer ? 'Special 24h Offer' : (p.coming ? 'Coming Soon' : 'Standard Plan')}</div>
-            <div class="small" style="margin-top:8px">Invest: Rs ${p.invest} · Days: ${p.days}</div>
-            <div class="small">Total Profit: Rs ${p.total} · Daily: Rs ${daily}</div>
-          </div>
-          <div class="actions">
-            <div id="countdownWrap${p.id}" style="margin-bottom:6px"><span class="countdown" id="countdown${p.id}"></span></div>
-            ${p.coming ? '<div class="small" style="color:rgba(255,255,255,0.6)">COMING SOON</div>' : `<button onclick="buyPlan(${p.id})">Buy Now</button>`}
-          </div>
-        `;
-        list.appendChild(div);
-        if(p.offer && !p.coming) startCountdown(p.id, 24*3600);
-    });
-}
-
-// === COUNTDOWN (persistent) ===
-let countdownIntervals = {};
-function startCountdown(id, seconds){
-    const display = document.getElementById(`countdown${id}`);
-    if(!display) return;
-    const key = `verbose_offer_${id}`;
-    let end = parseInt(localStorage.getItem(key) || '0', 10);
-    if(!end || isNaN(end) || end < Date.now()){
-        end = Date.now() + seconds*1000;
-        localStorage.setItem(key, String(end));
-    }
-    clearInterval(countdownIntervals[id]);
-    countdownIntervals[id] = setInterval(()=> {
-        const diff = Math.floor((end - Date.now())/1000);
-        if(diff <= 0){
-            display.innerText = "Offer ended";
-            clearInterval(countdownIntervals[id]);
-            return;
-        }
-        const h = Math.floor(diff/3600);
-        const m = Math.floor((diff%3600)/60);
-        const s = diff%60;
-        display.innerText = `${h}h ${m}m ${s}s`;
-    }, 1000);
-}
-
-// === BUY PLAN (auto-fill deposit) ===
-function buyPlan(id){
-    const plan = plansData.find(x=>x.id===id);
-    if(!plan) return;
-    document.getElementById('depositAmount').value = plan.invest;
-    document.getElementById('depositMethod').value = 'jazzcash';
-    updateDepositNumber();
-    showPage('deposit');
-    if(!userPlans.find(x=>x.planId===id)){
-        userPlans.push({planId:id, lastUpdate: Date.now(), dailyProfit: Math.round(plan.total/plan.days)});
-        localStorage.setItem('verbose_userPlans', JSON.stringify(userPlans));
-    }
-}
-
-// === DEPOSIT / WITHDRAW ===
+// === DEPOSIT ===
 const depositNumbers = { jazzcash:'03705519562', easypaisa:'03379827882' };
 function updateDepositNumber(){
-    document.getElementById('depositNumber').value = depositNumbers[document.getElementById('depositMethod').value] || '';
+    const method = document.getElementById('depositMethod').value;
+    document.getElementById('depositNumber').value = depositNumbers[method];
+    document.getElementById('depositAmount').value = '1000'; // default
+}
+function copyDepositNumber(){
+    const dep = document.getElementById('depositNumber');
+    dep.select();
+    dep.setSelectionRange(0,99999);
+    navigator.clipboard.writeText(dep.value);
+    alert('Deposit number copied!');
 }
 function submitDeposit(){
     const tx = document.getElementById('depositTxId').value.trim();
-    const proof = document.getElementById('depositProof').files[0];
-    const amount = parseFloat(document.getElementById('depositAmount').value) || 0;
-    if(!tx || !proof){ alert("Fill TX ID & upload proof"); return; }
-    balance = (parseFloat(localStorage.getItem('verbose_balance')) || 0) + amount;
-    localStorage.setItem('verbose_balance', String(balance));
-    document.getElementById('dashBalance').innerText = balance;
-    alert("Deposit submitted. Admin will verify and credit your account after confirmation.");
-    document.getElementById('depositTxId').value='';
-    document.getElementById('depositProof').value='';
-    showPage('dashboard');
+    const file = document.getElementById('depositProof').files[0];
+    if(!tx || !file){ alert('Enter TX ID & select proof'); return; }
+    alert('Deposit submitted! Admin will verify shortly.');
+    document.getElementById('depositTxId').value = '';
+    document.getElementById('depositProof').value = '';
 }
 
+// === WITHDRAWAL ===
 function submitWithdraw(){
-    const amt = parseFloat(document.getElementById('withdrawAmount').value);
+    const amt = parseFloat(document.getElementById('withdrawAmount').value.trim());
     const acc = document.getElementById('withdrawAccount').value.trim();
-    if(!amt || !acc){ alert("Enter amount & account"); return; }
-    if(amt > (parseFloat(localStorage.getItem('verbose_balance')) || 0)){ alert("Insufficient balance"); return; }
-    balance = (parseFloat(localStorage.getItem('verbose_balance')) || 0) - amt;
-    localStorage.setItem('verbose_balance', String(balance));
+    if(!amt || !acc){ alert('Enter valid amount & account'); return; }
+    if(amt > balance){ alert('Insufficient balance'); return; }
+    balance -= amt;
+    localStorage.setItem('verbose_balance', balance);
     document.getElementById('dashBalance').innerText = balance;
-    alert(`Withdrawal request of Rs ${amt} received. Admin will process it.`);
-    document.getElementById('withdrawAmount').value='';
-    document.getElementById('withdrawAccount').value='';
-    showPage('dashboard');
+    alert('Withdrawal request submitted! Admin will process it.');
+    document.getElementById('withdrawAmount').value = '';
+    document.getElementById('withdrawAccount').value = '';
 }
 
-// === DAILY PROFIT ENGINE ===
-function addDailyProfit(){
-    const now = Date.now();
-    userPlans.forEach(p=>{
-        const last = p.lastUpdate || now;
-        const daysPassed = Math.floor((now - last)/(1000*60*60*24));
-        if(daysPassed > 0){
-            const add = p.dailyProfit * daysPassed;
-            balance = (parseFloat(localStorage.getItem('verbose_balance')) || 0) + add;
-            dailyProfit = (parseFloat(localStorage.getItem('verbose_daily')) || 0) + add;
-            p.lastUpdate = now;
-        }
+// === PLANS RENDER ===
+function renderPlans(){
+    const container = document.getElementById('plansList');
+    if(!container) return;
+    container.innerHTML = '';
+    plansData.forEach(p=>{
+        const div = document.createElement('div');
+        div.className = 'plan-box';
+        div.innerHTML = `
+          <div class="meta">
+            <b>${p.name}</b>
+            <div class="small">Invest: Rs ${p.invest} | Days: ${p.days} | Total: Rs ${p.total}</div>
+            ${p.offer ? '<div class="offer">Special Offer!</div>': ''}
+            ${p.coming ? '<div class="small" style="color:#f33">Coming Soon</div>': ''}
+          </div>
+          <div class="actions">
+            ${p.coming ? '' : `<button onclick="buyPlan(${p.id})">Buy</button>`}
+          </div>
+        `;
+        container.appendChild(div);
     });
-    localStorage.setItem('verbose_balance', String(balance));
-    localStorage.setItem('verbose_daily', String(dailyProfit));
-    localStorage.setItem('verbose_userPlans', JSON.stringify(userPlans));
-    if(document.getElementById('dashBalance')) document.getElementById('dashBalance').innerText = balance;
-    if(document.getElementById('dashDaily')) document.getElementById('dashDaily').innerText = dailyProfit;
 }
 
-// === ONLOAD INITIALIZE ===
-window.onload = function(){
-    // restore values and UI
-    if(currentUser){
-        document.getElementById('dashUser').innerText = currentUser;
-        document.getElementById('dashBalance').innerText = balance;
-        document.getElementById('dashDaily').innerText = dailyProfit;
-        document.getElementById('dashSince').innerText = new Date().toLocaleDateString();
-        document.getElementById('refLink').value = `https://gtv140.github.io/verbose/?ref=${referralCode}`;
-        document.getElementById('loginPage').classList.add('hidden');
-        document.getElementById('dashboard').classList.remove('hidden');
-        document.getElementById('bottomNav').classList.remove('hidden');
-        updateDepositNumber();
-        renderPlans();
-    }
+// === BUY PLAN ===
+function buyPlan(planId){
+    const plan = plansData.find(p=>p.id===planId);
+    if(!plan){ alert('Plan not found'); return; }
+    if(balance < plan.invest){ alert('Insufficient balance'); return; }
+    balance -= plan.invest;
+    dailyProfit += Math.round(plan.total/plan.days);
+    userPlans.push({id:planId,start:new Date().toISOString()});
+    localStorage.setItem('verbose_balance', balance);
+    localStorage.setItem('verbose_daily', dailyProfit);
+    localStorage.setItem('verbose_userPlans', JSON.stringify(userPlans));
+    document.getElementById('dashBalance').innerText = balance;
+    document.getElementById('dashDaily').innerText = dailyProfit;
+    alert(`You bought ${plan.name}. Daily profit updated!`);
+}
 
-    // set withdraw username if logged in
+// AUTO LOGIN IF USER EXISTS
+if(currentUser){
+    document.getElementById('dashUser').innerText = currentUser;
+    document.getElementById('dashBalance').innerText = balance;
+    document.getElementById('dashDaily').innerText = dailyProfit;
+    document.getElementById('dashSince').innerText = new Date().toLocaleDateString();
+    document.getElementById('refLink').value = `https://gtv140.github.io/verbose/?ref=${referralCode}`;
+    document.getElementById('loginPage').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+    document.getElementById('bottomNav').classList.remove('hidden');
+    updateDepositNumber();
+    renderPlans();
     if(document.getElementById('withdrawUsername')){
-        document.getElementById('withdrawUsername').value = currentUser || '';
+        document.getElementById('withdrawUsername').value = currentUser;
     }
-
-    // daily profit updater every 1 hour
-    setInterval(addDailyProfit, 60*60*1000);
-    
-    // initial profit update on load
-    addDailyProfit();
-};
+}
 </script>
+
 </body>
 </html>
