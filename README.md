@@ -277,8 +277,8 @@ let referralCode = localStorage.getItem('verbose_referral') || '';
 // CREATE PLANS 1..25 (200 - 30000), 5 special offers, last 5 coming soon  
 for(let i=1;i<=25;i++){  
     const invest = Math.round(200 + (i-1)*(30000-200)/24);  
-    const days = 25 + Math.floor((i-1)*(70-25)/30);  
-    const multiplier = i<=5 ? 3 : 2.5;  
+    const days = 25 + Math.floor((i-1)*(78-25)/30);  
+    const multiplier = i<=5 ? 2.8 : 2.3;  
     const comingSoon = i > 25; // last 5 are coming soon (25-30)  
     plansData.push({  
       id:i,  
