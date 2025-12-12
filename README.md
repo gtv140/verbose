@@ -84,7 +84,6 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5);}
     <div class="small">Share this link to invite friends. Bonuses apply automatically.</div>
   </div>
 
-  <!-- HELP ICONS -->
   <div class="help-box">
     <a href="mailto:rock.earn92@gmail.com">📧 Email Support</a>
     <a href="https://chat.whatsapp.com/GJEVKhdDeNKCNkA8r3gONu" target="_blank">💬 WhatsApp Support</a>
@@ -166,7 +165,6 @@ let userPlans = JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');
 let referralCode = localStorage.getItem('verbose_referral')||'';
 let savedEndTimes = JSON.parse(localStorage.getItem('verbose_offerEndTimes')||'{}');
 let history = JSON.parse(localStorage.getItem('verbose_history')||'[]');
-let activePlans = JSON.parse(localStorage.getItem('verbose_activePlans')||'[]');
 let totalUsers = parseInt(localStorage.getItem('verbose_totalUsers')||'1');
 
 // ===== PLANS DATA =====
@@ -177,7 +175,7 @@ for(let i=1;i<=30;i++){
   else{ invest=4000+(i-8)*1000; multiplier=2.3; days=60+Math.floor((i-8)/3)*2; planName=`Plan ${i}`; special=false;}
   let endTime = savedEndTimes[i] || (special ? new Date().getTime()+24*60*60*1000 : new Date().getTime()+days*24*60*60*1000);
   if(special) savedEndTimes[i]=endTime;
-  plansData.push({id:i,name:planName,invest,days,total:Math.round(invest*multiplier),special,endTime});
+  plansData.push({id:i,name:planName,invest,days,total:Math.round(invest*multiplier),daily:Math.round((invest*multiplier)/days),special,endTime});
 }
 localStorage.setItem('verbose_offerEndTimes',JSON.stringify(savedEndTimes));
 
@@ -199,6 +197,7 @@ function copyReferral(){navigator.clipboard.writeText(document.getElementById('r
 function copyDepositNumber(){navigator.clipboard.writeText(document.getElementById('depositNumber').value); alert('Deposit number copied!');}
 function updateDepositNumber(){ const method=document.getElementById('depositMethod').value; document.getElementById('depositNumber').value=method==='jazzcash'?'03705519562':'03379827882';}
 
+// ===== DASHBOARD =====
 function updateDashboard(){
   document.getElementById('dashUser').innerText=currentUser;
   document.getElementById('dashBalance').innerText=balance.toFixed(2);
@@ -211,16 +210,31 @@ function updateDashboard(){
   renderPlans(); renderHistory(); updateActiveMembers(); updateActivePlans(); setTimeout(checkSpecialOffers,5000);
 }
 
+// ===== RENDER PLANS =====
 function renderPlans(){
   const list=document.getElementById('plansList'); list.innerHTML='';
   plansData.forEach(p=>{
     const div=document.createElement('div'); div.className='plan-box';
-    let countdownHTML=''; if(p.special){ countdownHTML=`<div class='small countdown' id='countdown${p.id}'></div>`; startCountdown(p.id); }
-    div.innerHTML=`<div class='meta'><b>${p.name}</b><div class='small'>Invest: Rs ${p.invest} | Total: Rs ${p.total} | Days: ${p.days}</div>${countdownHTML}</div><div class='actions'><button onclick='buyPlan(${p.id})'>Buy</button></div>`;
+    let countdownHTML=''; 
+    if(p.special){ countdownHTML=`<div class='small countdown' id='countdown${p.id}'></div>`; startCountdown(p.id); }
+    div.innerHTML=`<div class='meta'><b>${p.name}</b>
+      <div class='small'>Invest: Rs ${p.invest} | Total: Rs ${p.total} | Daily: Rs ${p.daily} | Days: ${p.days}</div>
+      ${countdownHTML}
+    </div>
+    <div class='actions'><button onclick='buyNow(${p.id})'>Buy Now</button></div>`;
     list.appendChild(div);
   });
 }
 
+// ===== BUY NOW =====
+function buyNow(id){
+  let plan = plansData.find(p=>p.id===id);
+  document.getElementById('depositAmount').value = plan.invest;
+  showPage('deposit');
+  addHistory(`Clicked Buy Now for ${plan.name} - Rs ${plan.invest}`);
+}
+
+// ===== COUNTDOWN =====
 function startCountdown(id){
   const el=document.getElementById('countdown'+id);
   if(!el) return;
@@ -229,104 +243,74 @@ function startCountdown(id){
     let now=Date.now();
     let diff=plan.endTime-now;
     if(diff<=0){el.innerText='Offer ended'; clearInterval(interval);}
-    else{ let h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000); el.innerText=`Ends in ${h}h ${m}m ${s}s`; }
+    else{ 
+      let h=Math.floor(diff/3600000);
+      let m=Math.floor((diff%3600000)/60000);
+      let s=Math.floor((diff%60000)/1000)/1000);
+      el.innerText=`Ends in: ${h}h ${m}m ${s}s`;
+    }
   },1000);
 }
 
-function buyPlan(id){
-  let plan=plansData.find(p=>p.id===id);
-  if(balance<plan.invest){alert('Insufficient balance'); return;}
-  balance-=plan.invest; dailyProfit+=plan.total/plan.days; userPlans.push(plan); activePlans.push(plan);
-  localStorage.setItem('verbose_balance',balance); localStorage.setItem('verbose_daily',dailyProfit); localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans)); localStorage.setItem('verbose_activePlans',JSON.stringify(activePlans));
-  addHistory(`Bought ${plan.name} for${plan.invest} Rs`);
-  updateDashboard();
-}
-
-// ===== HISTORY =====
-function addHistory(text){
-  const now = new Date().toLocaleString();
-  history.push({text, time: now});
-  localStorage.setItem('verbose_history', JSON.stringify(history));
-  renderHistory();
-}
-
-function renderHistory(){
-  const list = document.getElementById('historyList');
-  if(!list) return;
-  list.innerHTML = '';
-  history.slice().reverse().forEach(h=>{
-    const div = document.createElement('div');
-    div.className = 'plan-box';
-    div.innerHTML = `<div class='meta'><b>${h.text}</b><div class='small'>${h.time}</div></div>`;
-    list.appendChild(div);
-  });
-}
-
 // ===== ACTIVE MEMBERS & PLANS =====
-function updateActiveMembers(){
-  document.getElementById('activeMembers').innerText = totalUsers;
-}
-
+function updateActiveMembers(){ document.getElementById('activeMembers').innerText=totalUsers; }
 function updateActivePlans(){
-  const box = document.getElementById('activePlansBox');
-  box.innerHTML = '';
-  activePlans.forEach(p=>{
-    const div = document.createElement('div');
-    div.className = 'plan-box';
-    div.innerHTML = `<div class='meta'><b>${p.name}</b><div class='small'>Invested: Rs ${p.invest} | Total: Rs ${p.total}</div></div>`;
+  const box=document.getElementById('activePlansBox'); box.innerHTML='';
+  userPlans.forEach(p=>{ 
+    let div=document.createElement('div'); div.className='plan-box';
+    div.innerHTML=`<div class='meta'><b>${p.name}</b><div class='small'>Invested: Rs ${p.invest} | Total: Rs ${p.total}</div></div>`;
     box.appendChild(div);
   });
 }
 
-// ===== SPECIAL OFFERS POPUP =====
-function checkSpecialOffers(){
-  plansData.forEach(p=>{
-    if(p.special && Date.now() < p.endTime){
-      showPopup(`${p.name} special offer is live! Invest Rs ${p.invest} for Rs ${p.total} return in ${p.days} days.`);
-    }
+// ===== HISTORY =====
+function addHistory(txt){ 
+  history.push({txt,time:new Date().toLocaleString()}); 
+  localStorage.setItem('verbose_history',JSON.stringify(history));
+  renderHistory();
+}
+function renderHistory(){
+  const list=document.getElementById('historyList'); list.innerHTML='';
+  history.slice().reverse().forEach(h=>{
+    let div=document.createElement('div'); div.className='alert-box';
+    div.innerHTML=`${h.time}: ${h.txt}`; list.appendChild(div);
   });
 }
 
-function showPopup(msg){
-  const popup = document.getElementById('popup');
-  popup.classList.remove('hidden');
-  document.getElementById('popupText').innerText = msg;
-}
-
-function closePopup(){
-  document.getElementById('popup').classList.add('hidden');
-}
-
-// ===== DEPOSIT =====
+// ===== DEPOSIT & WITHDRAW =====
 function submitDeposit(){
-  const method = document.getElementById('depositMethod').value;
-  const amount = parseFloat(document.getElementById('depositAmount').value);
-  const tx = document.getElementById('depositTxId').value.trim();
-  if(!amount || !tx){ alert('Enter amount & transaction ID'); return; }
-  addHistory(`Deposit request: Rs ${amount} via ${method} (TX: ${tx})`);
-  alert('Deposit submitted. Admin will review.');
-  document.getElementById('depositAmount').value='';
-  document.getElementById('depositTxId').value='';
-  document.getElementById('depositProof').value='';
+  const amt=parseFloat(document.getElementById('depositAmount').value);
+  if(isNaN(amt)||amt<=0){alert('Enter valid amount');return;}
+  balance+=amt; dailyProfit+=amt*0.02; 
+  localStorage.setItem('verbose_balance',balance);
+  localStorage.setItem('verbose_daily',dailyProfit);
+  addHistory(`Deposit: Rs ${amt}`);
+  alert('Deposit submitted successfully!');
+  updateDashboard();
+}
+function submitWithdraw(){
+  const amt=parseFloat(document.getElementById('withdrawAmount').value);
+  if(isNaN(amt)||amt<=0||amt>balance){alert('Invalid amount'); return;}
+  balance-=amt; localStorage.setItem('verbose_balance',balance);
+  addHistory(`Withdrawal requested: Rs ${amt}`);
+  alert('Withdrawal request sent!');
+  updateDashboard();
 }
 
-// ===== WITHDRAW =====
-function submitWithdraw(){
-  const method = document.getElementById('withdrawMethod').value;
-  const acc = document.getElementById('withdrawAccount').value.trim();
-  const amount = parseFloat(document.getElementById('withdrawAmount').value);
-  if(!acc || !amount){ alert('Enter account & amount'); return; }
-  if(amount>balance){ alert('Insufficient balance'); return; }
-  balance -= amount; localStorage.setItem('verbose_balance', balance);
-  addHistory(`Withdrawal request: Rs ${amount} via ${method} to ${acc}`);
-  updateDashboard();
-  alert('Withdrawal submitted. Admin will review.');
-  document.getElementById('withdrawAccount').value='';
-  document.getElementById('withdrawAmount').value='';
+// ===== REFERRAL =====
+function checkSpecialOffers(){
+  plansData.filter(p=>p.special).forEach(p=>{
+    if(Date.now()>p.endTime){renderPlans();}
+  });
 }
+
+// ===== POPUP =====
+function showPopup(txt){ document.getElementById('popupText').innerText=txt; document.getElementById('popup').classList.remove('hidden'); }
+function closePopup(){ document.getElementById('popup').classList.add('hidden'); }
 
 // ===== INIT =====
 if(currentUser){ updateDashboard(); } else { showPage('loginPage'); }
 </script>
+
 </body>
 </html>
