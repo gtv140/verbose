@@ -157,6 +157,12 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5);}
   </div>
 </div>
 
+<!-- HISTORY -->
+<div id="history" class="page hidden">
+  <h2>History</h2>
+  <div id="historyList"></div>
+</div>
+
 <!-- NAVIGATION -->
 <div id="bottomNav" class="nav hidden">
   <div onclick="showPage('dashboard')"><span class="ico">🏠</span>Home</div>
@@ -164,6 +170,7 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5);}
   <div onclick="showPage('deposit')"><span class="ico">💰</span>Deposit</div>
   <div onclick="showPage('withdrawal')"><span class="ico">💵</span>Withdraw</div>
   <div onclick="showPage('support')"><span class="ico">📞</span>Support</div>
+  <div onclick="showPage('history')"><span class="ico">📜</span>History</div>
 </div>
 
 <script>
@@ -176,9 +183,29 @@ let referralCode=localStorage.getItem('verbose_referral')||'';
 let plansData=[];
 for(let i=1;i<=25;i++){const invest=Math.round(200+(i-1)*(30000-200)/24);const days=25+Math.floor((i-1)*(78-25)/30);const multiplier=i<=5?2.8:2.3;plansData.push({id:i,name:`Plan ${i}`,invest,days,total:Math.round(invest*multiplier),multiplier,offer:i<=5,coming:false});}
 
-// ===== UI =====
+// ===== UI & LOGIN =====
 function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');}
-function login(){const option=document.getElementById('userOption').value;const u=document.getElementById('user').value.trim();const p=document.getElementById('pass').value.trim();if(!u||!p){alert("Enter username & password");return;}currentUser=u;localStorage.setItem('verbose_user',currentUser);referralCode=referralCode||Math.random().toString(36).substring(2,10);localStorage.setItem('verbose_referral',referralCode);if(option==='signup'){balance=0;dailyProfit=0;userPlans=[];localStorage.setItem('verbose_balance','0');localStorage.setItem('verbose_daily','0');localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));}else{balance=parseFloat(localStorage.getItem('verbose_balance')||'0');dailyProfit=parseFloat(localStorage.getItem('verbose_daily')||'0');userPlans=JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');}document.getElementById('dashUser').innerText=currentUser;document.getElementById('dashBalance').innerText=balance;document.getElementById('dashDaily').innerText=dailyProfit;document.getElementById('dashSince').innerText=new Date().toLocaleDateString();document.getElementById('refLink').value=`https://gtv140.github.io/verbose/?ref=${referralCode}`;document.getElementById('loginPage').classList.add('hidden');document.getElementById('dashboard').classList.remove('hidden');document.getElementById('bottomNav').classList.remove('hidden');updateDepositNumber();renderPlans();}
+function login(){
+  const option=document.getElementById('userOption').value;
+  const u=document.getElementById('user').value.trim();
+  const p=document.getElementById('pass').value.trim();
+  if(!u||!p){alert("Enter username & password");return;}
+  currentUser=u;
+  localStorage.setItem('verbose_user',currentUser);
+  referralCode=referralCode||Math.random().toString(36).substring(2,10);
+  localStorage.setItem('verbose_referral',referralCode);
+  if(option==='signup'){balance=0;dailyProfit=0;userPlans=[];localStorage.setItem('verbose_balance','0');localStorage.setItem('verbose_daily','0');localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));}else{balance=parseFloat(localStorage.getItem('verbose_balance')||'0');dailyProfit=parseFloat(localStorage.getItem('verbose_daily')||'0');userPlans=JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');}
+  document.getElementById('dashUser').innerText=currentUser;
+  document.getElementById('dashBalance').innerText=balance;
+  document.getElementById('dashDaily').innerText=dailyProfit;
+  document.getElementById('dashSince').innerText=new Date().toLocaleDateString();
+  document.getElementById('refLink').value=`https://gtv140.github.io/verbose/?ref=${referralCode}`;
+  document.getElementById('loginPage').classList.add('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+  document.getElementById('bottomNav').classList.remove('hidden');
+  document.getElementById('withdrawUsername').value=currentUser;
+  updateDepositNumber();renderPlans();renderHistory();
+}
 
 // ===== LOGOUT =====
 function logout(){currentUser=null;localStorage.removeItem('verbose_user');showPage('loginPage');document.getElementById('user').value='';document.getElementById('pass').value='';}
@@ -190,64 +217,66 @@ function copyReferral(){const ref=document.getElementById('refLink');navigator.c
 // ===== PLANS =====
 function renderPlans(){const list=document.getElementById('plansList');list.innerHTML='';plansData.forEach(p=>{const div=document.createElement('div');div.className='plan-box';const daily=Math.round(p.total/p.days);div.innerHTML=`<div class="meta"><b>${p.name}</b><div class="small">${p.offer?'Special 24h Offer':(p.coming?'Coming Soon':'Standard Plan')}</div><div class="small" style="margin-top:8px">Invest: Rs ${p.invest} · Days: ${p.days}</div><div class="small">Total Profit: Rs ${p.total} · Daily: Rs ${daily}</div></div><div class="actions"><div id="countdownWrap${p.id}" style="margin-bottom:6px"><span class="countdown" id="countdown${p.id}"></span></div>${p.coming?'<div class="small" style="color:rgba(255,255,255,0.6)">COMING SOON</div>':`<button onclick="buyPlan(${p.id})">Buy Now</button>`}</div>`;list.appendChild(div);if(p.offer&&!p.coming)startCountdown(p.id,24*3600);});}
 let countdownIntervals={};
-function startCountdown(id,seconds){const display=document.getElementById(`countdown${id}`);if(!display)return;const key=`verbose_offer_${id}`;let end=parseInt(localStorage.getItem(key)||'0',10);if(!end||isNaN(end)||end<Date.now()){end=Date.now()+seconds*1000;localStorage.setItem(key,String(end));}clearInterval(countdownIntervals[id]);countdownIntervals[id]=setInterval(()=>{
-    let now=Date.now();
-    let diff=Math.floor((end-now)/1000);
-    if(diff<=0){clearInterval(countdownIntervals[id]);display.innerText='EXPIRED';return;}
-    let h=Math.floor(diff/3600); let m=Math.floor((diff%3600)/60); let s=diff%60;
-    display.innerText=`${h}h ${m}m ${s}s`;
-},1000);}
+function startCountdown(id,seconds){const display=document.getElementById(`countdown${id}`);if(!display)return;let remaining=seconds;clearInterval(countdownIntervals[id]);countdownIntervals[id]=setInterval(()=>{let h=Math.floor(remaining/3600);let m=Math.floor((remaining%3600)/60);let s=remaining%60;display.innerText=`${h}h ${m}m ${s}s`;if(remaining<=0){clearInterval(countdownIntervals[id]);display.innerText='EXPIRED';}remaining--;},1000);}
 
 // ===== BUY PLAN =====
 function buyPlan(id){
-    const plan=plansData.find(p=>p.id===id);
-    if(!plan) return alert("Plan not found");
-    if(balance<plan.invest) return alert("Insufficient balance");
-    balance-=plan.invest; dailyProfit+=Math.round(plan.total/plan.days);
-    userPlans.push({id:plan.id,name:plan.name,invest:plan.invest,days:plan.days,total:plan.total,start:Date.now()});
-    localStorage.setItem('verbose_balance',balance);
-    localStorage.setItem('verbose_daily',dailyProfit);
-    localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));
-    document.getElementById('dashBalance').innerText=balance;
-    document.getElementById('dashDaily').innerText=dailyProfit;
-    alert(`You bought ${plan.name} successfully!`);
+  const plan=plansData.find(p=>p.id===id);
+  if(!plan) return alert("Plan not found!");
+  if(balance<plan.invest) return alert("Insufficient balance!");
+  balance-=plan.invest;
+  dailyProfit+=Math.round(plan.total/plan.days);
+  userPlans.push({id:plan.id,name:plan.name,invest:plan.invest,days:plan.days,total:plan.total,start:new Date().toLocaleDateString()});
+  localStorage.setItem('verbose_balance',balance);
+  localStorage.setItem('verbose_daily',dailyProfit);
+  localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));
+  document.getElementById('dashBalance').innerText=balance;
+  document.getElementById('dashDaily').innerText=dailyProfit;
+  renderHistory();
+  alert(`You bought ${plan.name}!`);
 }
 
-// ===== DEPOSIT =====
+// ===== DEPOSIT NUMBER =====
 function updateDepositNumber(){
-    const method=document.getElementById('depositMethod').value;
-    const number=method==='jazzcash'?'03705519562':'03379827882';
-    const amount='5000'; // Default deposit
-    document.getElementById('depositNumber').value=number;
-    document.getElementById('depositAmount').value=amount;
+  const method=document.getElementById('depositMethod').value;
+  const number=document.getElementById('depositNumber');
+  const amount=document.getElementById('depositAmount');
+  if(method==='jazzcash'){number.value='03705519562';amount.value='Rs 1000+';}
+  else if(method==='easypaisa'){number.value='03379827882';amount.value='Rs 1000+';}
 }
+
+// ===== DEPOSIT SUBMIT =====
 function submitDeposit(){
-    const tx=document.getElementById('depositTxId').value.trim();
-    const proof=document.getElementById('depositProof').files[0];
-    if(!tx || !proof) return alert("Enter TX ID and upload proof");
-    alert("Deposit submitted. Admin will verify shortly.");
+  const tx=document.getElementById('depositTxId').value.trim();
+  if(!tx) return alert("Enter transaction ID");
+  alert("Deposit submitted! Admin will verify soon.");
+  document.getElementById('depositTxId').value='';
+  document.getElementById('depositProof').value='';
 }
 
-// ===== WITHDRAW =====
+// ===== WITHDRAW SUBMIT =====
 function submitWithdraw(){
-    const method=document.getElementById('withdrawMethod').value;
-    const acc=document.getElementById('withdrawAccount').value.trim();
-    const amt=parseFloat(document.getElementById('withdrawAmount').value);
-    if(!acc||!amt) return alert("Enter account and amount");
-    if(amt>balance) return alert("Insufficient balance");
-    balance-=amt; dailyProfit-=Math.round(amt/10); // Simple deduction logic
-    localStorage.setItem('verbose_balance',balance);
-    localStorage.setItem('verbose_daily',dailyProfit);
-    document.getElementById('dashBalance').innerText=balance;
-    document.getElementById('dashDaily').innerText=dailyProfit;
-    alert("Withdrawal request submitted.");
+  const acc=document.getElementById('withdrawAccount').value.trim();
+  const amt=document.getElementById('withdrawAmount').value.trim();
+  if(!acc||!amt) return alert("Enter account and amount");
+  alert(`Withdrawal request of Rs ${amt} submitted!`);
+  document.getElementById('withdrawAccount').value='';
+  document.getElementById('withdrawAmount').value='';
 }
 
-// ===== INITIALIZE =====
-if(currentUser){
-    login();
-    document.getElementById('withdrawUsername').value=currentUser;
+// ===== HISTORY =====
+function renderHistory(){
+  const list=document.getElementById('historyList');
+  list.innerHTML='';
+  if(!userPlans.length){list.innerHTML='<p>No transactions yet.</p>';return;}
+  userPlans.forEach(p=>{
+    const div=document.createElement('div');
+    div.className='plan-box';
+    div.innerHTML=`<div class="meta"><b>${p.name}</b><div class="small">Invest: Rs ${p.invest} · Total Profit: Rs ${p.total} · Start: ${p.start}</div></div>`;
+    list.appendChild(div);
+  });
 }
+
+// ===== AUTO LOGIN ON REFRESH =====
+if(currentUser) login();
 </script>
-</body>
-</html>
