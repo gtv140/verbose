@@ -1,7 +1,7 @@
-<!DOCTYPE html>
+<VERBOSE>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>VERBOSE Dashboard</title>
 <style>
@@ -97,7 +97,7 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5);}
     <button onclick="copyDepositNumber()" style="width:110px">Copy</button>
   </div>
   <label style="margin-top:12px">Amount</label>
-  <input id="depositAmount" readonly />
+  <input id="depositAmount" placeholder="Enter Amount" />
   <label>Transaction ID</label>
   <input id="depositTxId" placeholder="TX ID" />
   <label>Upload Proof</label>
@@ -115,7 +115,6 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5);}
     <option value="easypaisa">EasyPaisa</option>
     <option value="bank">Bank</option>
   </select>
-  <input id="withdrawUsername" readonly placeholder="Username" />
   <input id="withdrawAccount" placeholder="Account Number" />
   <input id="withdrawAmount" placeholder="Amount" />
   <button onclick="submitWithdraw()">Request Withdrawal</button>
@@ -132,25 +131,20 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5);}
 <div id="support" class="page hidden">
   <div class="support-box">
     <h2>Contact Admin</h2>
-    <div class="support-grid">
-      <div class="support-item">
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <div style="flex:1;min-width:150px;">
         <div class="icon">💬</div>
-        <div>
-          <p><strong>WhatsApp Support</strong></p>
-          <p class="small">Fastest support via group or admin message.</p>
-          <p style="margin-top:6px"><a href="https://chat.whatsapp.com/Kmaiv3VdSo09rio4qcRTRM" target="_blank">Join WhatsApp Group</a></p>
-        </div>
+        <p><strong>WhatsApp Support</strong></p>
+        <p class="small">Fastest support via group or admin message.</p>
+        <p><a href="https://chat.whatsapp.com/Kmaiv3VdSo09rio4qcRTRM" target="_blank">Join WhatsApp Group</a></p>
       </div>
-      <div class="support-item">
+      <div style="flex:1;min-width:150px;">
         <div class="icon">📧</div>
-        <div>
-          <p><strong>Email Support</strong></p>
-          <p class="small">Send proofs or queries via email.</p>
-          <p style="margin-top:6px"><a href="mailto:rock.earn92@gmail.com">rock.earn92@gmail.com</a></p>
-        </div>
+        <p><strong>Email Support</strong></p>
+        <p class="small">Send proofs or queries via email.</p>
+        <p><a href="mailto:rock.earn92@gmail.com">rock.earn92@gmail.com</a></p>
       </div>
     </div>
-    <p class="small" style="text-align:center;margin-top:10px;color:var(--neon);font-weight:800;">VERBOSE — Secure. Transparent. Professional.</p>
   </div>
 </div>
 
@@ -167,27 +161,27 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5);}
 <script>
 // ===== STORAGE =====
 let currentUser = localStorage.getItem('verbose_user')||null;
-let balance = parseFloat(localStorage.getItem('verbose_balance')||'0');
+let balance = parseFloat(localStorage.getItem('verbose_balance')||'5000');
 let dailyProfit = parseFloat(localStorage.getItem('verbose_daily')||'0');
 let userPlans = JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');
 let referralCode = localStorage.getItem('verbose_referral')||'';
-let history = JSON.parse(localStorage.getItem('verbose_history')||'[]');
 let savedEndTimes = JSON.parse(localStorage.getItem('verbose_offerEndTimes')||'{}');
+let history = JSON.parse(localStorage.getItem('verbose_history')||'[]');
 
 // ===== PLANS DATA =====
 let plansData=[];
-for(let i=1;i<=30;i++){
+for(let i=1;i<=10;i++){
   let invest, days, multiplier, planName, special;
-  if(i<=7){
+  if(i<=3){
     invest = 200 + (i-1)*400;
     multiplier = 2.8;
     days = 25 + (i-1)*5;
     planName = `Special Plan ${i}`;
     special = true;
   } else {
-    invest = 4000 + (i-8)*1000;
+    invest = 4000 + (i-4)*1000;
     multiplier = 2.3;
-    days = 60 + Math.floor((i-8)/3)*2;
+    days = 60 + Math.floor((i-4)/2)*2;
     planName = `Plan ${i}`;
     special = false;
   }
@@ -198,7 +192,10 @@ for(let i=1;i<=30;i++){
 localStorage.setItem('verbose_offerEndTimes',JSON.stringify(savedEndTimes));
 
 // ===== UI =====
-function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');}
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
 function login(){
   const option=document.getElementById('userOption').value;
   const u=document.getElementById('user').value.trim();
@@ -208,11 +205,16 @@ function login(){
   localStorage.setItem('verbose_user',currentUser);
   referralCode=referralCode||Math.random().toString(36).substring(2,10);
   localStorage.setItem('verbose_referral',referralCode);
-  if(option==='signup'){balance=0;dailyProfit=0;userPlans=[];localStorage.setItem('verbose_balance','0');localStorage.setItem('verbose_daily','0');localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));}
-  document.getElementById('withdrawUsername').value=currentUser;
+  if(option==='signup'){
+    balance=5000; dailyProfit=0; userPlans=[];
+    localStorage.setItem('verbose_balance',balance);
+    localStorage.setItem('verbose_daily',dailyProfit);
+    localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));
+  }
   updateDashboard();
 }
 
+// ===== DASHBOARD =====
 function updateDashboard(){
   document.getElementById('dashUser').innerText=currentUser;
   document.getElementById('dashBalance').innerText=balance;
@@ -223,29 +225,21 @@ function updateDashboard(){
   document.getElementById('dashboard').classList.remove('hidden');
   document.getElementById('bottomNav').classList.remove('hidden');
   renderPlans();
+  renderHistory();
 }
 
-// ===== LOGOUT =====
-function logout(){
-  currentUser=null;
-  localStorage.removeItem('verbose_user');
-  showPage('loginPage');
-  document.getElementById('user').value='';
-  document.getElementById('pass').value='';
-}
-
-// ===== REFERRAL & DEPOSIT =====
+// ===== REFERRAL =====
 function copyReferral(){navigator.clipboard.writeText(document.getElementById('refLink').value); alert("Referral link copied!");}
 function copyDepositNumber(){navigator.clipboard.writeText(document.getElementById('depositNumber').value); alert("Deposit number copied!");}
 
 // ===== RENDER PLANS =====
 function renderPlans(){
-  const list=document.getElementById('plansList');list.innerHTML='';
+  const list=document.getElementById('plansList'); list.innerHTML='';
   plansData.forEach(p=>{
-    const div=document.createElement('div');div.className='plan-box';
-    let countdownHTML = '';
+    const div=document.createElement('div'); div.className='plan-box';
+    let countdownHTML='';
     if(p.special){ 
-      countdownHTML = `<div class="small countdown" id="countdown${p.id}"></div>`; 
+      countdownHTML=`<div class="small countdown" id="countdown${p.id}"></div>`; 
       startCountdown(p.id); 
     }
     div.innerHTML=`
@@ -256,71 +250,115 @@ function renderPlans(){
         <div class="small" style="margin-top:8px">Invest: Rs ${p.invest} · Days: ${p.days}</div>
         <div class="small">Total Profit: Rs ${p.total}</div>
         <div class="small">Daily Profit: Rs ${Math.round(p.total/p.days)}</div>
-        <div style="background:rgba(0,255,240,0.1);border-radius:8px;height:10px;margin-top:6px;overflow:hidden;">
-          <div style="width:${Math.min(100,(p.days/70)*100)}%;background:linear-gradient(90deg,var(--neon),var(--accent));height:100%;"></div>
-        </div>
       </div>
       <div class="actions"><button onclick="buyPlan(${p.id})">Buy Now</button></div>`;
     list.appendChild(div);
   });
 }
 
-// ===== COUNTDOWN SPECIAL OFFERS =====
+// ===== COUNTDOWN SPECIAL =====
 function startCountdown(id){
-  let plan = plansData.find(p=>p.id===id);
-  if(!plan || !plan.special) return;
+  const countdownEl = document.getElementById(`countdown${id}`);
+  if(!countdownEl) return;
+  const endTime = savedEndTimes[id];
   const interval = setInterval(()=>{
     const now = new Date().getTime();
-    const distance = plan.endTime - now;
-    if(distance<0){ 
-      document.getElementById(`countdown${id}`).innerText='Offer Expired'; 
-      clearInterval(interval); 
+    const distance = endTime - now;
+    if(distance <=0){
+      countdownEl.innerText = "Offer expired";
+      clearInterval(interval);
       return;
     }
-    const h = Math.floor(distance/(1000*60*60));
-    const m = Math.floor((distance % (1000*60*60))/(1000*60));
-    const s = Math.floor((distance % (1000*60))/1000);
-    document.getElementById(`countdown${id}`).innerText = `Offer ends in ${h}h ${m}m ${s}s`;
+    const hrs = Math.floor((distance%(1000*60*60*24))/(1000*60*60));
+    const mins = Math.floor((distance%(1000*60*60))/(1000*60));
+    const secs = Math.floor((distance%(1000*60))/1000);
+    countdownEl.innerText = `Ends in: ${hrs}h ${mins}m ${secs}s`;
   },1000);
 }
 
 // ===== BUY PLAN =====
 function buyPlan(id){
-  let plan = plansData.find(p=>p.id===id);
-  if(!plan) return;
-  if(balance < plan.invest){alert("Insufficient balance!"); return;}
+  const plan = plansData.find(p=>p.id===id);
+  if(balance < plan.invest){alert("Insufficient balance to buy this plan.");return;}
   balance -= plan.invest;
   dailyProfit += Math.round(plan.total/plan.days);
-  userPlans.push({id:plan.id,name:plan.name,invest:plan.invest,daily:Math.round(plan.total/plan.days),total:plan.total,days:plan.days,start:new Date().getTime()});
-  localStorage.setItem('verbose_balance',balance);
-  localStorage.setItem('verbose_daily',dailyProfit);
-  localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));
+  userPlans.push({id:plan.id,name:plan.name,start:new Date().getTime(),days:plan.days,end:new Date().getTime()+plan.days*24*60*60*1000});
+  history.push({type:'Plan Bought',name:plan.name,amount:plan.invest,date:new Date().todate.toLocaleString()});
+  localStorage.setItem('verbose_balance', balance);
+  localStorage.setItem('verbose_daily', dailyProfit);
+  localStorage.setItem('verbose_userPlans', JSON.stringify(userPlans));
+  localStorage.setItem('verbose_history', JSON.stringify(history));
   updateDashboard();
   alert(`You bought ${plan.name} successfully!`);
 }
 
+// ===== LOGOUT =====
+function logout(){
+  currentUser = null;
+  localStorage.removeItem('verbose_user');
+  document.getElementById('dashboard').classList.add('hidden');
+  document.getElementById('loginPage').classList.remove('hidden');
+  document.getElementById('bottomNav').classList.add('hidden');
+}
+
 // ===== DEPOSIT =====
+const depositNumbers = {jazzcash:'03705519562', easypaisa:'03379827882'};
 function updateDepositNumber(){
   const method = document.getElementById('depositMethod').value;
-  let number = method==='jazzcash'?'03705519562':'03379827882';
-  document.getElementById('depositNumber').value=number;
-  document.getElementById('depositAmount').value='Minimum Rs 100';
+  document.getElementById('depositNumber').value = depositNumbers[method];
 }
+updateDepositNumber();
 function submitDeposit(){
-  alert("Deposit submitted. Admin will verify.");
+  const method = document.getElementById('depositMethod').value;
+  const amount = parseFloat(document.getElementById('depositAmount').value);
+  const txid = document.getElementById('depositTxId').value.trim();
+  if(!amount || !txid){alert("Enter valid amount and TX ID"); return;}
+  balance += amount;
+  history.push({type:'Deposit',method,amount,date:new Date().toLocaleString(),txid});
+  localStorage.setItem('verbose_balance', balance);
+  localStorage.setItem('verbose_history', JSON.stringify(history));
+  alert(`Deposit of Rs ${amount} added!`);
+  document.getElementById('depositAmount').value='';
+  document.getElementById('depositTxId').value='';
 }
 
 // ===== WITHDRAW =====
 function submitWithdraw(){
-  alert("Withdrawal request submitted.");
+  const method = document.getElementById('withdrawMethod').value;
+  const account = document.getElementById('withdrawAccount').value.trim();
+  const amount = parseFloat(document.getElementById('withdrawAmount').value);
+  if(!account || !amount){alert("Enter account and amount"); return;}
+  if(amount>balance){alert("Insufficient balance"); return;}
+  balance -= amount;
+  history.push({type:'Withdraw',method,account,amount,date:new Date().toLocaleString()});
+  localStorage.setItem('verbose_balance', balance);
+  localStorage.setItem('verbose_history', JSON.stringify(history));
+  updateDashboard();
+  alert(`Withdrawal request of Rs ${amount} submitted!`);
+  document.getElementById('withdrawAccount').value='';
+  document.getElementById('withdrawAmount').value='';
 }
 
-// ===== INIT =====
-window.onload = ()=>{
-  if(currentUser) updateDashboard();
-  updateDepositNumber();
-  renderPlans();
+// ===== HISTORY =====
+function renderHistory(){
+  const list = document.getElementById('historyList');
+  list.innerHTML='';
+  if(history.length===0){list.innerHTML='<p class="small">No history yet.</p>'; return;}
+  history.slice().reverse().forEach(h=>{
+    const div = document.createElement('div');
+    div.className='plan-box';
+    div.innerHTML=`<div class="meta">
+      <b>${h.type}</b>
+      <div class="small">${h.name||''}${h.method?' ('+h.method+')':''}</div>
+      <div class="small">Amount: Rs ${h.amount}</div>
+      <div class="small">Date: ${h.date}</div>
+    </div>`;
+    list.appendChild(div);
+  });
 }
+
+// ===== INITIAL LOAD =====
+if(currentUser) updateDashboard();
 </script>
 </body>
 </html>
