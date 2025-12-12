@@ -169,7 +169,7 @@ for(let i=1;i<=30;i++){
 }
 localStorage.setItem('verbose_offerEndTimes',JSON.stringify(savedEndTimes));
 
-// ===== UI =====
+// ===== UI FUNCTIONS =====
 function showPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
@@ -203,14 +203,11 @@ function updateDashboard(){
   renderPlans();
   renderHistory();
 }
-function logout(){
-  currentUser=null; localStorage.removeItem('verbose_user'); location.reload();
-}
+function logout(){ currentUser=null; localStorage.removeItem('verbose_user'); location.reload(); }
 function copyReferral(){navigator.clipboard.writeText(document.getElementById('refLink').value); alert("Referral link copied!");}
 function copyDepositNumber(){navigator.clipboard.writeText(document.getElementById('depositNumber').value); alert("Deposit number copied!");}
 function updateDepositNumber(){ 
   const method=document.getElementById('depositMethod').value;
-  const amount = document.getElementById('depositAmount').value || 100;
   document.getElementById('depositNumber').value = method==='jazzcash'?'03705519562':'03379827882';
 }
 
@@ -238,7 +235,7 @@ function renderPlans(){
   });
 }
 
-// ===== COUNTDOWN SPECIAL =====
+// ===== COUNTDOWN =====
 function startCountdown(id){
   const el=document.getElementById(`countdown${id}`);
   if(!el) return;
@@ -257,7 +254,6 @@ function startCountdown(id){
 // ===== BUY PLAN =====
 function buyPlan(id){
   const plan=plansData.find(p=>p.id===id);
-  if(balance<plan.invest){alert("Insufficient balance"); return;}
   document.getElementById('depositAmount').value=plan.invest;
   showPage('deposit');
   updateDepositNumber();
@@ -290,14 +286,17 @@ function renderHistory(){
   history.slice().reverse().forEach(h=>{
     const div=document.createElement('div');
     div.className='plan-box';
-    div.innerHTML=`<div class="meta"><b>${h.type}</b><div class="small">Amount: Rs ${h.amount}</div><div class="small">Date: ${h.date}</div></div>`;
+    div.innerHTML=`<div class="meta"><b>${h.type}</b><div class="small">Amount: Rs ${h.amount}</div><div class="small">${h.date}</div></div>`;
     list.appendChild(div);
   });
 }
 
 // ===== INITIAL LOAD =====
-if(currentUser){ updateDashboard(); showPage('dashboard'); } else { showPage('loginPage'); }
-
+if(currentUser){
+  updateDashboard();
+}else{
+  showPage('loginPage');
+}
 </script>
 </body>
 </html>
