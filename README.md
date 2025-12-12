@@ -156,7 +156,7 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5);}
 <script>
 // ===== STORAGE =====
 let currentUser = localStorage.getItem('verbose_user')||null;
-let balance = parseFloat(localStorage.getItem('verbose_balance')||'5000');
+let balance = parseFloat(localStorage.getItem('verbose_balance')||'20');
 let dailyProfit = parseFloat(localStorage.getItem('verbose_daily')||'0');
 let userPlans = JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');
 let referralCode = localStorage.getItem('verbose_referral')||'';
