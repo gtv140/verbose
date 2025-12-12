@@ -277,81 +277,97 @@ function buyPlan(id){
   updateActivePlans();
 }
 
-// ===== ACTIVE MEMBERS & PLANS =====
-function updateActiveMembers(){ document.getElementById('activeMembers').innerText = totalUsers; }
-
+// ===== ACTIVE PLANS & DASHBOARD LIVE =====
 function updateActivePlans(){
   const box = document.getElementById('activePlansBox'); box.innerHTML='';
+  const now = new Date().getTime();
+  activePlans = activePlans.filter(p=>{
+    const planData = plansData.find(pl=>pl.id===p.id);
+    if(!planData) return false;
+    const distance = p.endTime - now;
+    if(distance<=0) return false; 
+    return true;
+  });
+
+  localStorage.setItem('verbose_activePlans',JSON.stringify(activePlans));
+
   activePlans.forEach(p=>{
-    const div = document.createElement('div'); div.className='plan-box';
-    div.innerHTML = `<div class="meta"><b>${p.name}</b><div class="small">Invest: Rs ${p.invest}</div><div class="small countdown" id="activeCountdown${p.name}</b><div class="small">Invest: Rs ${p.invest}</div><div class="small countdown" id="activeCountdown${p.id}"></div></div>`;
+    const planData = plansData.find(pl=>pl.id===p.id);
+    const div = document.createElement('div');
+    div.className='plan-box';
+    const distance = p.endTime - now;
+    const daysLeft = Math.ceil(distance/(1000*60*60*24));
+    div.innerHTML=`
+      <div class="meta">
+        <b>${p.name}</b>
+        <div class="small">Invest: Rs ${p.invest}</div>
+        <div class="small">Ends in: ${daysLeft} day(s)</div>
+      </div>`;
     box.appendChild(div);
-    startActiveCountdown(p.id, p.endTime);
   });
 }
 
-// ===== ACTIVE PLANS COUNTDOWN =====
-function startActiveCountdown(id, endTime){
-  const el = document.getElementById(`activeCountdown${id}`);
-  if(!el) return;
-  const interval = setInterval(()=>{
-    const now = new Date().getTime();
-    const distance = endTime - now;
-    if(distance <= 0){ 
-      el.innerText="Completed"; 
-      activePlans = activePlans.filter(p=>p.id!==id);
-      localStorage.setItem('verbose_activePlans', JSON.stringify(activePlans));
-      updateActivePlans();
-      clearInterval(interval); 
-      return;
-    }
-    const days = Math.floor(distance/(1000*60*60*24));
-    const hrs = Math.floor((distance%(1000*60*60*24))/(1000*60*60));
-    const mins = Math.floor((distance%(1000*60*60))/(1000*60));
-    const secs = Math.floor((distance%(1000*60))/1000);
-    el.innerText = `Ends in: ${days}d ${hrs}h ${mins}m ${secs}s`;
-  }, 1000);
-}
-
-// ===== DEPOSIT & WITHDRAWAL =====
-function submitDeposit(){
-  const amount=parseFloat(document.getElementById('depositAmount').value);
-  const tx=document.getElementById('depositTxId').value;
-  if(!amount || !tx){alert("Enter amount and TX ID"); return;}
-  balance += amount;
-  localStorage.setItem('verbose_balance', balance);
-  history.push({type:'Deposit',amount,date:new Date().toLocaleString()});
-  localStorage.setItem('verbose_history', JSON.stringify(history));
-  alert(`Deposit successful! Rs ${amount} added.`);
-  updateDashboard();
-  showPage('dashboard');
-}
-function submitWithdraw(){
-  const amount=parseFloat(document.getElementById('withdrawAmount').value);
-  if(!amount || amount>balance){alert("Invalid amount"); return;}
-  balance -= amount;
-  localStorage.setItem('verbose_balance', balance);
-  history.push({type:'Withdrawal',amount,date:new Date().toLocaleString()});
-  localStorage.setItem('verbose_history', JSON.stringify(history));
-  alert(`Withdrawal request submitted for Rs ${amount}`);
-  updateDashboard();
-  showPage('dashboard');
+// ===== UPDATE ACTIVE MEMBERS =====
+function updateActiveMembers(){
+  document.getElementById('activeMembers').innerText = totalUsers;
 }
 
 // ===== HISTORY =====
 function renderHistory(){
-  const list=document.getElementById('historyList');
-  list.innerHTML='';
-  history.slice().reverse().forEach(h=>{
+  const list = document.getElementById('historyList'); list.innerHTML='';
+  if(history.length===0){list.innerHTML='<div class="small">No history yet.</div>';return;}
+  history.forEach(h=>{
     const div=document.createElement('div');
-    div.className='plan-box';
-    div.innerHTML=`<div class="meta"><b>${h.type}</b><div class="small">Amount: Rs ${h.amount}</div><div class="small">Date: ${h.date}</div></div>`;
+    div.className='alert-box';
+    div.innerHTML=`<b>${h.type}</b> - Rs ${h.amount} <div class="small">${new Date(h.time).toLocaleString()}</div>`;
     list.appendChild(div);
   });
 }
 
-// ===== INITIALIZE =====
-if(currentUser) updateDashboard();
+// ===== DEPOSIT =====
+function submitDeposit(){
+  const amount=parseFloat(document.getElementById('depositAmount').value);
+  const txid=document.getElementById('depositTxId').value.trim();
+  if(isNaN(amount)||amount<=0){alert("Enter valid amount"); return;}
+  if(!txid){alert("Enter transaction ID"); return;}
+  balance += amount;
+  dailyProfit += Math.round(amount*0.05); // 5% daily bonus example
+  localStorage.setItem('verbose_balance',balance);
+  localStorage.setItem('verbose_daily',dailyProfit);
+  history.push({type:'Deposit',amount,time:new Date().getTime()});
+  localStorage.setItem('verbose_history',JSON.stringify(history));
+  alert("Deposit submitted! Admin will confirm.");
+  updateDashboard();
+}
+
+// ===== WITHDRAW =====
+function submitWithdraw(){
+  const amount=parseFloat(document.getElementById('withdrawAmount').value);
+  const account=document.getElementById('withdrawAccount').value.trim();
+  if(isNaN(amount)||amount<=0){alert("Enter valid amount"); return;}
+  if(!account){alert("Enter account number"); return;}
+  if(amount>balance){alert("Insufficient balance"); return;}
+  balance -= amount;
+  localStorage.setItem('verbose_balance',balance);
+  history.push({type:'Withdrawal',amount,time:new Date().getTime()});
+  localStorage.setItem('verbose_history',JSON.stringify(history));
+  alert("Withdrawal request submitted! Admin will process.");
+  updateDashboard();
+}
+
+// ===== AUTO UPDATE DAILY PROFIT =====
+setInterval(()=>{
+  if(!currentUser) return;
+  dailyProfit += Math.round(activePlans.reduce((acc,p)=>{
+    const planData=plansData.find(pl=>pl.id===p.id);
+    return acc + Math.round(planData.total/planData.days);
+  },0));
+  localStorage.setItem('verbose_daily',dailyProfit);
+  document.getElementById('dashDaily').innerText=dailyProfit;
+},60*1000); // every minute
+
+// ===== INIT =====
+if(currentUser){updateDashboard();}
 </script>
 </body>
 </html>
