@@ -37,6 +37,9 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5);}
 #popup button{margin-top:10px;padding:8px 12px;border:none;border-radius:8px;background:#001;color:#fff;font-weight:700;cursor:pointer;}
 .help-box{background:linear-gradient(90deg,rgba(0,255,240,0.06),rgba(255,92,255,0.02));padding:10px;border-radius:10px;margin:10px 0;display:flex;justify-content:space-around;}
 .help-box a{color:var(--neon);text-decoration:none;font-weight:700;}
+.support-icon{display:flex;align-items:center;gap:6px;padding:10px 12px;margin-bottom:12px;border-radius:10px;background:linear-gradient(90deg, rgba(0,255,240,0.06), rgba(255,92,255,0.02));cursor:pointer;width:fit-content;font-weight:700;}
+.support-icon .ico{font-size:18px;}
+.support-icon:hover{box-shadow:0 6px 20px rgba(0,255,240,0.2);transform:translateY(-2px);transition:all 0.15s ease;}
 @media(max-width:480px){.login-box,.page{margin:12px;padding:14px}.nav div{width:48px}header{font-size:22px}.logout-btn{padding:10px 12px;font-size:14px}}
 </style>
 </head>
@@ -82,11 +85,6 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5);}
       <button onclick="copyReferral()">Copy Link</button>
     </div>
     <div class="small">Share this link to invite friends. Bonuses apply automatically.</div>
-  </div>
-
-  <div class="help-box">
-    <a href="mailto:rock.earn92@gmail.com">📧 Email Support</a>
-    <a href="https://chat.whatsapp.com/GJEVKhdDeNKCNkA8r3gONu" target="_blank">💬 WhatsApp Support</a>
   </div>
 
   <button class="logout-btn" onclick="logout()">Logout</button>
@@ -138,6 +136,13 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5);}
 <!-- HISTORY -->
 <div id="history" class="page hidden">
   <h2>History</h2>
+
+  <!-- SUPPORT ICON -->
+  <div class="support-icon" onclick="openSupport()">
+    <span class="ico">🛠️</span>
+    <div class="small">Support</div>
+  </div>
+
   <div id="historyList"></div>
 </div>
 
@@ -210,7 +215,23 @@ function updateDashboard(){
   renderPlans(); renderHistory(); updateActiveMembers(); updateActivePlans(); setTimeout(checkSpecialOffers,5000);
 }
 
-// ===== RENDER PLANS =====
+// ===== SUPPORT =====
+function openSupport(){
+  window.open("https://chat.whatsapp.com/GJEVKhdDeNKCNkA8r3gONu","_blank");
+}
+
+// ===== HISTORY =====
+function renderHistory(){
+  const list=document.getElementById('historyList'); list.innerHTML='';
+  history.forEach(h=>{
+    const div=document.createElement('div');
+    div.className='plan-box';
+    div.innerHTML=`<div class='meta'>${h}</div>`;
+    list.appendChild(div);
+  });
+}
+
+// ===== PLANS =====
 function renderPlans(){
   const list=document.getElementById('plansList'); list.innerHTML='';
   plansData.forEach(p=>{
@@ -229,117 +250,90 @@ function renderPlans(){
 // ===== BUY NOW =====
 function buyNow(id){
   let plan = plansData.find(p=>p.id===id);
-  document.getElementById('depositAmount').value = plan.invest;
-  showPage('deposit');
-  addHistory(`Clicked Buy Now for ${plan.name} - Rs ${plan.invest}`);
-}
-
-// ===== COUNTDOWN =====
-function startCountdown(id){
-  const el=document.getElementById('countdown'+id);
-  if(!el) return;
-  let plan=plansData.find(p=>p.id===id);
-  let interval=setInterval(()=>{
-    let now=Date.now();
-    let diff=plan.endTime-now;
-    if(diff<=0){el.innerText='Offer ended'; clearInterval(interval);}
-    else{ 
-      let h=Math.floor(diff/3600000);
-      let m=Math.floor((diff%3600000)/60000);
-      let s=Math.floor((diff%60000)/1000);
-      el.innerText=`Ends in: ${h}h ${m}m ${s}s`;
-    }
-  },1000);
-}
-
-// ===== ACTIVE MEMBERS =====
-function updateActiveMembers(){
-  document.getElementById('activeMembers').innerText = totalUsers;
-}
-
-// ===== ACTIVE PLANS ON DASHBOARD =====
-function updateActivePlans(){
-  const container = document.getElementById('activePlansBox');
-  container.innerHTML='';
-  if(userPlans.length===0){ container.innerHTML='<div class="small">No active plans yet.</div>'; return;}
-  userPlans.forEach(p=>{
-    const div=document.createElement('div'); div.className='plan-box';
-    div.innerHTML=`<div class='meta'><b>${p.name}</b>
-      <div class='small'>Invested: Rs ${p.invest} | Total: Rs ${p.total} | Daily: Rs ${p.daily} | Days: ${p.days}</div>
-    </div>`;
-    container.appendChild(div);
-  });
-}
-
-// ===== HISTORY =====
-function addHistory(text){
-  let now = new Date().toLocaleString();
-  history.push({text,date:now});
-  localStorage.setItem('verbose_history',JSON.stringify(history));
-  renderHistory();
-}
-function renderHistory(){
-  const list = document.getElementById('historyList');
-  if(!list) return;
-  list.innerHTML='';
-  if(history.length===0){ list.innerHTML='<div class="small">No history yet.</div>'; return;}
-  history.slice().reverse().forEach(h=>{
-    const div=document.createElement('div'); div.className='plan-box';
-    div.innerHTML=`<div class='meta'><b>${h.text}</b><div class='small'>${h.date}</div></div>`;
-    list.appendChild(div);
-  });
-}
-
-// ===== DEPOSIT =====
-function submitDeposit(){
-  let amt = parseFloat(document.getElementById('depositAmount').value);
-  if(isNaN(amt)||amt<=0){ alert('Enter valid amount'); return;}
-  balance += amt;
-  dailyProfit = Math.round(amt * 0.05); // daily profit 5% of deposit
-  userPlans.push({name:'Manual Deposit',invest:amt,total:amt*1.05,daily:Math.round(amt*0.05),days:1});
+  if(!plan) return;
+  if(balance < plan.invest){ alert('Insufficient balance!'); return; }
+  balance -= plan.invest;
+  dailyProfit += plan.daily;
+  userPlans.push({id:plan.id,name:plan.name,daily:plan.daily,total:plan.total,start:new Date().getTime(),days:plan.days});
+  history.push(`Bought ${plan.name} for Rs ${plan.invest} on ${new Date().toLocaleDateString()}`);
   localStorage.setItem('verbose_balance',balance);
   localStorage.setItem('verbose_daily',dailyProfit);
   localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));
-  addHistory(`Deposited Rs ${amt}`);
-  alert('Deposit added successfully!');
+  localStorage.setItem('verbose_history',JSON.stringify(history));
   updateDashboard();
-  showPage('dashboard');
+  alert(`Successfully purchased ${plan.name}!`);
 }
 
-// ===== WITHDRAW =====
+// ===== COUNTDOWN FOR SPECIAL OFFERS =====
+function startCountdown(id){
+  const el=document.getElementById(`countdown${id}`);
+  const plan = plansData.find(p=>p.id===id);
+  if(!el || !plan) return;
+  const interval = setInterval(()=>{
+    const now = new Date().getTime();
+    let distance = plan.endTime - now;
+    if(distance < 0){ el.innerText="Offer expired"; clearInterval(interval); return; }
+    let hrs=Math.floor((distance%(1000*60*60*24))/(1000*60*60));
+    let mins=Math.floor((distance%(1000*60*60))/(1000*60));
+    let secs=Math.floor((distance%(1000*60))/1000);
+    el.innerText=`Offer ends in ${hrs}h ${mins}m ${secs}s`;
+  },1000);
+}
+
+// ===== ACTIVE MEMBERS & PLANS =====
+function updateActiveMembers(){ document.getElementById('activeMembers').innerText=totalUsers; }
+function updateActivePlans(){
+  const box=document.getElementById('activePlansBox'); box.innerHTML='';
+  userPlans.forEach(p=>{
+    const div=document.createElement('div'); div.className='plan-box';
+    div.innerHTML=`<div class='meta'><b>${p.name}</b><div class='small'>Daily: Rs ${p.daily} | Total: Rs ${p.total} | Days: ${p.days}</div></div>`;
+    box.appendChild(div);
+  });
+}
+
+// ===== DEPOSIT & WITHDRAW =====
+function submitDeposit(){
+  const amt = parseFloat(document.getElementById('depositAmount').value);
+  if(isNaN(amt) || amt <=0){ alert('Enter valid amount'); return; }
+  const tx = document.getElementById('depositTxId').value.trim();
+  if(!tx){ alert('Enter transaction ID'); return; }
+  alert(`Deposit of Rs ${amt} submitted. Admin will verify.`);
+  history.push(`Deposited Rs ${amt} via ${document.getElementById('depositMethod').value} on ${new Date().toLocaleDateString()}`);
+  localStorage.setItem('verbose_history',JSON.stringify(history));
+  renderHistory();
+}
+
 function submitWithdraw(){
-  let amt = parseFloat(document.getElementById('withdrawAmount').value);
-  let acc = document.getElementById('withdrawAccount').value.trim();
-  if(isNaN(amt)||amt<=0||!acc){ alert('Enter valid amount and account'); return;}
-  if(amt>balance){ alert('Insufficient balance'); return;}
-  balance -= amt;
-  localStorage.setItem('verbose_balance',balance);
-  addHistory(`Withdrawal Requested: Rs ${amt} to ${acc}`);
-  alert('Withdrawal request submitted. Admin will review.');
-  updateDashboard();
-  showPage('dashboard');
+  const amt = parseFloat(document.getElementById('withdrawAmount').value);
+  if(isNaN(amt) || amt <=0){ alert('Enter valid amount'); return; }
+  const acc = document.getElementById('withdrawAccount').value.trim();
+  if(!acc){ alert('Enter account number'); return; }
+  alert(`Withdrawal of Rs ${amt} requested. Admin will process.`);
+  history.push(`Requested withdrawal Rs ${amt} via ${document.getElementById('withdrawMethod').value} on ${new Date().toLocaleDateString()}`);
+  localStorage.setItem('verbose_history',JSON.stringify(history));
+  renderHistory();
 }
 
 // ===== POPUP =====
-function showPopup(text){
-  const popup=document.getElementById('popup');
-  document.getElementById('popupText').innerText=text;
-  popup.classList.remove('hidden');
-}
 function closePopup(){ document.getElementById('popup').classList.add('hidden'); }
+function showPopup(msg){ document.getElementById('popupText').innerText=msg; document.getElementById('popup').classList.remove('hidden'); }
 
 // ===== SPECIAL OFFERS CHECK =====
 function checkSpecialOffers(){
   plansData.forEach(p=>{
-    if(p.special && Date.now()>=p.endTime){
-      renderPlans(); // refresh plans if offer ended
+    if(p.special){
+      const now = new Date().getTime();
+      if(now > p.endTime){
+        // Offer expired, remove if needed
+        p.special=false;
+        localStorage.setItem('verbose_offerEndTimes',JSON.stringify(savedEndTimes));
+      }
     }
   });
 }
 
-// ===== INITIALIZE =====
+// ===== INIT =====
 if(currentUser) updateDashboard();
-updateDepositNumber();
 </script>
 </body>
 </html>
