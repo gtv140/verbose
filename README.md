@@ -9,7 +9,6 @@
   --neon:#00f7ff;
   --accent:#ff5cff;
   --dark:#070707;
-  --panel:#0f1114;
 }
 *{box-sizing:border-box}
 body{
@@ -18,104 +17,28 @@ body{
     background:var(--dark);
     color:#fff;
     overflow-x:hidden;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
 }
-header{
-text-align:center;
-padding:24px 12px;
-font-size:28px;
-font-weight:800;
-letter-spacing:2px;
-background:linear-gradient(90deg,var(--neon),var(--accent));
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-}
+header{text-align:center;padding:24px 12px;font-size:28px;font-weight:800;letter-spacing:2px;background:linear-gradient(90deg,var(--neon),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .login-box,.page{
-max-width:430px;
-margin:18px auto;
-background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-padding:18px;
-border-radius:12px;
-border:1px solid rgba(0,255,240,0.06);
-box-shadow:0 8px 30px rgba(0,0,0,0.6);
-}
-input,button,select{
-width:100%;
-padding:10px;
-margin-top:10px;
-border-radius:8px;
-border:1px solid rgba(0,255,240,0.08);
-background:transparent;
-color:#e6f7fb;
-outline:none;
-font-size:14px;
-}
+max-width:430px;margin:18px auto;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+padding:18px;border-radius:12px;border:1px solid rgba(0,255,240,0.06);box-shadow:0 8px 30px rgba(0,0,0,0.6);}
+input,button,select{width:100%;padding:10px;margin-top:10px;border-radius:8px;border:1px solid rgba(0,255,240,0.08);background:transparent;color:#e6f7fb;outline:none;font-size:14px;}
 input::placeholder{color:rgba(230,247,251,0.5)}
-button{
-background:linear-gradient(90deg,var(--neon),var(--accent));
-border:none;
-color:#001;
-font-weight:700;
-cursor:pointer;
-padding:11px;
-border-radius:10px;
-transition:transform .15s ease, box-shadow .15s;
-}
+button{background:linear-gradient(90deg,var(--neon),var(--accent));border:none;color:#001;font-weight:700;cursor:pointer;padding:11px;border-radius:10px;transition:transform .15s ease, box-shadow .15s;}
 button:hover{ transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,0,0,0.5); }
-.nav{
-position:fixed;
-bottom:0; left:0; right:0;
-background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-display:flex;
-justify-content:space-around;
-padding:12px 6px;
-border-top:1px solid rgba(0,255,240,0.04);
-font-size:14px;
-gap:6px;
-}
+.nav{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));display:flex;justify-content:space-around;padding:12px 6px;border-top:1px solid rgba(0,255,240,0.04);font-size:14px;gap:6px;}
 .nav div{text-align:center;cursor:pointer; width:64px;}
 .nav div .ico{font-size:20px;display:block;margin-bottom:4px}
 .hidden{display:none;}
 .small{font-size:13px;color:rgba(230,247,251,0.8);}
-.user-box{
-background:linear-gradient(90deg, rgba(0,255,240,0.06), rgba(255,92,255,0.02));
-padding:14px;
-border-radius:12px;
-margin-bottom:12px;
-font-weight:700;
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:10px;
-border:1px solid rgba(0,255,240,0.06);
-position:relative;
-}
+.user-box{background:linear-gradient(90deg, rgba(0,255,240,0.06), rgba(255,92,255,0.02));padding:14px;border-radius:12px;margin-bottom:12px;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid rgba(0,255,240,0.06);position:relative;}
 .user-box .left{display:flex;flex-direction:column;gap:6px}
 .user-box .right{text-align:right;font-size:13px}
 .badge{background:rgba(0,255,240,0.06);padding:6px 10px;border-radius:999px;color:var(--neon);font-weight:800}
 .user-box .icons{display:flex;gap:10px;position:absolute;top:14px;right:14px}
 .user-box .icons div{width:34px;height:34px;background:rgba(0,255,240,0.06);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--neon);font-weight:800;cursor:pointer;font-size:16px}
-.alert-box{
-background:linear-gradient(90deg, rgba(255,0,136,0.04), rgba(0,0,0,0.02));
-padding:12px;
-border-radius:10px;
-margin-bottom:12px;
-color:var(--accent);
-border:1px solid rgba(255,0,136,0.06);
-box-shadow:0 6px 20px rgba(255,0,136,0.03) inset;
-}
-.plan-box{
-border:1px solid rgba(0,255,240,0.06);
-padding:12px;
-margin:10px 0;
-border-radius:10px;
-background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.04));
-transition:box-shadow .2s ease, transform .12s ease;
-display:flex;
-gap:12px;
-align-items:center;
-}
+.alert-box{background:linear-gradient(90deg, rgba(255,0,136,0.04), rgba(0,0,0,0.02));padding:12px;border-radius:10px;margin-bottom:12px;color:var(--accent);border:1px solid rgba(255,0,136,0.06);box-shadow:0 6px 20px rgba(255,0,136,0.03) inset;}
+.plan-box{border:1px solid rgba(0,255,240,0.06);padding:12px;margin:10px 0;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.04));transition:box-shadow .2s ease, transform .12s ease;display:flex;gap:12px;align-items:center;}
 .plan-box .meta{flex:1}
 .plan-box .meta b{display:block;margin-bottom:6px;font-size:15px}
 .plan-box .meta .small{margin-top:6px}
@@ -124,13 +47,7 @@ align-items:center;
 .offer{color:var(--neon);font-weight:800;}
 .referral-box{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.03));padding:12px;border-radius:10px;margin:10px 0;border:1px solid rgba(0,255,240,0.04)}
 .referral-box input{background:transparent;border:1px dashed rgba(255,255,255,0.03);padding:8px;border-radius:8px}
-.support-box{
-background:linear-gradient(90deg, rgba(0,0,0,0.35), rgba(0,0,0,0.45));
-padding:14px;
-border-radius:12px;
-border:1px solid rgba(255,0,136,0.06);
-box-shadow:0 10px 30px rgba(255,0,136,0.03) inset;
-}
+.support-box{background:linear-gradient(90deg, rgba(0,0,0,0.35), rgba(0,0,0,0.45));padding:14px;border-radius:12px;border:1px solid rgba(255,0,136,0.06);box-shadow:0 10px 30px rgba(255,0,136,0.03) inset;}
 .support-box h2{margin:0 0 8px 0;font-size:18px;background:linear-gradient(90deg,var(--neon),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .support-grid{display:flex;gap:12px;flex-direction:column}
 .support-item{display:flex;gap:10px;align-items:center}
@@ -182,6 +99,7 @@ header{font-size:22px}
       <div style="font-size:13px">Balance</div>
       <div style="font-size:18px;font-weight:900">Rs <span id="dashBalance">0</span></div>
       <div style="margin-top:8px" class="badge">Daily: Rs <span id="dashDaily">0</span></div>
+      <div style="margin-top:4px" class="badge">Active Users: <span id="activeUsers">1</span></div>
     </div>
     <div class="icons">
       <div title="Active Users">🟢</div>
@@ -295,6 +213,15 @@ let dailyProfit = parseFloat(localStorage.getItem('verbose_daily')) || 0;
 let plansData = [];
 let userPlans = JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');
 let referralCode = localStorage.getItem('verbose_referral') || '';
+let activeUsers = parseInt(localStorage.getItem('verbose_activeUsers')||'1');
+
+// === ACTIVE USERS SIMULATION ===
+function updateActiveUsers(){ 
+  activeUsers = 1 + Math.floor(Math.random()*10);
+  document.getElementById('activeUsers').innerText=activeUsers;
+  localStorage.setItem('verbose_activeUsers',activeUsers);
+}
+setInterval(updateActiveUsers, 10000);
 
 // === CREATE PLANS ===
 for(let i=1;i<=25;i++){
@@ -333,145 +260,116 @@ function login(){
     document.getElementById('bottomNav').classList.remove('hidden');
     updateDepositNumber();
     renderPlans();
+    renderHistory();
+    document.getElementById('withdrawUsername').value=currentUser;
 }
 
-// === LOGOUT ===
+// === LOGOUT & PAGE SWITCH ===
 function logout(){
-    currentUser=null;
     localStorage.removeItem('verbose_user');
-    document.getElementById('loginPage').classList.remove('hidden');
+    localStorage.removeItem('verbose_balance');
+    localStorage.removeItem('verbose_daily');
+    localStorage.removeItem('verbose_userPlans');
+    currentUser=null;
+    balance=0;
+    dailyProfit=0;
+    userPlans=[];
     document.getElementById('dashboard').classList.add('hidden');
-document.getElementById('bottomNav').classList.add('hidden');
+    document.getElementById('loginPage').classList.remove('hidden');
+    document.getElementById('bottomNav').classList.add('hidden');
 }
 
-// === NAVIGATION ===
-function showPage(page){
-    const pages = ['dashboard','plans','deposit','withdrawal','support'];
-    pages.forEach(p => document.getElementById(p).classList.add('hidden'));
-    document.getElementById(page).classList.remove('hidden');
+function showPage(pageId){
+    const pages=document.querySelectorAll('.page');
+    pages.forEach(p=>p.classList.add('hidden'));
+    document.getElementById(pageId).classList.remove('hidden');
 }
 
 // === REFERRAL COPY ===
 function copyReferral(){
     const ref=document.getElementById('refLink');
     ref.select();
-    ref.setSelectionRange(0,99999);
-    document.execCommand('copy');
-    alert('Referral link copied!');
+    navigator.clipboard.writeText(ref.value).then(()=>alert('Referral copied!'));
 }
 
-// === DEPOSIT ===
+// === DEPOSIT LOGIC ===
 function updateDepositNumber(){
     const method=document.getElementById('depositMethod').value;
-    const num=method==='jazzcash'?'03705519562':'03379827882';
-    document.getElementById('depositNumber').value=num;
+    const number=method==='jazzcash'?'03705519562':'03379827882';
+    document.getElementById('depositNumber').value=number;
     document.getElementById('depositAmount').value='1000';
 }
 function copyDepositNumber(){
     const dep=document.getElementById('depositNumber');
     dep.select();
-    dep.setSelectionRange(0,99999);
-    document.execCommand('copy');
-    alert('Deposit number copied!');
+    navigator.clipboard.writeText(dep.value).then(()=>alert('Deposit number copied!'));
 }
 function submitDeposit(){
     const tx=document.getElementById('depositTxId').value.trim();
-    if(!tx){ alert('Enter transaction ID'); return; }
-    alert('Deposit submitted. Admin will verify shortly.');
+    if(!tx){alert('Enter transaction ID'); return;}
+    alert('Deposit submitted for verification!');
 }
 
-// === WITHDRAW ===
+// === WITHDRAW LOGIC ===
 function submitWithdraw(){
     const amt=document.getElementById('withdrawAmount').value.trim();
-    if(!amt){ alert('Enter amount'); return; }
-    alert('Withdrawal request submitted.');
+    const acc=document.getElementById('withdrawAccount').value.trim();
+    if(!amt||!acc){ alert('Fill account & amount'); return;}
+    alert(`Withdrawal of Rs ${amt} requested!`);
 }
 
 // === PLANS ===
 function renderPlans(){
-    const container=document.getElementById('plansList');
-    container.innerHTML='';
-    plansData.forEach(plan=>{
-        const planEl=document.createElement('div');
-        planEl.className='plan-box';
-        planEl.innerHTML=`
-            <div class="meta">
-                <b>${plan.name} ${plan.offer?'<span class="offer">🔥 Offer</span>':''}</b>
-                <div class="small">Invest: Rs ${plan.invest}</div>
-                <div class="small">Days: ${plan.days}</div>
-                <div class="small">Total Profit: Rs ${plan.total}</div>
-                <div class="small countdown" id="cd${plan.id}">⏳ Calculating...</div>
-            </div>
-            <div class="actions">
-                <button onclick="buyPlan(${plan.id})">Buy Now</button>
-            </div>
-        `;
-        container.appendChild(planEl);
-        startCountdown(plan.id, plan.days);
+    const list=document.getElementById('plansList');
+    list.innerHTML='';
+    plansData.forEach(p=>{
+        const div=document.createElement('div');
+        div.className='plan-box';
+        div.innerHTML=`<div class="meta">
+            <b>${p.name}</b>
+            <div class="small">Invest: Rs ${p.invest} | Total: Rs ${p.total} | Days: ${p.days}</div>
+            ${p.offer?'<div class="offer">Special Offer!</div>':''}
+        </div>
+        <div class="actions">
+            <button onclick="investPlan(${p.id})">Invest</button>
+        </div>`;
+        list.appendChild(div);
     });
 }
 
-// === BUY PLAN ===
-function buyPlan(id){
+function investPlan(id){
     const plan=plansData.find(p=>p.id===id);
-    if(balance<plan.invest){ alert('Insufficient balance'); return; }
+    if(!plan) return;
+    if(balance<plan.invest){alert('Insufficient balance'); return;}
     balance-=plan.invest;
-    dailyProfit+=Math.round(plan.total/plan.days);
+    dailyProfit+=plan.total/plan.days;
     localStorage.setItem('verbose_balance',balance);
     localStorage.setItem('verbose_daily',dailyProfit);
     document.getElementById('dashBalance').innerText=balance;
     document.getElementById('dashDaily').innerText=dailyProfit;
-    userPlans.push({id, date:new Date().toLocaleDateString()});
+    userPlans.push(plan);
     localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));
-    addHistory(`Bought ${plan.name} for Rs ${plan.invest}`);
-    alert(`${plan.name} purchased successfully!`);
-}
-
-// === COUNTDOWN ===
-function startCountdown(id,days){
-    const el=document.getElementById('cd'+id);
-    let endDate=new Date();
-    endDate.setDate(endDate.getDate()+days);
-    const interval=setInterval(()=>{
-        const now=new Date();
-        const diff=endDate-now;
-        if(diff<=0){ el.innerText='✅ Completed'; clearInterval(interval); return; }
-        const d=Math.floor(diff/(1000*60*60*24));
-        const h=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
-        const m=Math.floor((diff%(1000*60*60))/(1000*60));
-        const s=Math.floor((diff%(1000*60))/1000);
-        el.innerText=`⏳ ${d}d ${h}h ${m}m ${s}s`;
-    },1000);
-}
-
-// === HISTORY ===
-function addHistory(msg){
-    const history=JSON.parse(localStorage.getItem('verbose_history')||'[]');
-    history.unshift({msg,date:new Date().toLocaleString()});
-    localStorage.setItem('verbose_history',JSON.stringify(history));
     renderHistory();
 }
 
+// === HISTORY ===
 function renderHistory(){
     const container=document.getElementById('historyContainer');
-    const history=JSON.parse(localStorage.getItem('verbose_history')||'[]');
+    if(userPlans.length===0){ container.classList.add('hidden'); return;}
+    container.classList.remove('hidden');
     container.innerHTML='';
-    history.forEach(h=>{
-        const p=document.createElement('p');
-        p.innerText=`[${h.date}] ${h.msg}`;
-        container.appendChild(p);
+    userPlans.forEach(p=>{
+        const div=document.createElement('div');
+        div.className='history-box';
+        div.innerHTML=`<p><b>${p.name}</b></p>
+        <p>Invested: Rs ${p.invest} | Total Return: Rs ${p.total} | Days: ${p.days}</p>`;
+        container.appendChild(div);
     });
 }
 
-// === DASHBOARD ICONS ===
-document.querySelector('.user-box .icons div[title="History"]').onclick=()=>{
-    const hist=document.getElementById('historyContainer');
-    hist.classList.toggle('hidden');
+// === AUTO LOGIN IF LOCALSTORAGE ===
+if(currentUser){
+    login();
+    document.getElementById('user').value=currentUser;
 }
-
-// === INIT ===
-if(currentUser){ login(); }
-
 </script>
-</body>
-</html>
