@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>VERBOSE Dashboard</title>
 <style>
-:root{--neon:#00f7ff;--accent:#ff5cff;--dark:#070707;--panel:#0f1114;}
+:root{--neon:#00f7ff;--accent:#ff5cff;--dark:#070707;}
 *{box-sizing:border-box;}
 body{margin:0;font-family:Inter, Arial,sans-serif;background:var(--dark);color:#fff;overflow-x:hidden;}
 header{text-align:center;padding:24px 12px;font-size:28px;font-weight:800;letter-spacing:2px;background:linear-gradient(90deg,var(--neon),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
@@ -30,7 +30,6 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5);}
 .plan-box .meta .small{margin-top:6px;}
 .plan-box .actions{width:140px;text-align:right;}
 .plan-box:hover{box-shadow:0 12px 30px rgba(0,255,240,0.06);transform:translateY(-4px);}
-.offer{color:var(--neon);font-weight:800;}
 .referral-box{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.03));padding:12px;border-radius:10px;margin:10px 0;border:1px solid rgba(0,255,240,0.04);}
 .referral-box input{background:transparent;border:1px dashed rgba(255,255,255,0.03);padding:8px;border-radius:8px;}
 .support-box{background:linear-gradient(90deg, rgba(0,0,0,0.35), rgba(0,0,0,0.45));padding:14px;border-radius:12px;border:1px solid rgba(255,0,136,0.06);box-shadow:0 10px 30px rgba(255,0,136,0.03) inset;}
@@ -39,7 +38,6 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5);}
 .support-item{display:flex;gap:10px;align-items:center;}
 .support-item .icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(0,255,240,0.04);color:var(--neon);font-weight:800;}
 .support-item p{margin:0;font-size:14px;}
-.support-note{font-size:13px;color:rgba(230,247,251,0.75);margin-top:8px;}
 .countdown{font-weight:700;color:var(--neon);}
 @media(max-width:480px){.login-box,.page{margin:12px;padding:14px}.nav div{width:48px}header{font-size:22px}.logout-btn{padding:10px 12px;font-size:14px}}
 </style>
@@ -114,87 +112,57 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5);}
   <p class="small" style="margin-top:8px">After submitting, share proof with admin on WhatsApp or Email.</p>
 </div>
 
-<!-- WITHDRAWAL -->
-<div id="withdrawal" class="page hidden">
-  <h2>Withdrawal</h2>
-  <label>Method</label>
-  <select id="withdrawMethod">
-    <option value="jazzcash">JazzCash</option>
-    <option value="easypaisa">EasyPaisa</option>
-    <option value="bank">Bank</option>
-  </select>
-  <input id="withdrawUsername" readonly placeholder="Username" />
-  <input id="withdrawAccount" placeholder="Account Number (manual)" />
-  <input id="withdrawAmount" placeholder="Amount" />
-  <button onclick="submitWithdraw()">Request Withdrawal</button>
-  <p class="small" style="margin-top:8px">Requests are reviewed by admin.</p>
-</div>
-
-<!-- SUPPORT -->
-<div id="support" class="page hidden">
-  <div class="support-box">
-    <h2>Contact Admin</h2>
-    <div class="support-grid">
-      <div class="support-item">
-        <div class="icon">💬</div>
-        <div>
-          <p><strong>WhatsApp Support</strong></p>
-          <p class="small">Fastest support via group or admin message.</p>
-          <p style="margin-top:6px"><a href="https://chat.whatsapp.com/Kmaiv3VdSo09rio4qcRTRM" target="_blank">Join WhatsApp Group</a></p>
-        </div>
-      </div>
-      <div class="support-item">
-        <div class="icon">📧</div>
-        <div>
-          <p><strong>Email Support</strong></p>
-          <p class="small">Send proofs or queries via email.</p>
-          <p style="margin-top:6px"><a href="mailto:rock.earn92@gmail.com">rock.earn92@gmail.com</a></p>
-        </div>
-      </div>
-    </div>
-    <p class="support-note">Always use official support channels.</p>
-    <p style="color:var(--neon);font-weight:800;text-align:center;margin-top:10px">VERBOSE — Secure. Transparent. Professional.</p>
-  </div>
-</div>
-
-<!-- HISTORY -->
-<div id="history" class="page hidden">
-  <h2>History</h2>
-  <div id="historyList"></div>
-</div>
-
 <!-- NAVIGATION -->
 <div id="bottomNav" class="nav hidden">
   <div onclick="showPage('dashboard')"><span class="ico">🏠</span>Home</div>
   <div onclick="showPage('plans')"><span class="ico">📦</span>Plans</div>
   <div onclick="showPage('deposit')"><span class="ico">💰</span>Deposit</div>
-  <div onclick="showPage('withdrawal')"><span class="ico">💵</span>Withdraw</div>
   <div onclick="showPage('support')"><span class="ico">📞</span>Support</div>
-  <div onclick="showPage('history')"><span class="ico">📜</span>History</div>
 </div>
 
 <script>
 // ===== USERS & STORAGE =====
-let currentUser=localStorage.getItem('verbose_user')||null;
-let balance=parseFloat(localStorage.getItem('verbose_balance')||'0');
-let dailyProfit=parseFloat(localStorage.getItem('verbose_daily')||'0');
-let userPlans=JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');
-let referralCode=localStorage.getItem('verbose_referral')||'';
-let plansData=[];
-for(let i=1;i<=25;i++){const invest=Math.round(200+(i-1)*(30000-200)/24);const days=25+Math.floor((i-1)*(78-25)/30);const multiplier=i<=5?2.8:2.3;plansData.push({id:i,name:`Plan ${i}`,invest,days,total:Math.round(invest*multiplier),multiplier,offer:i<=5,coming:false});}
+let currentUser = localStorage.getItem('verbose_user') || null;
+let balance = parseFloat(localStorage.getItem('verbose_balance') || '0');
+let dailyProfit = parseFloat(localStorage.getItem('verbose_daily') || '0');
+let userPlans = JSON.parse(localStorage.getItem('verbose_userPlans') || '[]');
+let referralCode = localStorage.getItem('verbose_referral') || '';
+let plansData = [];
+for(let i=1;i<=5;i++){
+  const invest = 1000*i;
+  const days = 25 + i*5;
+  const multiplier = 2;
+  plansData.push({id:i,name:`Plan ${i}`,invest,days,total:invest*multiplier,offer:true,coming:false});
+}
 
-// ===== UI & LOGIN =====
-function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');}
+// ===== UI =====
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
 function login(){
   const option=document.getElementById('userOption').value;
   const u=document.getElementById('user').value.trim();
   const p=document.getElementById('pass').value.trim();
   if(!u||!p){alert("Enter username & password");return;}
-  currentUser=u;
+  currentUser = u;
   localStorage.setItem('verbose_user',currentUser);
-  referralCode=referralCode||Math.random().toString(36).substring(2,10);
+  referralCode = referralCode || Math.random().toString(36).substring(2,10);
   localStorage.setItem('verbose_referral',referralCode);
-  if(option==='signup'){balance=0;dailyProfit=0;userPlans=[];localStorage.setItem('verbose_balance','0');localStorage.setItem('verbose_daily','0');localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));}else{balance=parseFloat(localStorage.getItem('verbose_balance')||'0');dailyProfit=parseFloat(localStorage.getItem('verbose_daily')||'0');userPlans=JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');}
+  if(option==='signup'){
+    balance=0;dailyProfit=0;userPlans=[];
+    localStorage.setItem('verbose_balance','0');
+    localStorage.setItem('verbose_daily','0');
+    localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));
+  }else{
+    balance=parseFloat(localStorage.getItem('verbose_balance')||'0');
+    dailyProfit=parseFloat(localStorage.getItem('verbose_daily')||'0');
+    userPlans=JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');
+  }
+  updateDashboard();
+}
+
+function updateDashboard(){
   document.getElementById('dashUser').innerText=currentUser;
   document.getElementById('dashBalance').innerText=balance;
   document.getElementById('dashDaily').innerText=dailyProfit;
@@ -203,80 +171,52 @@ function login(){
   document.getElementById('loginPage').classList.add('hidden');
   document.getElementById('dashboard').classList.remove('hidden');
   document.getElementById('bottomNav').classList.remove('hidden');
-  document.getElementById('withdrawUsername').value=currentUser;
-  updateDepositNumber();renderPlans();renderHistory();
+  renderPlans();
 }
 
 // ===== LOGOUT =====
-function logout(){currentUser=null;localStorage.removeItem('verbose_user');showPage('loginPage');document.getElementById('user').value='';document.getElementById('pass').value='';}
+function logout(){
+  currentUser=null;
+  localStorage.removeItem('verbose_user');
+  showPage('loginPage');
+  document.getElementById('user').value='';
+  document.getElementById('pass').value='';
+}
 
 // ===== COPY =====
-function copyDepositNumber(){const num=document.getElementById('depositNumber');navigator.clipboard?.writeText(num.value)||num.select()&&document.execCommand('copy');alert("Deposit number copied!");}
-function copyReferral(){const ref=document.getElementById('refLink');navigator.clipboard?.writeText(ref.value)||ref.select()&&document.execCommand('copy');alert("Referral link copied!");}
+function copyReferral(){navigator.clipboard.writeText(document.getElementById('refLink').value); alert("Referral link copied!");}
+function copyDepositNumber(){navigator.clipboard.writeText(document.getElementById('depositNumber').value); alert("Deposit number copied!");}
 
 // ===== PLANS =====
-function renderPlans(){const list=document.getElementById('plansList');list.innerHTML='';plansData.forEach(p=>{const div=document.createElement('div');div.className='plan-box';const daily=Math.round(p.total/p.days);div.innerHTML=`<div class="meta"><b>${p.name}</b><div class="small">${p.offer?'Special 24h Offer':(p.coming?'Coming Soon':'Standard Plan')}</div><div class="small" style="margin-top:8px">Invest: Rs ${p.invest} · Days: ${p.days}</div><div class="small">Total Profit: Rs ${p.total} · Daily: Rs ${daily}</div></div><div class="actions"><div id="countdownWrap${p.id}" style="margin-bottom:6px"><span class="countdown" id="countdown${p.id}"></span></div>${p.coming?'<div class="small" style="color:rgba(255,255,255,0.6)">COMING SOON</div>':`<button onclick="buyPlan(${p.id})">Buy Now</button>`}</div>`;list.appendChild(div);if(p.offer&&!p.coming)startCountdown(p.id,24*3600);});}
-let countdownIntervals={};
-function startCountdown(id,seconds){const display=document.getElementById(`countdown${id}`);if(!display)return;let remaining=seconds;clearInterval(countdownIntervals[id]);countdownIntervals[id]=setInterval(()=>{let h=Math.floor(remaining/3600);let m=Math.floor((remaining%3600)/60);let s=remaining%60;display.innerText=`${h}h ${m}m ${s}s`;if(remaining<=0){clearInterval(countdownIntervals[id]);display.innerText='EXPIRED';}remaining--;},1000);}
-
-// ===== BUY PLAN =====
-function buyPlan(id){
-  const plan=plansData.find(p=>p.id===id);
-  if(!plan) return alert("Plan not found!");
-  if(balance<plan.invest) return alert("Insufficient balance!");
-  balance-=plan.invest;
-  dailyProfit+=Math.round(plan.total/plan.days);
-  userPlans.push({id:plan.id,name:plan.name,invest:plan.invest,days:plan.days,total:plan.total,start:new Date().toLocaleDateString()});
-  localStorage.setItem('verbose_balance',balance);
-  localStorage.setItem('verbose_daily',dailyProfit);
-  localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));
-  document.getElementById('dashBalance').innerText=balance;
-  document.getElementById('dashDaily').innerText=dailyProfit;
-  renderHistory();
-  alert(`You bought ${plan.name}!`);
-}
-
-// ===== DEPOSIT NUMBER =====
-function updateDepositNumber(){
-  const method=document.getElementById('depositMethod').value;
-  const number=document.getElementById('depositNumber');
-  const amount=document.getElementById('depositAmount');
-  if(method==='jazzcash'){number.value='03705519562';amount.value='Rs 1000+';}
-  else if(method==='easypaisa'){number.value='03379827882';amount.value='Rs 1000+';}
-}
-
-// ===== DEPOSIT SUBMIT =====
-function submitDeposit(){
-  const tx=document.getElementById('depositTxId').value.trim();
-  if(!tx) return alert("Enter transaction ID");
-  alert("Deposit submitted! Admin will verify soon.");
-  document.getElementById('depositTxId').value='';
-  document.getElementById('depositProof').value='';
-}
-
-// ===== WITHDRAW SUBMIT =====
-function submitWithdraw(){
-  const acc=document.getElementById('withdrawAccount').value.trim();
-  const amt=document.getElementById('withdrawAmount').value.trim();
-  if(!acc||!amt) return alert("Enter account and amount");
-  alert(`Withdrawal request of Rs ${amt} submitted!`);
-  document.getElementById('withdrawAccount').value='';
-  document.getElementById('withdrawAmount').value='';
-}
-
-// ===== HISTORY =====
-function renderHistory(){
-  const list=document.getElementById('historyList');
-  list.innerHTML='';
-  if(!userPlans.length){list.innerHTML='<p>No transactions yet.</p>';return;}
-  userPlans.forEach(p=>{
-    const div=document.createElement('div');
-    div.className='plan-box';
-    div.innerHTML=`<div class="meta"><b>${p.name}</b><div class="small">Invest: Rs ${p.invest} · Total Profit: Rs ${p.total} · Start: ${p.start}</div></div>`;
+function renderPlans(){
+  const list=document.getElementById('plansList'); list.innerHTML='';
+  plansData.forEach(p=>{
+    const div=document.createElement('div'); div.className='plan-box';
+    div.innerHTML=`<div class="meta"><b>${p.name}</b><div class="small">Special Offer</div><div class="small" style="margin-top:8px">Invest: Rs ${p.invest} · Days: ${p.days}</div><div class="small">Total Profit: Rs ${p.total}</div></div><div class="actions"><button onclick="buyPlan(${p.id})">Buy Now</button></div>`;
     list.appendChild(div);
   });
 }
 
-// ===== AUTO LOGIN ON REFRESH =====
-if(currentUser) login();
+// ===== BUY PLAN =====
+function buyPlan(id){
+  const plan = plansData.find(p => p.id===id);
+  if(!plan) return alert("Plan not found!");
+  showPage('deposit');
+  document.getElementById('depositAmount').value = plan.invest;
+  document.getElementById('depositMethod').value = 'jazzcash';
+  updateDepositNumber();
+  alert(`You selected ${plan.name}. Deposit Rs ${plan.invest} to buy this plan.`);
+}
+
+// ===== DEPOSIT NUMBER =====
+function updateDepositNumber(){
+  const method = document.getElementById('depositMethod').value;
+  const number = method==='jazzcash'?'03705519562':'03379827882';
+  document.getElementById('depositNumber').value=number;
+}
+
+// ===== AUTO LOGIN IF REFRESH =====
+if(currentUser) updateDashboard();
 </script>
+</body>
+</html>
