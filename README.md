@@ -1,4 +1,4 @@
-<VERBOSE>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -223,9 +223,9 @@ function updateDashboard(){
   document.getElementById('dashboard').classList.remove('hidden');
   document.getElementById('bottomNav').classList.remove('hidden');
   renderPlans();
-  renderHistory();
 }
 
+// ===== LOGOUT =====
 function logout(){
   currentUser=null;
   localStorage.removeItem('verbose_user');
@@ -234,16 +234,20 @@ function logout(){
   document.getElementById('pass').value='';
 }
 
+// ===== REFERRAL & DEPOSIT =====
 function copyReferral(){navigator.clipboard.writeText(document.getElementById('refLink').value); alert("Referral link copied!");}
 function copyDepositNumber(){navigator.clipboard.writeText(document.getElementById('depositNumber').value); alert("Deposit number copied!");}
 
-// ===== PLANS =====
+// ===== RENDER PLANS =====
 function renderPlans(){
   const list=document.getElementById('plansList');list.innerHTML='';
   plansData.forEach(p=>{
     const div=document.createElement('div');div.className='plan-box';
     let countdownHTML = '';
-    if(p.special){ countdownHTML = `<div class="small countdown" id="countdown${p.id}"></div>`; startCountdown(p.id); }
+    if(p.special){ 
+      countdownHTML = `<div class="small countdown" id="countdown${p.id}"></div>`; 
+      startCountdown(p.id); 
+    }
     div.innerHTML=`
       <div class="meta">
         <b>${p.name}</b>
@@ -251,6 +255,7 @@ function renderPlans(){
         ${countdownHTML}
         <div class="small" style="margin-top:8px">Invest: Rs ${p.invest} · Days: ${p.days}</div>
         <div class="small">Total Profit: Rs ${p.total}</div>
+        <div class="small">Daily Profit: Rs ${Math.round(p.total/p.days)}</div>
         <div style="background:rgba(0,255,240,0.1);border-radius:8px;height:10px;margin-top:6px;overflow:hidden;">
           <div style="width:${Math.min(100,(p.days/70)*100)}%;background:linear-gradient(90deg,var(--neon),var(--accent));height:100%;"></div>
         </div>
@@ -260,7 +265,7 @@ function renderPlans(){
   });
 }
 
-// ===== COUNTDOWN =====
+// ===== COUNTDOWN SPECIAL OFFERS =====
 function startCountdown(id){
   let plan = plansData.find(p=>p.id===id);
   if(!plan || !plan.special) return;
@@ -273,9 +278,9 @@ function startCountdown(id){
       return;
     }
     const h = Math.floor(distance/(1000*60*60));
-    const m = Math.floor((distance%(1000*60*60))/(60*1000));
-    const s = Math.floor((distance%(1000*60))/1000);
-    document.getElementById(`countdown${id}`).innerText=`${h}h ${m}m ${s}s left`;
+    const m = Math.floor((distance % (1000*60*60))/(1000*60));
+    const s = Math.floor((distance % (1000*60))/1000);
+    document.getElementById(`countdown${id}`).innerText = `Offer ends in ${h}h ${m}m ${s}s`;
   },1000);
 }
 
@@ -283,75 +288,39 @@ function startCountdown(id){
 function buyPlan(id){
   let plan = plansData.find(p=>p.id===id);
   if(!plan) return;
-  if(balance < plan.invest){ alert("Insufficient balance!"); return; }
+  if(balance < plan.invest){alert("Insufficient balance!"); return;}
   balance -= plan.invest;
   dailyProfit += Math.round(plan.total/plan.days);
-  userPlans.push({id:plan.id,name:plan.name,invest:plan.invest,start:new Date().getTime(),days:plan.days,total:plan.total});
-  history.push({type:'Plan Bought',name:plan.name,amount:plan.invest,date:new Date().toLocaleString()});
+  userPlans.push({id:plan.id,name:plan.name,invest:plan.invest,daily:Math.round(plan.total/plan.days),total:plan.total,days:plan.days,start:new Date().getTime()});
   localStorage.setItem('verbose_balance',balance);
   localStorage.setItem('verbose_daily',dailyProfit);
   localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));
-  localStorage.setItem('verbose_history',JSON.stringify(history));
   updateDashboard();
-  alert(`Successfully bought ${plan.name}!`);
-  renderHistory();
-}
-
-// ===== HISTORY =====
-function renderHistory(){
-  const hList = document.getElementById('historyList');
-  hList.innerHTML='';
-  history.slice().reverse().forEach(h=>{
-    const div = document.createElement('div');
-    div.style.padding='8px'; div.style.borderBottom='1px solid rgba(0,255,240,0.06)';
-    div.innerHTML=`<b>${h.type}</b> - ${h.name || ''} Rs ${h.amount || ''} <span class="small">${h.date}</span>`;
-    hList.appendChild(div);
-  });
+  alert(`You bought ${plan.name} successfully!`);
 }
 
 // ===== DEPOSIT =====
 function updateDepositNumber(){
   const method = document.getElementById('depositMethod').value;
-  const num = method==='jazzcash'?'03705519562':'03379827882';
-  document.getElementById('depositNumber').value=num;
-  document.getElementById('depositAmount').value=''; // optional
+  let number = method==='jazzcash'?'03705519562':'03379827882';
+  document.getElementById('depositNumber').value=number;
+  document.getElementById('depositAmount').value='Minimum Rs 100';
 }
-
 function submitDeposit(){
-  const tx=document.getElementById('depositTxId').value.trim();
-  if(!tx){alert("Enter TX ID"); return;}
-  const method = document.getElementById('depositMethod').value;
-  const amount = prompt("Enter deposit amount");
-  if(!amount || isNaN(amount)){alert("Invalid amount"); return;}
-  balance += parseFloat(amount);
-  history.push({type:'Deposit',name:method,amount:amount,date:new Date().toLocaleString()});
-  localStorage.setItem('verbose_balance',balance);
-  localStorage.setItem('verbose_history',JSON.stringify(history));
-  updateDashboard();
-  alert("Deposit submitted successfully!");
-  renderHistory();
+  alert("Deposit submitted. Admin will verify.");
 }
 
 // ===== WITHDRAW =====
 function submitWithdraw(){
-  const method = document.getElementById('withdrawMethod').value;
-  const acc = document.getElementById('withdrawAccount').value.trim();
-  const amount = parseFloat(document.getElementById('withdrawAmount').value.trim());
-  if(!acc || !amount || amount>balance){ alert("Invalid withdrawal"); return; }
-  balance -= amount;
-  history.push({type:'Withdrawal',name:method,amount:amount,date:new Date().toLocaleString()});
-  localStorage.setItem('verbose_balance',balance);
-  localStorage.setItem('verbose_history',JSON.stringify(history));
-  updateDashboard();
-  alert("Withdrawal request submitted!");
-  renderHistory();
+  alert("Withdrawal request submitted.");
 }
 
 // ===== INIT =====
-window.onload=function(){
+window.onload = ()=>{
   if(currentUser) updateDashboard();
+  updateDepositNumber();
+  renderPlans();
 }
 </script>
-
 </body>
 </html>
