@@ -35,8 +35,6 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5);}
 .countdown{font-weight:700;color:var(--neon);}
 #popup{position:fixed;top:20%;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#00f7ff,#ff5cff);padding:20px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.5);color:#001;font-weight:800;z-index:9999;text-align:center;}
 #popup button{margin-top:10px;padding:8px 12px;border:none;border-radius:8px;background:#001;color:#fff;font-weight:700;cursor:pointer;}
-.help-box{background:linear-gradient(90deg,rgba(0,255,240,0.06),rgba(255,92,255,0.02));padding:10px;border-radius:10px;margin:10px 0;display:flex;justify-content:space-around;}
-.help-box a{color:var(--neon);text-decoration:none;font-weight:700;}
 .support-icon{display:flex;align-items:center;gap:6px;padding:10px 12px;margin-bottom:12px;border-radius:10px;background:linear-gradient(90deg, rgba(0,255,240,0.06), rgba(255,92,255,0.02));cursor:pointer;width:fit-content;font-weight:700;}
 .support-icon .ico{font-size:18px;}
 .support-icon:hover{box-shadow:0 6px 20px rgba(0,255,240,0.2);transform:translateY(-2px);transition:all 0.15s ease;}
@@ -75,10 +73,8 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5);}
       <div style="margin-top:8px" class="badge">Daily: Rs <span id="dashDaily">0</span></div>
     </div>
   </div>
-
   <div class="alert-box">Active Members: <span id="activeMembers">0</span></div>
   <div id="activePlansBox"></div>
-
   <div class="referral-box">
     <div style="display:flex;gap:8px;align-items:center">
       <input id="refLink" readonly style="flex:1" />
@@ -86,7 +82,6 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5);}
     </div>
     <div class="small">Share this link to invite friends. Bonuses apply automatically.</div>
   </div>
-
   <button class="logout-btn" onclick="logout()">Logout</button>
 </div>
 
@@ -136,13 +131,10 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5);}
 <!-- HISTORY -->
 <div id="history" class="page hidden">
   <h2>History</h2>
-
-  <!-- SUPPORT ICON -->
   <div class="support-icon" onclick="openSupport()">
     <span class="ico">🛠️</span>
     <div class="small">Support</div>
   </div>
-
   <div id="historyList"></div>
 </div>
 
@@ -216,16 +208,13 @@ function updateDashboard(){
 }
 
 // ===== SUPPORT =====
-function openSupport(){
-  window.open("https://chat.whatsapp.com/GJEVKhdDeNKCNkA8r3gONu","_blank");
-}
+function openSupport(){ window.open("https://chat.whatsapp.com/GJEVKhdDeNKCNkA8r3gONu","_blank"); }
 
 // ===== HISTORY =====
 function renderHistory(){
   const list=document.getElementById('historyList'); list.innerHTML='';
   history.forEach(h=>{
-    const div=document.createElement('div');
-    div.className='plan-box';
+    const div=document.createElement('div'); div.className='plan-box';
     div.innerHTML=`<div class='meta'>${h}</div>`;
     list.appendChild(div);
   });
@@ -255,85 +244,100 @@ function buyNow(id){
   balance -= plan.invest;
   dailyProfit += plan.daily;
   userPlans.push({id:plan.id,name:plan.name,daily:plan.daily,total:plan.total,start:new Date().getTime(),days:plan.days});
-  history.push(`Bought ${plan.name} for Rs ${plan.invest} on ${new Date().toLocaleDateString()}`);
+  history.push(`Bought ${plan.name} for Rs ${plan.invest} on ${new Date().toLocaleString()}`);
+  saveData();
+  updateDashboard();
+  alert(`Plan ${plan.name} purchased successfully!`);
+}
+
+// ===== SAVE DATA =====
+function saveData(){
   localStorage.setItem('verbose_balance',balance);
   localStorage.setItem('verbose_daily',dailyProfit);
   localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));
   localStorage.setItem('verbose_history',JSON.stringify(history));
-  updateDashboard();
-  alert(`Successfully purchased ${plan.name}!`);
+}
+
+// ===== ACTIVE MEMBERS & PLANS =====
+function updateActiveMembers(){
+  document.getElementById('activeMembers').innerText=totalUsers;
+}
+function updateActivePlans(){
+  const box=document.getElementById('activePlansBox'); box.innerHTML='';
+  userPlans.forEach(p=>{
+    const div=document.createElement('div'); div.className='plan-box';
+    div.innerHTML=`<div class='meta'><b>${p.name}</b>
+      <div class='small'>Daily: Rs ${p.daily} | Total: Rs ${p.total} | Remaining Days: ${Math.max(p.days - Math.floor((new Date().getTime()-p.start)/(24*60*60*1000)),0)}</div>
+    </div>`;
+    box.appendChild(div);
+  });
 }
 
 // ===== COUNTDOWN FOR SPECIAL OFFERS =====
 function startCountdown(id){
   const el=document.getElementById(`countdown${id}`);
-  const plan = plansData.find(p=>p.id===id);
-  if(!el || !plan) return;
-  const interval = setInterval(()=>{
-    const now = new Date().getTime();
-    let distance = plan.endTime - now;
-    if(distance < 0){ el.innerText="Offer expired"; clearInterval(interval); return; }
-    let hrs=Math.floor((distance%(1000*60*60*24))/(1000*60*60));
-    let mins=Math.floor((distance%(1000*60*60))/(1000*60));
-    let secs=Math.floor((distance%(1000*60))/1000);
-    el.innerText=`Offer ends in ${hrs}h ${mins}m ${secs}s`;
-  },1000);
+  if(!el) return;
+  const plan=plansData.find(p=>p.id===id);
+  function update(){
+    const now=new Date().getTime();
+    const diff=plan.endTime-now;
+    if(diff<=0){ el.innerText='Offer expired'; return; }
+    const h=Math.floor(diff/(1000*60*60));
+    const m=Math.floor((diff%(1000*60*60))/(1000*60));
+    const s=Math.floor((diff%60000)/1000);
+    el.innerText=`Offer ends in ${h}h ${m}m ${s}s`;
+    setTimeout(update,1000);
+  }
+  update();
 }
 
-// ===== ACTIVE MEMBERS & PLANS =====
-function updateActiveMembers(){ document.getElementById('activeMembers').innerText=totalUsers; }
-function updateActivePlans(){
-  const box=document.getElementById('activePlansBox'); box.innerHTML='';
-  userPlans.forEach(p=>{
-    const div=document.createElement('div'); div.className='plan-box';
-    div.innerHTML=`<div class='meta'><b>${p.name}</b><div class='small'>Daily: Rs ${p.daily} | Total: Rs ${p.total} | Days: ${p.days}</div></div>`;
-    box.appendChild(div);
-  });
+function checkSpecialOffers(){
+  plansData.forEach(p=>{if(p.special && p.endTime<new Date().getTime()){p.special=false; saveData(); renderPlans();}});
 }
 
-// ===== DEPOSIT & WITHDRAW =====
+// ===== DEPOSIT =====
 function submitDeposit(){
-  const amt = parseFloat(document.getElementById('depositAmount').value);
-  if(isNaN(amt) || amt <=0){ alert('Enter valid amount'); return; }
-  const tx = document.getElementById('depositTxId').value.trim();
-  if(!tx){ alert('Enter transaction ID'); return; }
-  alert(`Deposit of Rs ${amt} submitted. Admin will verify.`);
-  history.push(`Deposited Rs ${amt} via ${document.getElementById('depositMethod').value} on ${new Date().toLocaleDateString()}`);
-  localStorage.setItem('verbose_history',JSON.stringify(history));
+  const method=document.getElementById('depositMethod').value;
+  const amount=parseFloat(document.getElementById('depositAmount').value);
+  const txId=document.getElementById('depositTxId').value.trim();
+  if(!amount || !txId){ alert('Enter amount and TX ID'); return; }
+  history.push(`Deposit Rs ${amount} via ${method} | TX: ${txId} on ${new Date().toLocaleString()}`);
+  saveData();
+  alert('Deposit submitted. Admin will verify.');
+  document.getElementById('depositAmount').value='';
+  document.getElementById('depositTxId').value='';
+  document.getElementById('depositProof').value='';
   renderHistory();
 }
 
+// ===== WITHDRAWAL =====
 function submitWithdraw(){
-  const amt = parseFloat(document.getElementById('withdrawAmount').value);
-  if(isNaN(amt) || amt <=0){ alert('Enter valid amount'); return; }
-  const acc = document.getElementById('withdrawAccount').value.trim();
-  if(!acc){ alert('Enter account number'); return; }
-  alert(`Withdrawal of Rs ${amt} requested. Admin will process.`);
-  history.push(`Requested withdrawal Rs ${amt} via ${document.getElementById('withdrawMethod').value} on ${new Date().toLocaleDateString()}`);
-  localStorage.setItem('verbose_history',JSON.stringify(history));
+  const method=document.getElementById('withdrawMethod').value;
+  const account=document.getElementById('withdrawAccount').value.trim();
+  const amount=parseFloat(document.getElementById('withdrawAmount').value);
+  if(!account || !amount){ alert('Enter account and amount'); return; }
+  if(amount>balance){ alert('Insufficient balance'); return; }
+  balance -= amount;
+  history.push(`Withdrawal Rs ${amount} via ${method} | Account: ${account} on ${new Date().toLocaleString()}`);
+  saveData();
+  updateDashboard();
+  alert('Withdrawal request submitted for admin approval.');
+  document.getElementById('withdrawAccount').value='';
+  document.getElementById('withdrawAmount').value='';
   renderHistory();
 }
 
 // ===== POPUP =====
-function closePopup(){ document.getElementById('popup').classList.add('hidden'); }
-function showPopup(msg){ document.getElementById('popupText').innerText=msg; document.getElementById('popup').classList.remove('hidden'); }
-
-// ===== SPECIAL OFFERS CHECK =====
-function checkSpecialOffers(){
-  plansData.forEach(p=>{
-    if(p.special){
-      const now = new Date().getTime();
-      if(now > p.endTime){
-        // Offer expired, remove if needed
-        p.special=false;
-        localStorage.setItem('verbose_offerEndTimes',JSON.stringify(savedEndTimes));
-      }
-    }
-  });
+function showPopup(msg){ 
+  const p=document.getElementById('popup');
+  document.getElementById('popupText').innerText=msg;
+  p.classList.remove('hidden');
 }
+function closePopup(){ document.getElementById('popup').classList.add('hidden'); }
 
 // ===== INIT =====
 if(currentUser) updateDashboard();
+else showPage('loginPage');
 </script>
 </body>
 </html>
