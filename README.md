@@ -171,7 +171,7 @@ for(let i=1;i<=30;i++){
     planName = `Plan ${i}`;
     special = false;
   }
-  let endTime = savedEndTimes[i] || (special ? new Date().getTime() + 24*60*60*1000 : null);
+  let endTime = savedEndTimes[i] || (special ? new Date().getTime() + 24*60*60*1000 : new Date().getTime() + days*24*60*60*1000);
   if(special) savedEndTimes[i] = endTime;
   plansData.push({id:i,name:planName,invest,days,total:Math.round(invest*multiplier),special,endTime});
 }
@@ -228,10 +228,7 @@ function renderPlans(){
   plansData.forEach(p=>{
     const div=document.createElement('div'); div.className='plan-box';
     let countdownHTML='';
-    if(p.special){ 
-      countdownHTML=`<div class="small countdown" id="countdown${p.id}"></div>`; 
-      startCountdown(p.id); 
-    }
+    if(p.special){ countdownHTML=`<div class="small countdown" id="countdown${p.id}"></div>`; startCountdown(p.id);}
     div.innerHTML=`
       <div class="meta">
         <b>${p.name}</b>
@@ -250,11 +247,11 @@ function renderPlans(){
 function startCountdown(id){
   const el=document.getElementById(`countdown${id}`);
   if(!el) return;
-  const endTime=savedEndTimes[id];
   const interval=setInterval(()=>{
     const now=new Date().getTime();
-    const distance=endTime-now;
-    if(distance<=0){el.innerText="Offer expired"; clearInterval(interval); return;}
+    const planEndTime = savedEndTimes[id];
+    const distance=planEndTime-now;
+    if(distance<=0){el.innerText="Offer expired"; clearInterval(interval); updateActivePlans(); return;}
     const hrs=Math.floor((distance%(1000*60*60*24))/(1000*60*60));
     const mins=Math.floor((distance%(1000*60*60))/(1000*60));
     const secs=Math.floor((distance%(1000*60))/1000);
@@ -265,8 +262,7 @@ function startCountdown(id){
 // ===== BUY PLAN =====
 function buyPlan(id){
   const plan=plansData.find(p=>p.id===id);
-  const endTime = plan.special ? savedEndTimes[id] : new Date().getTime() + plan.days*24*60*60*1000;
-  activePlans.push({id, name: plan.name, invest: plan.invest, endTime});
+  activePlans.push({id, name: plan.name, invest: plan.invest, endTime: plan.endTime});
   localStorage.setItem('verbose_activePlans',JSON.stringify(activePlans));
   document.getElementById('depositAmount').value=plan.invest;
   showPage('deposit');
@@ -278,83 +274,75 @@ function buyPlan(id){
 function updateActivePlans(){
   const box = document.getElementById('activePlansBox'); box.innerHTML='';
   const now = new Date().getTime();
-  activePlans = activePlans.filter(p=>{
-    const planData = plansData.find(pl=>pl.id===p.id);
-    if(!planData) return false;
-    const distance = p.endTime - now;
-    if(distance<=0) return false; 
-    return true;
-  });
+  activePlans = activePlans.filter(p=>p.endTime>now);
   localStorage.setItem('verbose_activePlans',JSON.stringify(activePlans));
   activePlans.forEach(p=>{
-    const distance = p.endTime - now;const hrs = Math.floor((distance % (1000*60*60*24)) / (1000*60*60));
+    const distance = p.endTime-now;
+    const hrs = Math.floor((distance % (1000*60*60*24)) / (1000*60*60));
     const mins = Math.floor((distance % (1000*60*60)) / (1000*60));
     const secs = Math.floor((distance % (1000*60)) / 1000);
     const div = document.createElement('div');
-    div.className = 'plan-box';
-    div.innerHTML = `
-      <div class="meta">
-        <b>${p.name}</b>
-        <div class="small">Invested: Rs ${p.invest}</div>
-        <div class="small countdown">Ends in: ${hrs}h ${mins}m ${secs}s</div>
-      </div>
-    `;
+    div.className='plan-box';
+    div.innerHTML=`<div class="meta"><b>${p.name}</b>
+      <div class="small">Invest: Rs ${p.invest}</div>
+      <div class="small">Ends in: ${hrs}h ${mins}m ${secs}s</div></div>`;
     box.appendChild(div);
   });
 }
 
-// ===== ACTIVE MEMBERS UPDATE =====
+// ===== ACTIVE MEMBERS =====
 function updateActiveMembers(){
   document.getElementById('activeMembers').innerText = totalUsers;
 }
 
-// ===== DEPOSIT =====
-function submitDeposit(){
-  const method = document.getElementById('depositMethod').value;
-  const number = document.getElementById('depositNumber').value;
-  const amount = parseFloat(document.getElementById('depositAmount').value) || 0;
-  const txid = document.getElementById('depositTxId').value.trim();
-  const proof = document.getElementById('depositProof').files[0];
-  if(!amount || !txid || !proof){alert("Fill all deposit fields"); return;}
-  balance += amount;
-  dailyProfit += Math.round(amount*0.05); // simple daily profit example
-  localStorage.setItem('verbose_balance',balance);
-  localStorage.setItem('verbose_daily',dailyProfit);
-  history.push({type:'Deposit',method,number,amount,txid,date:new Date().toLocaleString()});
-  localStorage.setItem('verbose_history',JSON.stringify(history));
-  alert("Deposit successful!");
-  updateDashboard();
-}
-
-// ===== WITHDRAW =====
-function submitWithdraw(){
-  const method = document.getElementById('withdrawMethod').value;
-  const account = document.getElementById('withdrawAccount').value.trim();
-  const amount = parseFloat(document.getElementById('withdrawAmount').value) || 0;
-  if(!account || !amount){alert("Enter account & amount"); return;}
-  if(amount>balance){alert("Insufficient balance"); return;}
-  balance -= amount;
-  localStorage.setItem('verbose_balance',balance);
-  history.push({type:'Withdraw',method,account,amount,date:new Date().toLocaleString()});
-  localStorage.setItem('verbose_history',JSON.stringify(history));
-  alert("Withdrawal request submitted!");
-  updateDashboard();
-}
-
-// ===== HISTORY =====
+// ===== HISTORY RENDER =====
 function renderHistory(){
-  const list = document.getElementById('historyList');
-  list.innerHTML='';
+  const list = document.getElementById('historyList'); list.innerHTML='';
+  if(history.length===0){ list.innerHTML='<p class="small">No transactions yet.</p>'; return;}
   history.slice().reverse().forEach(h=>{
-    const div=document.createElement('div');
-    div.className='plan-box';
-    div.innerHTML=`<div class="meta"><b>${h.type}</b><div class="small">${h.date}</div><div class="small">Amount: Rs ${h.amount}</div></div>`;
+    const div=document.createElement('div'); div.className='plan-box';
+    div.innerHTML=`<div class="meta"><b>${h.type}</b>
+      <div class="small">Amount: Rs ${h.amount}</div>
+      <div class="small">Date: ${new Date(h.date).toLocaleString()}</div>
+      ${h.method?'<div class="small">Method: '+h.method+'</div>':''}
+      ${h.status?'<div class="small">Status: '+h.status+'</div>':''}</div>`;
     list.appendChild(div);
   });
 }
 
-// ===== INITIAL LOAD =====
-if(currentUser){updateDashboard();}
+// ===== DEPOSIT =====
+function submitDeposit(){
+  const method=document.getElementById('depositMethod').value;
+  const amount=parseFloat(document.getElementById('depositAmount').value)||0;
+  const txid=document.getElementById('depositTxId').value.trim();
+  if(amount<=0 || !txid){alert("Enter amount & TX ID"); return;}
+  balance+=amount; dailyProfit+=Math.round(amount*0.03);
+  localStorage.setItem('verbose_balance',balance);
+  localStorage.setItem('verbose_daily',dailyProfit);
+  history.push({type:'Deposit',amount,method,txid,date:new Date().getTime(),status:'Completed'});
+  localStorage.setItem('verbose_history',JSON.stringify(history));
+  alert('Deposit successful!');
+  updateDashboard();
+  showPage('dashboard');
+}
+
+// ===== WITHDRAW =====
+function submitWithdraw(){
+  const method=document.getElementById('withdrawMethod').value;
+  const account=document.getElementById('withdrawAccount').value.trim();
+  const amount=parseFloat(document.getElementById('withdrawAmount').value)||0;
+  if(!account || amount<=0 || amount>balance){alert("Check account & amount"); return;}
+  balance-=amount;
+  localStorage.setItem('verbose_balance',balance);
+  history.push({type:'Withdrawal',amount,method,account,date:new Date().getTime(),status:'Pending'});
+  localStorage.setItem('verbose_history',JSON.stringify(history));
+  alert('Withdrawal request submitted!');
+  updateDashboard();
+  showPage('dashboard');
+}
+
+// ===== INITIALIZE =====
+if(currentUser) updateDashboard();
 </script>
 </body>
 </html>
