@@ -178,10 +178,7 @@ for(let i=1;i<=30;i++){
 localStorage.setItem('verbose_offerEndTimes',JSON.stringify(savedEndTimes));
 
 // ===== UI FUNCTIONS =====
-function showPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
-}
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');}
 function login(){
   const option=document.getElementById('userOption').value;
   const u=document.getElementById('user').value.trim();
@@ -277,7 +274,7 @@ function buyPlan(id){
   updateActivePlans();
 }
 
-// ===== ACTIVE PLANS & DASHBOARD LIVE =====
+// ===== ACTIVE PLANS =====
 function updateActivePlans(){
   const box = document.getElementById('activePlansBox'); box.innerHTML='';
   const now = new Date().getTime();
@@ -288,85 +285,75 @@ function updateActivePlans(){
     if(distance<=0) return false; 
     return true;
   });
-
   localStorage.setItem('verbose_activePlans',JSON.stringify(activePlans));
-
   activePlans.forEach(p=>{
-    const planData = plansData.find(pl=>pl.id===p.id);
+    const distance = p.endTime - now;const hrs = Math.floor((distance % (1000*60*60*24)) / (1000*60*60));
+    const mins = Math.floor((distance % (1000*60*60)) / (1000*60));
+    const secs = Math.floor((distance % (1000*60)) / 1000);
     const div = document.createElement('div');
-    div.className='plan-box';
-    const distance = p.endTime - now;
-    const daysLeft = Math.ceil(distance/(1000*60*60*24));
-    div.innerHTML=`
+    div.className = 'plan-box';
+    div.innerHTML = `
       <div class="meta">
         <b>${p.name}</b>
-        <div class="small">Invest: Rs ${p.invest}</div>
-        <div class="small">Ends in: ${daysLeft} day(s)</div>
-      </div>`;
+        <div class="small">Invested: Rs ${p.invest}</div>
+        <div class="small countdown">Ends in: ${hrs}h ${mins}m ${secs}s</div>
+      </div>
+    `;
     box.appendChild(div);
   });
 }
 
-// ===== UPDATE ACTIVE MEMBERS =====
+// ===== ACTIVE MEMBERS UPDATE =====
 function updateActiveMembers(){
   document.getElementById('activeMembers').innerText = totalUsers;
 }
 
-// ===== HISTORY =====
-function renderHistory(){
-  const list = document.getElementById('historyList'); list.innerHTML='';
-  if(history.length===0){list.innerHTML='<div class="small">No history yet.</div>';return;}
-  history.forEach(h=>{
-    const div=document.createElement('div');
-    div.className='alert-box';
-    div.innerHTML=`<b>${h.type}</b> - Rs ${h.amount} <div class="small">${new Date(h.time).toLocaleString()}</div>`;
-    list.appendChild(div);
-  });
-}
-
 // ===== DEPOSIT =====
 function submitDeposit(){
-  const amount=parseFloat(document.getElementById('depositAmount').value);
-  const txid=document.getElementById('depositTxId').value.trim();
-  if(isNaN(amount)||amount<=0){alert("Enter valid amount"); return;}
-  if(!txid){alert("Enter transaction ID"); return;}
+  const method = document.getElementById('depositMethod').value;
+  const number = document.getElementById('depositNumber').value;
+  const amount = parseFloat(document.getElementById('depositAmount').value) || 0;
+  const txid = document.getElementById('depositTxId').value.trim();
+  const proof = document.getElementById('depositProof').files[0];
+  if(!amount || !txid || !proof){alert("Fill all deposit fields"); return;}
   balance += amount;
-  dailyProfit += Math.round(amount*0.05); // 5% daily bonus example
+  dailyProfit += Math.round(amount*0.05); // simple daily profit example
   localStorage.setItem('verbose_balance',balance);
   localStorage.setItem('verbose_daily',dailyProfit);
-  history.push({type:'Deposit',amount,time:new Date().getTime()});
+  history.push({type:'Deposit',method,number,amount,txid,date:new Date().toLocaleString()});
   localStorage.setItem('verbose_history',JSON.stringify(history));
-  alert("Deposit submitted! Admin will confirm.");
+  alert("Deposit successful!");
   updateDashboard();
 }
 
 // ===== WITHDRAW =====
 function submitWithdraw(){
-  const amount=parseFloat(document.getElementById('withdrawAmount').value);
-  const account=document.getElementById('withdrawAccount').value.trim();
-  if(isNaN(amount)||amount<=0){alert("Enter valid amount"); return;}
-  if(!account){alert("Enter account number"); return;}
+  const method = document.getElementById('withdrawMethod').value;
+  const account = document.getElementById('withdrawAccount').value.trim();
+  const amount = parseFloat(document.getElementById('withdrawAmount').value) || 0;
+  if(!account || !amount){alert("Enter account & amount"); return;}
   if(amount>balance){alert("Insufficient balance"); return;}
   balance -= amount;
   localStorage.setItem('verbose_balance',balance);
-  history.push({type:'Withdrawal',amount,time:new Date().getTime()});
+  history.push({type:'Withdraw',method,account,amount,date:new Date().toLocaleString()});
   localStorage.setItem('verbose_history',JSON.stringify(history));
-  alert("Withdrawal request submitted! Admin will process.");
+  alert("Withdrawal request submitted!");
   updateDashboard();
 }
 
-// ===== AUTO UPDATE DAILY PROFIT =====
-setInterval(()=>{
-  if(!currentUser) return;
-  dailyProfit += Math.round(activePlans.reduce((acc,p)=>{
-    const planData=plansData.find(pl=>pl.id===p.id);
-    return acc + Math.round(planData.total/planData.days);
-  },0));
-  localStorage.setItem('verbose_daily',dailyProfit);
-  document.getElementById('dashDaily').innerText=dailyProfit;
-},60*1000); // every minute
+// ===== HISTORY =====
+function renderHistory(){
+  const list = document.getElementById('historyList');
+  list.innerHTML='';
+  history.slice().reverse().forEach(h=>{
+    const div=document.createElement('div');
+    div.className='plan-box';
+    div.innerHTML=`<div class="meta"><b>${h.type}</b><div class="small">${h.date}</div><div class="small">Amount: Rs ${h.amount}</div></div>`;
+    list.appendChild(div);
+  });
+}
 
-// ===== INIT =====
+// ===== INITIAL LOAD =====
 if(currentUser){updateDashboard();}
 </script>
 </body>
