@@ -176,8 +176,8 @@ let history = JSON.parse(localStorage.getItem('verbose_history')||'[]');
 // ===== PLANS DATA 25+5 =====
 let plansData=[];
 for(let i=1;i<=30;i++){
-  const invest=200 + (i-1)*1000;
-  const days=25 + Math.floor((i-1)*2);
+  const invest=1000*i;
+  const days=25 + Math.floor((i-1)*5/5);
   const multiplier=i<=5?2.8:2.3;
   plansData.push({id:i,name:`Plan ${i}`,invest,days,total:Math.round(invest*multiplier)});
 }
@@ -265,30 +265,41 @@ function submitWithdraw(){
   balance-=amount;
   localStorage.setItem('verbose_balance',balance);
   history.push({type:'Withdrawal',amount,account,method,date:new Date().toLocaleString()});
-  localStorage.setItem('verbose_history',JSON.stringify(history));
-  alert(`Withdrawal request of Rs ${amount} submitted successfully!`);
-  updateDashboard();
-  showPage('dashboard');
+localStorage.setItem('verbose_history',JSON.stringify(history));
+alert(`Withdrawal request of Rs ${amount} submitted! Admin will review.`)
+updateDashboard();
+showPage('dashboard');
 }
 
-// ===== HISTORY =====
+// ===== RENDER HISTORY =====
 function renderHistory(){
   const list=document.getElementById('historyList');
   list.innerHTML='';
-  if(history.length===0){list.innerHTML='<p class="small">No transactions yet.</p>';return;}
   history.slice().reverse().forEach(h=>{
     const div=document.createElement('div');
     div.className='plan-box';
-    let info=`<b>${h.type}</b> · Rs ${h.amount} · ${h.date}<br>`;
-    if(h.type==='Deposit'){info+=`TX: ${h.tx||'-'} · Proof: ${h.proof||'-'}`;}
-    if(h.type==='Withdrawal'){info+=`Method: ${h.method} · Account: ${h.account}`;}
-    div.innerHTML=`<div class="meta">${info}</div>`;
+    div.innerHTML=`<div class="meta"><b>${h.type}</b><div class="small">${h.date}</div>${h.amount?'<div class="small">Amount: Rs '+h.amount+'</div>':''}${h.tx?'<div class="small">TX: '+h.tx+'</div>':''}${h.proof?'<div class="small">Proof: '+h.proof+'</div>':''}${h.account?'<div class="small">Account: '+h.account+'</div>':''}${h.method?'<div class="small">Method: '+h.method+'</div>':''}</div>`;
     list.appendChild(div);
   });
 }
 
+// ===== DAILY PROFIT INCREMENT =====
+setInterval(()=>{
+  if(currentUser){
+    balance = parseFloat(localStorage.getItem('verbose_balance')||'0');
+    dailyProfit = parseFloat(localStorage.getItem('verbose_daily')||'0');
+    dailyProfit += Math.round(balance*0.01); // 1% daily
+    balance += Math.round(balance*0.01);
+    localStorage.setItem('verbose_balance',balance);
+    localStorage.setItem('verbose_daily',dailyProfit);
+    if(document.getElementById('dashBalance')) document.getElementById('dashBalance').innerText=balance;
+    if(document.getElementById('dashDaily')) document.getElementById('dashDaily').innerText=dailyProfit;
+  }
+}, 24*60*60*1000); // every 24 hours
+
 // ===== INIT =====
 if(currentUser){updateDashboard();}
+updateDepositNumber();
 </script>
 </body>
 </html>
