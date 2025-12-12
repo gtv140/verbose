@@ -1,380 +1,389 @@
 <VERBOSE>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>VERBOSE</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VERBOSE Premium Advanced</title>
+
 <style>
-:root{
-  --neon:#00f7ff;
-  --accent:#ff5cff;
-  --dark:#070707;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, sans-serif;
 }
-*{box-sizing:border-box}
+
 body{
-    margin:0;
-    font-family:Inter, Arial, sans-serif;
-    background:var(--dark);
-    color:#fff;
-    overflow-x:hidden;
+  background:#000;
+  color:#fff;
+  overflow-x:hidden;
 }
-header{text-align:center;padding:24px 12px;font-size:28px;font-weight:800;letter-spacing:2px;background:linear-gradient(90deg,var(--neon),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.login-box,.page{
-max-width:430px;margin:18px auto;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-padding:18px;border-radius:12px;border:1px solid rgba(0,255,240,0.06);box-shadow:0 8px 30px rgba(0,0,0,0.6);}
-input,button,select{width:100%;padding:10px;margin-top:10px;border-radius:8px;border:1px solid rgba(0,255,240,0.08);background:transparent;color:#e6f7fb;outline:none;font-size:14px;}
-input::placeholder{color:rgba(230,247,251,0.5)}
-button{background:linear-gradient(90deg,var(--neon),var(--accent));border:none;color:#001;font-weight:700;cursor:pointer;padding:11px;border-radius:10px;transition:transform .15s ease, box-shadow .15s;}
-button:hover{ transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,0,0,0.5); }
-.nav{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));display:flex;justify-content:space-around;padding:12px 6px;border-top:1px solid rgba(0,255,240,0.04);font-size:14px;gap:6px;}
-.nav div{text-align:center;cursor:pointer; width:64px;}
-.nav div .ico{font-size:20px;display:block;margin-bottom:4px}
-.hidden{display:none;}
-.small{font-size:13px;color:rgba(230,247,251,0.8);}
-.user-box{background:linear-gradient(90deg, rgba(0,255,240,0.06), rgba(255,92,255,0.02));padding:14px;border-radius:12px;margin-bottom:12px;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid rgba(0,255,240,0.06);position:relative;}
-.user-box .left{display:flex;flex-direction:column;gap:6px}
-.user-box .right{text-align:right;font-size:13px}
-.badge{background:rgba(0,255,240,0.06);padding:6px 10px;border-radius:999px;color:var(--neon);font-weight:800}
-.user-box .icons{display:flex;gap:10px;position:absolute;top:14px;right:14px}
-.user-box .icons div{width:34px;height:34px;background:rgba(0,255,240,0.06);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--neon);font-weight:800;cursor:pointer;font-size:16px}
-.alert-box{background:linear-gradient(90deg, rgba(255,0,136,0.04), rgba(0,0,0,0.02));padding:12px;border-radius:10px;margin-bottom:12px;color:var(--accent);border:1px solid rgba(255,0,136,0.06);box-shadow:0 6px 20px rgba(255,0,136,0.03) inset;}
-.plan-box{border:1px solid rgba(0,255,240,0.06);padding:12px;margin:10px 0;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.04));transition:box-shadow .2s ease, transform .12s ease;display:flex;gap:12px;align-items:center;}
-.plan-box .meta{flex:1}
-.plan-box .meta b{display:block;margin-bottom:6px;font-size:15px}
-.plan-box .meta .small{margin-top:6px}
-.plan-box .actions{width:120px;text-align:right}
-.plan-box:hover{box-shadow:0 12px 30px rgba(0,255,240,0.06); transform:translateY(-4px)}
-.offer{color:var(--neon);font-weight:800;}
-.referral-box{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.03));padding:12px;border-radius:10px;margin:10px 0;border:1px solid rgba(0,255,240,0.04)}
-.referral-box input{background:transparent;border:1px dashed rgba(255,255,255,0.03);padding:8px;border-radius:8px}
-.support-box{background:linear-gradient(90deg, rgba(0,0,0,0.35), rgba(0,0,0,0.45));padding:14px;border-radius:12px;border:1px solid rgba(255,0,136,0.06);box-shadow:0 10px 30px rgba(255,0,136,0.03) inset;}
-.support-box h2{margin:0 0 8px 0;font-size:18px;background:linear-gradient(90deg,var(--neon),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.support-grid{display:flex;gap:12px;flex-direction:column}
-.support-item{display:flex;gap:10px;align-items:center}
-.support-item .icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(0,255,240,0.04);color:var(--neon);font-weight:800}
-.support-item p{margin:0;font-size:14px}
-.support-note{font-size:13px;color:rgba(230,247,251,0.75);margin-top:8px}
-.countdown{font-weight:700;color:var(--neon)}
-.history-box{background:linear-gradient(180deg, rgba(0,255,240,0.04), rgba(0,0,0,0.05));padding:12px;border-radius:10px;margin:10px 0;border:1px solid rgba(0,255,240,0.06);}
-.history-box p{margin:4px 0;font-size:13px;color:#00f7ff;}
-@media (max-width:480px){
-.login-box,.page{margin:12px;padding:14px}
-.nav div{width:48px}
-header{font-size:22px}
-.logout-btn{padding:10px 12px;font-size:14px}
+
+/* HEADER */
+.header{
+  width:100%;
+  padding:18px;
+  background:#0f0f0f;
+  border-bottom:2px solid #111;
+  text-align:center;
+  font-size:22px;
+  font-weight:bold;
+  letter-spacing:1px;
+  color:#00f7ff;
+  text-shadow:0 0 8px #00f7ff;
+}
+
+/* USER BOX */
+.userBox{
+  width:92%;
+  margin:15px auto;
+  background:#0d0d0d;
+  padding:15px;
+  border-radius:12px;
+  box-shadow:0 0 12px #00f7ff55;
+  border:1px solid #00f7ff33;
+}
+
+.userBox h3{
+  font-size:18px;
+  color:#00f7ff;
+  margin-bottom:8px;
+  text-shadow:0 0 8px #00f7ff;
+}
+
+.user-data{
+  font-size:14px;
+  margin-top:5px;
+  color:#eee;
+}
+
+/* DASHBOARD */
+.dashboard{
+  width:92%;
+  margin:20px auto;
+}
+
+.box{
+  width:100%;
+  background:#0c0c0c;
+  padding:15px;
+  margin-bottom:15px;
+  border-radius:12px;
+  border:1px solid #00f7ff44;
+  box-shadow:0 0 10px #00f7ff44;
+}
+
+.box-title{
+  font-size:16px;
+  color:#00eaff;
+  margin-bottom:6px;
+}
+
+.box-amount{
+  font-size:22px;
+  font-weight:bold;
+  margin-top:5px;
+}
+
+/* BOTTOM NAV */
+.bottomNav{
+  width:100%;
+  position:fixed;
+  bottom:0;
+  left:0;
+  background:#0e0e0e;
+  padding:10px 0;
+  display:flex;
+  justify-content:space-around;
+  border-top:1px solid #00f7ff55;
+}
+
+.navItem{
+  text-align:center;
+  font-size:13px;
+  color:#fff;
+}
+
+.navItem.active{
+  color:#00f7ff;
+  text-shadow:0 0 6px #00f7ff;
+}
+
+.navIcon{
+  font-size:20px;
+  margin-bottom:3px;
 }
 </style>
 </head>
+
 <body>
-<header>VERBOSE</header>
 
-<!-- LOGIN / SIGNUP -->
-<div id="loginPage" class="login-box">
-  <h2 style="margin:0 0 8px 0">Login / Signup</h2>
-  <select id="userOption" aria-label="option">
-    <option value="login">Login</option>
-    <option value="signup">New User Signup</option>
-  </select>
-  <input id="user" placeholder="Username" />
-  <input id="pass" placeholder="Password" type="password" />
-  <button onclick="login()">Submit</button>
-  <p class="small" style="margin-top:10px">Tip: Use same device/browser to keep your account saved (local storage).</p>
+<div class="header">VERBOSE PREMIUM</div>
+
+<div class="userBox">
+  <h3>User Profile</h3>
+  <div class="user-data">Name: <span id="uName">Loading...</span></div>
+  <div class="user-data">Member Since: <span id="uSince">--</span></div>
+  <div class="user-data">Active Plans: <span id="activePlans">0</span></div>
 </div>
 
-<!-- DASHBOARD -->
-<div id="dashboard" class="page hidden">
-  <div class="alert-box">Warning: Only use official VERBOSE channels for deposits and communications. Never share sensitive passwords.</div>
+<div class="dashboard">
   
-  <div class="user-box">
-    <div class="left">
-      <div style="display:flex;gap:12px;align-items:center">
-        <div style="width:56px;height:56px;border-radius:12px;background:linear-gradient(90deg,var(--neon),var(--accent));display:flex;align-items:center;justify-content:center;color:#001;font-weight:900">V</div>
-        <div>
-          <div style="font-size:16px;font-weight:800" id="dashUser">—</div>
-          <div class="small">Member since: <span id="dashSince">—</span></div>
-        </div>
-      </div>
-    </div>
-    <div class="right">
-      <div style="font-size:13px">Balance</div>
-      <div style="font-size:18px;font-weight:900">Rs <span id="dashBalance">0</span></div>
-      <div style="margin-top:8px" class="badge">Daily: Rs <span id="dashDaily">0</span></div>
-      <div style="margin-top:4px" class="badge">Active Users: <span id="activeUsers">1</span></div>
-    </div>
-    <div class="icons">
-      <div title="Active Users" onclick="updateActiveUsers()">🟢</div>
-      <div title="History" onclick="toggleHistory()">📜</div>
-    </div>
+  <div class="box">
+    <div class="box-title">Main Balance</div>
+    <div class="box-amount" id="mainBalance">PKR 0</div>
   </div>
 
-  <h2 style="text-align:center;color:var(--neon);margin:6px 0 10px 0">Dashboard Overview</h2>
-  <p class="small" style="text-align:center;margin-top:-6px">Monitor plans, deposits & withdrawals securely. Neon interface for professional look.</p>
-
-  <div class="referral-box">
-    <div style="display:flex;gap:8px;align-items:center">
-      <input id="refLink" readonly style="flex:1" />
-      <button onclick="copyReferral()" style="width:110px">Copy Link</button>
-    </div>
-    <div class="small" style="margin-top:8px; color:var(--neon)">Share this link to invite friends. Bonus credits will reflect automatically.</div>
+  <div class="box">
+    <div class="box-title">Daily Profit</div>
+    <div class="box-amount" id="dailyProfit">PKR 0</div>
   </div>
 
-  <div id="historyContainer" class="hidden history-box"></div>
+  <div class="box">
+    <div class="box-title">Total Profit Earned</div>
+    <div class="box-amount" id="totalProfit">PKR 0</div>
+  </div>
 
-  <div style="margin-top:8px; text-align:center">
-    <button class="logout-btn" onclick="logout()" title="Logout">Logout</button>
+</div>
+
+<!-- BOTTOM NAVIGATION -->
+<div class="bottomNav">
+  <div class="navItem active" onclick="showPage('dashboardPage')">
+    <div class="navIcon">🏠</div>Home
+  </div>
+  <div class="navItem" onclick="showPage('plansPage')">
+    <div class="navIcon">📦</div>Plans
+  </div>
+  <div class="navItem" onclick="showPage('historyPage')">
+    <div class="navIcon">📜</div>History
+  </div>
+  <div class="navItem" onclick="showPage('depositPage')">
+    <div class="navIcon">💰</div>Deposit
+  </div>
+  <div class="navItem" onclick="showPage('supportPage')">
+    <div class="navIcon">📞</div>Support
   </div>
 </div>
 
-<!-- PLANS -->
-<div id="plans" class="page hidden">
-  <h2>Plans</h2>
-  <div id="plansList"></div>
-</div>
+<!-- PAGES START -->
+<div id="dashboardPage"></div>
+<div id="plansPage" style="display:none;"></div>
+<div id="historyPage" style="display:none;"></div>
+<div id="depositPage" style="display:none;"></div>
+<div id="supportPage" style="display:none;"></div>
 
-<!-- DEPOSIT -->
-<div id="deposit" class="page hidden">
-  <h2>Deposit</h2>
-  <label>Method</label>
-  <select id="depositMethod" onchange="updateDepositNumber()">
-    <option value="jazzcash">JazzCash</option>
-    <option value="easypaisa">EasyPaisa</option>
-  </select>
-  <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
-    <input id="depositNumber" readonly style="flex:1" />
-    <button onclick="copyDepositNumber()" style="width:110px">Copy</button>
-  </div>
-  <label style="margin-top:12px">Amount</label>
-  <input id="depositAmount" readonly />
-  <label>Transaction ID</label>
-  <input id="depositTxId" placeholder="TX ID" />
-  <label>Upload Proof</label>
-  <input type="file" id="depositProof" />
-  <button onclick="submitDeposit()">Submit Deposit</button>
-  <p class="small" style="margin-top:8px">After submitting, share proof with admin on WhatsApp or Email for verification.</p>
-</div>
-
-<!-- WITHDRAWAL -->
-<div id="withdrawal" class="page hidden">
-  <h2>Withdrawal</h2>
-  <label>Method</label>
-  <select id="withdrawMethod">
-    <option value="jazzcash">JazzCash</option>
-    <option value="easypaisa">EasyPaisa</option>
-    <option value="bank">Bank</option>
-  </select>
-  <input id="withdrawUsername" readonly placeholder="Username" />
-  <input id="withdrawAccount" placeholder="Account Number (manual)" />
-  <input id="withdrawAmount" placeholder="Amount" />
-  <button onclick="submitWithdraw()">Request Withdrawal</button>
-  <p class="small" style="margin-top:8px">Requests are reviewed by admin. Keep your proof ready.</p>
-</div>
-
-<!-- SUPPORT -->
-<div id="support" class="page hidden">
-  <div class="support-box">
-    <h2>Contact Administration</h2>
-    <div class="support-grid">
-      <div class="support-item">
-        <div class="icon">💬</div>
-        <div>
-          <p><strong>WhatsApp Support</strong></p>
-          <p class="small">Fastest support — join our group or message the admin directly.</p>
-          <p style="margin-top:6px"><a href="https://chat.whatsapp.com/Kmaiv3VdSo09rio4qcRTRM" target="_blank">Join WhatsApp Group</a></p>
-        </div>
-      </div>
-      <div class="support-item">
-        <div class="icon">📧</div>
-        <div>
-          <p><strong>Email Support</strong></p>
-          <p class="small">For formal queries and proofs, email our support team.</p>
-          <p style="margin-top:6px"><a href="mailto:rock.earn92@gmail.com">rock.earn92@gmail.com</a></p>
-        </div>
-      </div>
-    </div>
-    <p class="support-note">Always use official channels for verification. Never share sensitive info publicly.</p>
-    <p style="color:var(--neon);font-weight:800;text-align:center;margin-top:10px">VERBOSE — Secure. Transparent. Professional.</p>
-  </div>
-</div>
-
-<!-- NAVIGATION -->
-<div id="bottomNav" class="nav hidden">
-  <div onclick="showPage('dashboard')"><span class="ico">🏠</span>Home</div>
-  <div onclick="showPage('plans')"><span class="ico">📦</span>Plans</div>
-  <div onclick="showPage('deposit')"><span class="ico">💰</span>Deposit</div>
-  <div onclick="showPage('withdrawal')"><span class="ico">💵</span>Withdraw</div>
-  <div onclick="showPage('support')"><span class="ico">📞</span>Support</div>
-</div>
-
+<!-- SCRIPT START -->
 <script>
-// ===== USERS & STORAGE =====
-let currentUser = localStorage.getItem('verbose_user') || null;
-let balance = parseFloat(localStorage.getItem('verbose_balance')||0);
-let dailyProfit = parseFloat(localStorage.getItem('verbose_daily')||0);
-let userPlans = JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');
-let referralCode = localStorage.getItem('verbose_referral') || '';
-let activeUsers = parseInt(localStorage.getItem('verbose_activeUsers')||1);
+/* STABLE LOGIN – NO AUTO LOGOUT ON REFRESH */
+let user = JSON.parse(localStorage.getItem("verboseUser")) || null;
 
-// ===== ACTIVE USERS SIMULATION =====
-function updateActiveUsers(){ 
-  activeUsers = 1 + Math.floor(Math.random()*10);
-  document.getElementById('activeUsers').innerText=activeUsers;
-  localStorage.setItem('verbose_activeUsers',activeUsers);
+function loadUser(){
+  if(!user){
+     user = {name:"User", since:"2025", balance:0, depositHistory:[], plans:[]};
+     localStorage.setItem("verboseUser", JSON.stringify(user));
+  }
+
+  document.getElementById("uName").innerText = user.name;
+  document.getElementById("uSince").innerText = user.since;
+  document.getElementById("mainBalance").innerText = "PKR " + user.balance;
+  document.getElementById("activePlans").innerText = user.plans.length;
 }
-setInterval(updateActiveUsers,10000);
+loadUser();
 
-// ===== PLANS =====
-let plansData=[];
+function showPage(pg){
+  document.getElementById("dashboardPage").style.display="none";
+  document.getElementById("plansPage").style.display="none";
+  document.getElementById("historyPage").style.display="none";
+  document.getElementById("depositPage").style.display="none";
+  document.getElementById("supportPage").style.display="none";
+  
+  document.getElementById(pg).style.display="block";
+}
+<script>
+/* ===== PLANS DATA ===== */
+let plans = [];
 for(let i=1;i<=25;i++){
-    let invest,multiplier;
-    if(i<=5){ invest=Math.round(200 + (i-1)*(1800-200)/4); multiplier=2.6; }
-    else{ invest=Math.round(200 + (i-1)*(30000-200)/24); multiplier=2.2; }
-    const days=25+Math.floor((i-1)*(78-25)/30);
-    plansData.push({id:i,name:`Plan ${i}`,invest,days,total:Math.round(invest*multiplier),multiplier,offer:i<=5});
+  let invest = Math.round(200 + (i-1)*(30000-200)/24);
+  let days = 25 + Math.floor((i-1)*(78-25)/24);
+  let multiplier = i<=5 ? 2.8 : 2.3;
+  plans.push({
+    id:i,
+    name:`Plan ${i}`,
+    invest,
+    days,
+    total:Math.round(invest*multiplier),
+    offer:i<=5,
+    coming:false
+  });
 }
 
-// ===== AUTH =====
-function login(){
-    const option=document.getElementById('userOption').value;
-    const u=document.getElementById('user').value.trim();
-    const p=document.getElementById('pass').value.trim();
-    if(!u||!p){ alert("Enter username & password"); return; }
-    currentUser=u;
-    localStorage.setItem('verbose_user',currentUser);
-    referralCode=referralCode||Math.random().toString(36).substring(2,10);
-    localStorage.setItem('verbose_referral',referralCode);
-    if(option==='signup'){
-        balance=0; dailyProfit=0; userPlans=[];
-        localStorage.setItem('verbose_balance',balance);
-        localStorage.setItem('verbose_daily',dailyProfit);
-        localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));
-    } else {
-        balance=parseFloat(localStorage.getItem('verbose_balance')||0);
-        dailyProfit=parseFloat(localStorage.getItem('verbose_daily')||0);
-        userPlans=JSON.parse(localStorage.getItem('verbose_userPlans')||'[]');
-    }
-    document.getElementById('dashUser').innerText=currentUser;
-    document.getElementById('dashBalance').innerText=balance;
-    document.getElementById('dashDaily').innerText=dailyProfit;
-    document.getElementById('dashSince').innerText=new Date().toLocaleDateString();
-    document.getElementById('refLink').value=`https://gtv140.github.io/verbose/?ref=${referralCode}`;
-    document.getElementById('dashboard').classList.remove('hidden');
-    document.getElementById('loginPage').classList.add('hidden');
-    document.getElementById('bottomNav').classList.remove('hidden');
-    renderPlans();
-    updateDepositNumber();
-    document.getElementById('withdrawUsername').value=currentUser;
-}
-
-// ===== LOGOUT =====
-function logout(){
-    currentUser=null;
-    localStorage.removeItem('verbose_user');
-    document.getElementById('loginPage').classList.remove('hidden');
-    document.getElementById('dashboard').classList.add('hidden');
-    document.getElementById('plans').classList.add('hidden');
-    document.getElementById('deposit').classList.add('hidden');
-    document.getElementById('withdrawal').classList.add('hidden');
-    document.getElementById('support').classList.add('hidden');
-    document.getElementById('bottomNav').classList.add('hidden');
-}
-
-// ===== SHOW PAGE =====
-function showPage(page){
-    const pages=['dashboard','plans','deposit','withdrawal','support'];
-    pages.forEach(p=>{
-        document.getElementById(p).classList.add('hidden');
-    });
-    document.getElementById(page).classList.remove('hidden');
-}
-
-// ===== REFERRAL =====
-function copyReferral(){
-    const copyText = document.getElementById('refLink');
-    copyText.select();
-    copyText.setSelectionRange(0, 99999);
-    navigator.clipboard.writeText(copyText.value);
-    alert("Referral link copied!");
-}
-
-// ===== PLANS =====
+/* ===== RENDER PLANS ===== */
 function renderPlans(){
-    const container=document.getElementById('plansList');
-    container.innerHTML='';
-    plansData.forEach(plan=>{
-        const div=document.createElement('div');
-        div.className='plan-box';
-        div.innerHTML=`
-            <div class="meta">
-                <b>${plan.name}</b>
-                <div class="small">Invest: Rs ${plan.invest} | Days: ${plan.days} | Total Return: Rs ${plan.total}</div>
-                ${plan.offer?`<div class="offer">Special Offer!</div>`:''}
-            </div>
-            <div class="actions">
-                <button onclick="buyPlan(${plan.id})">Buy</button>
-            </div>
-        `;
-        container.appendChild(div);
-    });
+  const container = document.getElementById("plansPage");
+  container.innerHTML = "";
+  plans.forEach(p=>{
+    const box = document.createElement("div");
+    box.style.background="#0d0d0d";
+    box.style.border="1px solid #00f7ff44";
+    box.style.borderRadius="10px";
+    box.style.margin="8px";
+    box.style.padding="12px";
+    box.style.boxShadow="0 0 12px #00f7ff33";
+    const daily = Math.round(p.total/p.days);
+    box.innerHTML = `
+      <div style="font-weight:bold;color:#00f7ff;margin-bottom:6px;">${p.name}</div>
+      <div style="font-size:13px;color:#ccc">${p.offer ? "Special 24h Offer" : p.coming ? "Coming Soon" : "Standard Plan"}</div>
+      <div style="font-size:13px;margin-top:6px">Invest: PKR ${p.invest} · Days: ${p.days}</div>
+      <div style="font-size:13px">Total: PKR ${p.total} · Daily: PKR ${daily}</div>
+      ${p.coming ? '<div style="color:#888;font-size:12px;margin-top:4px">COMING SOON</div>' : `<button onclick="buyPlan(${p.id})" style="margin-top:6px;padding:6px 12px;border:none;border-radius:6px;background:#00f7ff;color:#001;cursor:pointer;">Buy Now</button>`}
+      <div id="countdown${p.id}" style="font-size:12px;color:#00f7ff;margin-top:4px;"></div>
+    `;
+    container.appendChild(box);
+
+    if(p.offer && !p.coming) startCountdown(p.id, 24*3600);
+  });
+}
+renderPlans();
+
+/* ===== COUNTDOWN FOR SPECIAL OFFERS ===== */
+let countdownIntervals = {};
+function startCountdown(id, seconds){
+  const display = document.getElementById("countdown"+id);
+  const key = "offer_end_"+id;
+  let end = parseInt(localStorage.getItem(key) || "0");
+  if(!end || end<Date.now()){
+    end = Date.now() + seconds*1000;
+    localStorage.setItem(key,end);
+  }
+  clearInterval(countdownIntervals[id]);
+  countdownIntervals[id] = setInterval(()=>{
+    const diff = Math.floor((end-Date.now())/1000);
+    if(diff<=0){
+      display.innerText="Offer Ended";
+      clearInterval(countdownIntervals[id]);
+      return;
+    }
+    const h=Math.floor(diff/3600);
+    const m=Math.floor((diff%3600)/60);
+    const s=diff%60;
+    display.innerText=`${h}h ${m}m ${s}s`;
+  },1000);
 }
 
-// ===== BUY PLAN =====
+/* ===== BUY PLAN ===== */
 function buyPlan(id){
-    const plan=plansData.find(p=>p.id===id);
-    if(balance<plan.invest){ alert("Insufficient balance!"); return; }
-    balance-=plan.invest;
-    dailyProfit+=Math.round((plan.total-plan.invest)/plan.days);
-    userPlans.push({id:plan.id,name:plan.name,invest:plan.invest,total:plan.total,days:plan.days,date:new Date().toLocaleDateString()});
-    localStorage.setItem('verbose_balance',balance);
-    localStorage.setItem('verbose_daily',dailyProfit);
-    localStorage.setItem('verbose_userPlans',JSON.stringify(userPlans));
-    document.getElementById('dashBalance').innerText=balance;
-    document.getElementById('dashDaily').innerText=dailyProfit;
-    alert(`You bought ${plan.name}!`);
+  const plan = plans.find(x=>x.id===id);
+  if(!plan) return;
+  
+  alert(`You selected ${plan.name}. Please deposit PKR ${plan.invest} to proceed.`);
+  
+  // add to user plans
+  if(!user.plans.find(x=>x.id===id)){
+    user.plans.push({id:id,lastUpdate:Date.now(),dailyProfit:Math.round(plan.total/plan.days)});
+    localStorage.setItem("verboseUser",JSON.stringify(user));
+  }
+
+  document.getElementById("depositPage").innerHTML=`
+    <div style="margin:12px;">
+      <div style="font-weight:bold;margin-bottom:8px;color:#00f7ff;">Deposit for ${plan.name}</div>
+      <div style="margin-bottom:6px;">Amount: PKR ${plan.invest}</div>
+      <div style="margin-bottom:6px;">Method: JazzCash / EasyPaisa</div>
+      <button onclick="submitDeposit(${plan.invest})" style="padding:6px 12px;border:none;border-radius:6px;background:#00f7ff;color:#001;cursor:pointer;">Submit Deposit</button>
+    </div>
+  `;
+  showPage("depositPage");
 }
 
-// ===== HISTORY =====
-function toggleHistory(){
-    const hist=document.getElementById('historyContainer');
-    hist.classList.toggle('hidden');
-    hist.innerHTML='';
-    if(userPlans.length===0){ hist.innerHTML='<p>No plans purchased yet.</p>'; return; }
-    userPlans.forEach(p=>{
-        const pdiv=document.createElement('p');
-        pdiv.innerText=`${p.name} | Invested: Rs ${p.invest} | Total: Rs ${p.total} | Date: ${p.date}`;
-        hist.appendChild(pdiv);
-    });
+/* ===== DEPOSIT SUBMISSION ===== */
+function submitDeposit(amount){
+  user.balance += amount;
+  localStorage.setItem("verboseUser",JSON.stringify(user));
+  document.getElementById("mainBalance").innerText="PKR "+user.balance;
+  alert("Deposit successful! Admin will verify your transaction.");
+  showPage("dashboardPage");
 }
 
-// ===== DEPOSIT =====
-function updateDepositNumber(){
-    const method=document.getElementById('depositMethod').value;
-    const number=method==='jazzcash'?'03705519562':'03379827882';
-    document.getElementById('depositNumber').value=number;
-    document.getElementById('depositAmount').value='Enter Amount';
+/* ===== DAILY PROFIT ENGINE ===== */
+function addDailyProfit(){
+  const now=Date.now();
+  user.plans.forEach(p=>{
+    const last=p.lastUpdate||now;
+    const daysPassed=Math.floor((now-last)/(1000*60*60*24));
+    if(daysPassed>0){
+      user.balance += p.dailyProfit*daysPassed;
+      p.lastUpdate=now;
+    }
+  });
+  localStorage.setItem("verboseUser",JSON.stringify(user));
+  document.getElementById("mainBalance").innerText="PKR "+user.balance;
 }
-function copyDepositNumber(){
-    const input=document.getElementById('depositNumber');
-    input.select(); input.setSelectionRange(0,99999);
-    navigator.clipboard.writeText(input.value);
-    alert("Deposit number copied!");
-}
-function submitDeposit(){
-    alert("Deposit submitted! Admin will verify and update balance.");
+setInterval(addDailyProfit,60000); // every 1 min auto-update
+<script>
+/* ===== REFERRAL COPY ===== */
+function copyReferral(){
+  const ref = document.getElementById('refLink');
+  if(!ref) return;
+  navigator.clipboard?.writeText(ref.value) || ref.select() && document.execCommand('copy');
+  alert("Referral link copied!");
 }
 
-// ===== WITHDRAWAL =====
+/* ===== WITHDRAWAL ===== */
 function submitWithdraw(){
-    const amt=parseFloat(document.getElementById('withdrawAmount').value);
-    if(isNaN(amt)||amt>balance){ alert("Invalid amount!"); return; }
-    balance-=amt;
-    localStorage.setItem('verbose_balance',balance);
-    document.getElementById('dashBalance').innerText=balance;
-    alert("Withdrawal request submitted! Admin will process it.");
+  const amt = parseFloat(document.getElementById('withdrawAmount').value);
+  const acc = document.getElementById('withdrawAccount').value.trim();
+  if(!amt || !acc){ alert("Enter amount & account"); return; }
+  if(amt > user.balance){ alert("Insufficient balance"); return; }
+  user.balance -= amt;
+  localStorage.setItem("verboseUser", JSON.stringify(user));
+  document.getElementById("mainBalance").innerText="PKR "+user.balance;
+  alert(`Withdrawal request of PKR ${amt} received. Admin will process it.`);
+  document.getElementById('withdrawAmount').value='';
+  document.getElementById('withdrawAccount').value='';
 }
 
-// ===== INIT =====
-if(currentUser){ login(); } else { document.getElementById('loginPage').classList.remove('hidden'); }
+/* ===== SUPPORT LINKS ===== */
+function openSupport(type){
+  if(type==="whatsapp"){
+    window.open("https://chat.whatsapp.com/Kmaiv3VdSo09rio4qcRTRM", "_blank");
+  } else if(type==="email"){
+    window.open("mailto:rock.earn92@gmail.com");
+  }
+}
 
+/* ===== LOGOUT ===== */
+function logout(){
+  localStorage.removeItem("verbose_user");
+  showPage("loginPage");
+}
+
+/* ===== INITIAL SETUP ===== */
+let user = JSON.parse(localStorage.getItem("verboseUser")) || {username:null,balance:0,dailyProfit:0,plans:[]};
+if(user.username){
+  document.getElementById("dashUser").innerText=user.username;
+  document.getElementById("mainBalance").innerText="PKR "+user.balance;
+  document.getElementById("bottomNav").classList.remove("hidden");
+  showPage("dashboardPage");
+}
+
+/* ===== NAVIGATION ===== */
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+/* ===== AUTO DAILY PROFIT UPDATE ===== */
+setInterval(()=>{
+  const now = Date.now();
+  user.plans.forEach(p=>{
+    const last = p.lastUpdate || now;
+    const daysPassed = Math.floor((now-last)/(1000*60*60*24));
+    if(daysPassed>0){
+      user.balance += p.dailyProfit*daysPassed;
+      p.lastUpdate = now;
+    }
+  });
+  localStorage.setItem("verboseUser",JSON.stringify(user));
+  const balEl = document.getElementById("mainBalance");
+  if(balEl) balEl.innerText="PKR "+user.balance;
+},60000); // every 1 minute
 </script>
-</body>
-</html>
