@@ -33,6 +33,8 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5);}
 .referral-box{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.03));padding:12px;border-radius:10px;margin:10px 0;border:1px solid rgba(0,255,240,0.04);}
 .referral-box input{background:transparent;border:1px dashed rgba(255,255,255,0.03);padding:8px;border-radius:8px;}
 .countdown{font-weight:700;color:var(--neon);}
+#popup{position:fixed;top:20%;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#00f7ff,#ff5cff);padding:20px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.5);color:#001;font-weight:800;z-index:9999;text-align:center;}
+#popup button{margin-top:10px;padding:8px 12px;border:none;border-radius:8px;background:#001;color:#fff;font-weight:700;cursor:pointer;}
 @media(max-width:480px){.login-box,.page{margin:12px;padding:14px}.nav div{width:48px}header{font-size:22px}.logout-btn{padding:10px 12px;font-size:14px}}
 </style>
 </head>
@@ -133,6 +135,12 @@ button:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,0.5);}
   <div id="historyList"></div>
 </div>
 
+<!-- POPUP -->
+<div id="popup" class="hidden">
+  <span id="popupText"></span><br>
+  <button onclick="closePopup()">Close</button>
+</div>
+
 <!-- NAVIGATION -->
 <div id="bottomNav" class="nav hidden">
   <div onclick="showPage('dashboard')"><span class="ico">🏠</span>Home</div>
@@ -198,12 +206,19 @@ function login(){
   }
   updateDashboard();
 }
+function logout(){ currentUser=null; localStorage.removeItem('verbose_user'); location.reload(); }
+function copyReferral(){navigator.clipboard.writeText(document.getElementById('refLink').value); alert("Referral link copied!");}
+function copyDepositNumber(){navigator.clipboard.writeText(document.getElementById('depositNumber').value); alert("Deposit number copied!");}
+function updateDepositNumber(){ 
+  const method=document.getElementById('depositMethod').value;
+  document.getElementById('depositNumber').value = method==='jazzcash'?'03705519562':'03379827882';
+}
 
-// ===== DASHBOARD UPDATE =====
+// ===== DASHBOARD =====
 function updateDashboard(){
   document.getElementById('dashUser').innerText=currentUser;
-  document.getElementById('dashBalance').innerText=balance;
-  document.getElementById('dashDaily').innerText=dailyProfit;
+  document.getElementById('dashBalance').innerText=balance.toFixed(2);
+  document.getElementById('dashDaily').innerText=dailyProfit.toFixed(2);
   document.getElementById('dashSince').innerText=new Date().toLocaleDateString();
   document.getElementById('refLink').value=`https://gtv140.github.io/verbose/?ref=${referralCode}`;
   document.getElementById('loginPage').classList.add('hidden');
@@ -213,13 +228,7 @@ function updateDashboard(){
   renderHistory();
   updateActiveMembers();
   updateActivePlans();
-}
-function logout(){ currentUser=null; localStorage.removeItem('verbose_user'); location.reload(); }
-function copyReferral(){navigator.clipboard.writeText(document.getElementById('refLink').value); alert("Referral link copied!");}
-function copyDepositNumber(){navigator.clipboard.writeText(document.getElementById('depositNumber').value); alert("Deposit number copied!");}
-function updateDepositNumber(){ 
-  const method=document.getElementById('depositMethod').value;
-  document.getElementById('depositNumber').value = method==='jazzcash'?'03705519562':'03379827882';
+  setTimeout(checkSpecialOffers,5000);
 }
 
 // ===== RENDER PLANS =====
@@ -243,7 +252,7 @@ function renderPlans(){
   });
 }
 
-// ===== SPECIAL OFFER COUNTDOWN =====
+// ===== COUNTDOWN =====
 function startCountdown(id){
   const el=document.getElementById(`countdown${id}`);
   if(!el) return;
@@ -262,31 +271,32 @@ function startCountdown(id){
 // ===== BUY PLAN =====
 function buyPlan(id){
   const plan=plansData.find(p=>p.id===id);
-  activePlans.push({id, name: plan.name, invest: plan.invest, endTime: plan.endTime});
-  localStorage.setItem('verbose_activePlans',JSON.stringify(activePlans));
-  document.getElementById('depositAmount').value=plan.invest;
-  showPage('deposit');
-  updateDepositNumber();
-  updateActivePlans();
+  activePlans.push({id, name: plan.name, invest: plan.invest, endTime: plan.endTime});localStorage.setItem('verbose_activePlans', JSON.stringify(activePlans));
+  userPlans.push({id: plan.id, name: plan.name, invest: plan.invest, startTime: new Date().getTime()});
+  localStorage.setItem('verbose_userPlans', JSON.stringify(userPlans));
+  balance -= plan.invest;
+  localStorage.setItem('verbose_balance', balance);
+  dailyProfit = Math.round((plan.total / plan.days) * activePlans.length);
+  localStorage.setItem('verbose_daily', dailyProfit);
+  updateDashboard();
+  showPopup(`You bought ${plan.name} for Rs ${plan.invest}`);
 }
 
-// ===== ACTIVE PLANS =====
+// ===== ACTIVE PLANS DISPLAY =====
 function updateActivePlans(){
-  const box = document.getElementById('activePlansBox'); box.innerHTML='';
-  const now = new Date().getTime();
-  activePlans = activePlans.filter(p=>p.endTime>now);
-  localStorage.setItem('verbose_activePlans',JSON.stringify(activePlans));
-  activePlans.forEach(p=>{
-    const distance = p.endTime-now;
-    const hrs = Math.floor((distance % (1000*60*60*24)) / (1000*60*60));
-    const mins = Math.floor((distance % (1000*60*60)) / (1000*60));
-    const secs = Math.floor((distance % (1000*60)) / 1000);
+  const container = document.getElementById('activePlansBox');
+  container.innerHTML = '';
+  if(activePlans.length === 0){container.innerHTML = '<div class="small">No active plans</div>'; return;}
+  activePlans.forEach(p => {
     const div = document.createElement('div');
-    div.className='plan-box';
-    div.innerHTML=`<div class="meta"><b>${p.name}</b>
-      <div class="small">Invest: Rs ${p.invest}</div>
-      <div class="small">Ends in: ${hrs}h ${mins}m ${secs}s</div></div>`;
-    box.appendChild(div);
+    div.className = 'plan-box';
+    div.innerHTML = `
+      <div class="meta">
+        <b>${p.name}</b>
+        <div class="small">Invested: Rs ${p.invest}</div>
+        <div class="small">Ends: ${new Date(p.endTime).toLocaleString()}</div>
+      </div>`;
+    container.appendChild(div);
   });
 }
 
@@ -295,54 +305,68 @@ function updateActiveMembers(){
   document.getElementById('activeMembers').innerText = totalUsers;
 }
 
-// ===== HISTORY RENDER =====
+// ===== HISTORY =====
 function renderHistory(){
-  const list = document.getElementById('historyList'); list.innerHTML='';
-  if(history.length===0){ list.innerHTML='<p class="small">No transactions yet.</p>'; return;}
-  history.slice().reverse().forEach(h=>{
-    const div=document.createElement('div'); div.className='plan-box';
-    div.innerHTML=`<div class="meta"><b>${h.type}</b>
-      <div class="small">Amount: Rs ${h.amount}</div>
-      <div class="small">Date: ${new Date(h.date).toLocaleString()}</div>
-      ${h.method?'<div class="small">Method: '+h.method+'</div>':''}
-      ${h.status?'<div class="small">Status: '+h.status+'</div>':''}</div>`;
+  const list = document.getElementById('historyList');
+  list.innerHTML = '';
+  if(history.length === 0){list.innerHTML = '<div class="small">No history yet</div>'; return;}
+  history.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'plan-box';
+    div.innerHTML = `<div class="meta"><b>${item.type}</b><div class="small">Amount: Rs ${item.amount}</div><div class="small">${new Date(item.time).toLocaleString()}</div></div>`;
     list.appendChild(div);
   });
 }
 
-// ===== DEPOSIT =====
+// ===== DEPOSIT & WITHDRAW =====
 function submitDeposit(){
-  const method=document.getElementById('depositMethod').value;
-  const amount=parseFloat(document.getElementById('depositAmount').value)||0;
-  const txid=document.getElementById('depositTxId').value.trim();
-  if(amount<=0 || !txid){alert("Enter amount & TX ID"); return;}
-  balance+=amount; dailyProfit+=Math.round(amount*0.03);
-  localStorage.setItem('verbose_balance',balance);
-  localStorage.setItem('verbose_daily',dailyProfit);
-  history.push({type:'Deposit',amount,method,txid,date:new Date().getTime(),status:'Completed'});
-  localStorage.setItem('verbose_history',JSON.stringify(history));
-  alert('Deposit successful!');
-  updateDashboard();
-  showPage('dashboard');
+  const method = document.getElementById('depositMethod').value;
+  const number = document.getElementById('depositNumber').value;
+  const amount = parseFloat(document.getElementById('depositAmount').value);
+  const tx = document.getElementById('depositTxId').value.trim();
+  if(!amount || !tx){alert("Enter amount & TX ID"); return;}
+  history.push({type:`Deposit (${method})`, amount, time: new Date().getTime()});
+  localStorage.setItem('verbose_history', JSON.stringify(history));
+  showPopup(`Deposit Rs ${amount} submitted via ${method}`);
+  document.getElementById('depositAmount').value='';
+  document.getElementById('depositTxId').value='';
 }
 
-// ===== WITHDRAW =====
 function submitWithdraw(){
-  const method=document.getElementById('withdrawMethod').value;
-  const account=document.getElementById('withdrawAccount').value.trim();
-  const amount=parseFloat(document.getElementById('withdrawAmount').value)||0;
-  if(!account || amount<=0 || amount>balance){alert("Check account & amount"); return;}
-  balance-=amount;
-  localStorage.setItem('verbose_balance',balance);
-  history.push({type:'Withdrawal',amount,method,account,date:new Date().getTime(),status:'Pending'});
-  localStorage.setItem('verbose_history',JSON.stringify(history));
-  alert('Withdrawal request submitted!');
+  const method = document.getElementById('withdrawMethod').value;
+  const account = document.getElementById('withdrawAccount').value.trim();
+  const amount = parseFloat(document.getElementById('withdrawAmount').value);
+  if(!account || !amount || amount > balance){alert("Invalid withdraw details"); return;}
+  history.push({type:`Withdraw (${method})`, amount, time: new Date().getTime()});
+  balance -= amount;
+  localStorage.setItem('verbose_history', JSON.stringify(history));
+  localStorage.setItem('verbose_balance', balance);
   updateDashboard();
-  showPage('dashboard');
+  showPopup(`Withdrawal Rs ${amount} requested via ${method}`);
+  document.getElementById('withdrawAccount').value='';
+  document.getElementById('withdrawAmount').value='';
 }
 
-// ===== INITIALIZE =====
-if(currentUser) updateDashboard();
+// ===== POPUP =====
+function showPopup(msg){
+  const popup = document.getElementById('popup');
+  document.getElementById('popupText').innerText = msg;
+  popup.classList.remove('hidden');
+}
+function closePopup(){document.getElementById('popup').classList.add('hidden');}
+
+// ===== SPECIAL OFFERS CHECK =====
+function checkSpecialOffers(){
+  plansData.filter(p => p.special).forEach(p => {
+    const now = new Date().getTime();
+    if(now > savedEndTimes[p.id]){
+      showPopup(`${p.name} offer expired!`);
+    }
+  });
+}
+
+// ===== INIT =====
+if(currentUser){updateDashboard();}
 </script>
 </body>
 </html>
