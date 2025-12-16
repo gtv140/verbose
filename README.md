@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+ <VERBOSE>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
