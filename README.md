@@ -11,109 +11,117 @@
 
   /* AUTH SCREEN */
   #authPage { position: fixed; inset: 0; background: var(--bg); z-index: 20000; padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-  .auth-card { width: 100%; max-width: 400px; background: var(--card); border: 1px solid var(--border); padding: 45px 30px; border-radius: 40px; backdrop-filter: blur(30px); text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-  .auth-logo { font-size: 36px; font-weight: 800; letter-spacing: 15px; text-shadow: 0 0 25px var(--neon); margin-bottom: 5px; }
+  .auth-card { width: 100%; max-width: 400px; background: var(--card); border: 1px solid var(--border); padding: 40px; border-radius: 40px; backdrop-filter: blur(30px); text-align: center; }
   
-  /* INPUTS & BUTTONS */
-  input, select { width: 100%; padding: 18px; margin-top: 15px; border-radius: 20px; border: 1px solid var(--border); background: rgba(255,255,255,0.02); color: #fff; font-size: 14px; }
-  .btn-primary { width: 100%; padding: 18px; border-radius: 20px; border: none; font-weight: 800; cursor: pointer; background: linear-gradient(135deg, var(--neon), var(--accent)); color: #fff; margin-top: 25px; box-shadow: 0 10px 25px rgba(112,0,255,0.3); }
-  .wa-help { display: block; margin-top: 25px; font-size: 11px; color: var(--success); text-decoration: none; font-weight: 700; letter-spacing: 0.5px; }
-
-  /* HOME PAGE UI */
+  /* DASHBOARD UI */
   header { text-align: center; padding: 45px 20px 10px; cursor: pointer; }
+  .logo-text { font-size: 32px; font-weight: 800; letter-spacing: 12px; text-shadow: 0 0 25px var(--neon); color: #fff; }
   .page { max-width: 450px; margin: 0 auto; padding: 10px 20px 140px; display: none; }
-  .active { display: block !important; animation: fadeIn 0.4s ease-out; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+  .active { display: block !important; animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  .balance-card { background: linear-gradient(160deg, #0a0a0a, #000); border: 1px solid var(--border); padding: 35px; border-radius: 40px; margin-bottom: 30px; border-top: 1px solid var(--neon); }
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
+  .stat-card { background: var(--card); border: 1px solid var(--border); padding: 18px; border-radius: 25px; }
+  .stat-card small { font-size: 9px; opacity: 0.5; text-transform: uppercase; letter-spacing: 1px; }
+  .stat-card div { font-size: 16px; font-weight: 800; margin-top: 5px; color: var(--neon); }
+
+  /* NODE ICONS */
+  .node-card { background: var(--card); border: 1px solid var(--border); border-radius: 30px; padding: 15px; display: flex; align-items: center; gap: 15px; margin-bottom: 12px; }
+  .node-icon { width: 50px; height: 50px; background: rgba(0,247,255,0.05); border: 1px solid var(--neon); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
   
-  /* NODE LISTING */
-  .node-card { background: var(--card); border: 1px solid var(--border); border-radius: 35px; padding: 20px; display: flex; align-items: center; gap: 18px; margin-bottom: 15px; border-left: 5px solid var(--accent); }
-  .node-icon { width: 55px; height: 55px; background: rgba(0,247,255,0.03); border: 1px solid var(--neon); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 0 15px rgba(0,247,255,0.1); }
-  .node-info h4 { margin: 0; font-size: 14px; font-weight: 800; }
-  .node-info p { margin: 3px 0 0; font-size: 10px; opacity: 0.5; }
-  .buy-btn { margin-left: auto; background: var(--neon); color: #000; border: none; padding: 10px 16px; border-radius: 14px; font-weight: 800; font-size: 10px; cursor: pointer; }
+  /* HISTORY & POLICY */
+  .list-item { background: rgba(255,255,255,0.02); padding: 15px; border-radius: 20px; margin-bottom: 10px; font-size: 11px; border-left: 3px solid var(--accent); }
+  .policy-text { font-size: 11px; opacity: 0.6; line-height: 1.8; text-align: justify; }
 
-  /* LIVE CHAT */
-  .chat-box { height: 380px; overflow-y: auto; background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 30px; padding: 20px; margin-bottom: 15px; }
-  .msg { margin-bottom: 12px; padding: 12px 18px; border-radius: 20px; background: rgba(255,255,255,0.04); font-size: 12px; position: relative; }
-  .msg b { color: var(--neon); display: block; font-size: 9px; margin-bottom: 4px; text-transform: uppercase; }
-  .adm-msg { border: 1px solid var(--gold); background: rgba(255,204,0,0.05); }
-  .adm-msg b { color: var(--gold) !important; text-shadow: 0 0 8px var(--gold); }
-
-  /* NAV */
-  .nav { position: fixed; bottom: 30px; left: 20px; right: 20px; background: rgba(10,10,10,0.92); backdrop-filter: blur(20px); display: none; justify-content: space-around; padding: 22px; border-radius: 40px; border: 1px solid var(--border); z-index: 1000; }
-  .nav-item { font-size: 9px; opacity: 0.4; font-weight: 800; cursor: pointer; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
+  /* INPUTS & NAV */
+  input { width: 100%; padding: 16px; margin-top: 10px; border-radius: 18px; border: 1px solid var(--border); background: rgba(255,255,255,0.02); color: #fff; font-size: 13px; }
+  .btn-primary { width: 100%; padding: 16px; border-radius: 18px; border: none; font-weight: 800; cursor: pointer; background: linear-gradient(135deg, var(--neon), var(--accent)); color: #fff; margin-top: 15px; }
+  
+  .nav { position: fixed; bottom: 25px; left: 15px; right: 15px; background: rgba(10,10,10,0.95); backdrop-filter: blur(20px); display: none; justify-content: space-around; padding: 20px; border-radius: 35px; border: 1px solid var(--border); z-index: 1000; }
+  .nav-item { font-size: 8px; opacity: 0.4; font-weight: 800; cursor: pointer; color: #fff; text-transform: uppercase; }
   .nav-item.active { opacity: 1; color: var(--neon); }
-
-  /* TOAST */
-  #toast { position: fixed; top: 20px; right: 20px; left: 20px; background: rgba(0,0,0,0.85); border: 1px solid var(--success); padding: 15px; border-radius: 20px; font-size: 11px; z-index: 30000; display: none; backdrop-filter: blur(10px); text-align: center; }
 </style>
 </head>
 <body>
 
-<div id="toast"></div>
-
 <div id="authPage">
     <div class="auth-card">
-        <div class="auth-logo">VERBOSE</div>
-        <p style="font-size:9px; opacity:0.4; letter-spacing:4px; margin-bottom:30px;">QUANTUM DATA INFRASTRUCTURE</p>
+        <div class="logo-text" style="font-size:24px;">VERBOSE</div>
+        <p style="font-size:9px; opacity:0.4; letter-spacing:3px; margin-top:10px;">QUANTUM ACCESS PORTAL</p>
         <div id="authBox">
-            <input id="authPhone" type="number" placeholder="Mobile Node ID">
-            <input id="authPass" type="password" placeholder="Access Key (Password)">
-            <button class="btn-primary" onclick="handleAuth()">INITIALIZE SYSTEM</button>
-            <p id="authSwitch" style="font-size:11px; margin-top:20px; cursor:pointer; color:var(--neon);" onclick="toggleAuth()">New User? Register Node</p>
-            <a href="https://wa.me/923705519562?text=Hello%20Admin,%20I%20need%20help%20recovering%20my%20VERBOSE%20account." class="wa-help">
-                💬 FORGOT KEY? CONTACT WHATSAPP SUPPORT
-            </a>
+            <input id="authName" placeholder="Full Name (For New Users)">
+            <input id="authPhone" type="number" placeholder="Phone Number (Node ID)">
+            <input id="authPass" type="password" placeholder="Access Password">
+            <div style="margin-top:15px; display:flex; align-items:center; gap:10px;">
+                <input type="checkbox" id="terms" style="width:20px; margin:0;">
+                <label for="terms" style="font-size:10px; opacity:0.6;">I agree to Privacy Policy</label>
+            </div>
+            <button class="btn-primary" onclick="handleAuth()">LOGIN / REGISTER</button>
+            <a href="https://wa.me/923705519562" style="display:block; margin-top:20px; font-size:10px; color:var(--success); text-decoration:none; font-weight:800;">⚡ FORGOT PASSWORD? CHAT SUPPORT</a>
         </div>
     </div>
 </div>
 
 <header id="adminTrigger">
     <div class="logo-text">VERBOSE</div>
-    <div style="font-size:8px; opacity:0.5; margin-top:8px; letter-spacing:4px;">NEW YORK DATA CENTER v16.0</div>
 </header>
 
 <div id="dash" class="page">
-    <div class="balance-card">
-        <small style="opacity:0.5; text-transform:uppercase; letter-spacing:1.5px; font-size:9px;">Active Cloud Balance</small>
-        <div style="font-size:36px; font-weight:800; margin-top:10px;">PKR <span id="uBal">0.00</span></div>
+    <div class="stat-grid">
+        <div class="stat-card" style="grid-column: span 2; border-color: var(--neon); background: linear-gradient(135deg, #0a0a0a, #000);">
+            <small>Active Balance</small>
+            <div style="font-size:28px;">PKR <span id="uBal">0.00</span></div>
+            <p id="uNameDisplay" style="font-size:10px; margin:10px 0 0; opacity:0.5;"></p>
+        </div>
+        <div class="stat-card"><small>Daily Profit</small><div id="uDaily">0.00</div></div>
+        <div class="stat-card"><small>Total Mining</small><div id="uTotal">0.00</div></div>
     </div>
-    <h3 style="letter-spacing:2px; font-size:11px; margin: 0 0 20px 5px; opacity:0.8;">MINING SERVERS ONLINE</h3>
+    
+    <h3 style="font-size:11px; letter-spacing:2px; opacity:0.7;">MINING NODES (25 ONLINE)</h3>
     <div id="nodeGrid"></div>
 </div>
 
-<div id="chatPage" class="page">
-    <h3 style="letter-spacing:2px; font-size:13px; margin-bottom:20px;">OPERATOR GLOBAL NETWORK</h3>
-    <div class="chat-box" id="chatBox"></div>
-    <div style="display:flex; gap:10px;">
-        <input id="cInput" placeholder="Secure transmission..." style="margin-top:0; flex:1;">
-        <button class="btn-primary" style="margin-top:0; width:80px; border-radius:18px;" onclick="sendMsg()">SEND</button>
+<div id="history" class="page">
+    <h3 style="font-size:14px; letter-spacing:2px;">TRANSACTION LOGS</h3>
+    <div id="logsList">
+        <div class="list-item">No transactions found in cloud database.</div>
     </div>
 </div>
 
 <div id="finance" class="page">
-    <div class="balance-card" style="padding:25px; margin-bottom:15px;">
-        <h3 style="margin:0 0 10px 0; font-size:16px;">DEPOSIT ASSETS</h3>
-        <p style="font-size:10px; opacity:0.6;">JazzCash/SadaPay: 03705519562</p>
-        <input id="dAmt" type="number" placeholder="Enter Amount">
-        <input id="dTID" placeholder="Transaction ID (TID)">
-        <input type="file" id="dFile" style="font-size:10px;">
-        <button class="btn-primary" onclick="userDeposit()">SUBMIT DEPOSIT</button>
+    <div class="stat-card" style="margin-bottom:15px;">
+        <h3>DEPOSIT ASSETS</h3>
+        <p style="font-size:10px; opacity:0.6;">SadaPay/JazzCash: 03705519562</p>
+        <input id="dAmt" type="number" placeholder="Amount PKR">
+        <input id="dTID" placeholder="TID Number">
+        <button class="btn-primary" onclick="alert('Sent for verification!')">DEPOSIT NOW</button>
+    </div>
+    <div class="stat-card">
+        <h3>WITHDRAW</h3>
+        <input id="wAmt" type="number" placeholder="Amount PKR">
+        <input id="wNum" placeholder="Account Number">
+        <button class="btn-primary" style="background:var(--error);" onclick="alert('Pending Admin Approval!')">WITHDRAW</button>
     </div>
 </div>
 
+<div id="policy" class="page">
+    <h3>ABOUT VERBOSE</h3>
+    <p class="policy-text">VERBOSE Technology LLC is a New York-based quantum cloud infrastructure provider. We offer high-performance cloud mining nodes for global users. Registered: 244 Madison Ave, NY.</p>
+    <h3>PRIVACY POLICY</h3>
+    <p class="policy-text">1. Your data is encrypted with AES-256.<br>2. Withdrawals take 1-24 hours.<br>3. Multiple accounts are strictly prohibited.<br>4. Deposit confirmation requires a valid TID.</p>
+</div>
+
 <nav class="nav" id="mainNav">
-    <div class="nav-item active" onclick="tab('dash', this)">Nodes</div>
-    <div class="nav-item" onclick="tab('chatPage', this)">Chat</div>
+    <div class="nav-item active" onclick="tab('dash', this)">Home</div>
+    <div class="nav-item" onclick="tab('history', this)">History</div>
     <div class="nav-item" onclick="tab('finance', this)">Wallet</div>
-    <div class="nav-item" onclick="logout()">Exit</div>
+    <div class="nav-item" onclick="tab('policy', this)">About</div>
+    <div class="nav-item" onclick="logout()" style="color:var(--error);">Logout</div>
 </nav>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getDatabase, ref, set, update, onValue, get, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  import { getDatabase, ref, set, update, onValue, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBe5Q5jXpx3UvrHC9WOky9UWeDnP9SPfZI",
@@ -125,7 +133,6 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
-  let isLogin = true;
   let user = localStorage.getItem('v_user');
 
   // --- RENDER 25 NODES ---
@@ -133,56 +140,43 @@
   const grid = document.getElementById('nodeGrid');
   for(let i=1; i<=25; i++) {
     let price = 500 * i;
-    let icon = icons[i % icons.length];
     grid.innerHTML += `
       <div class="node-card">
-        <div class="node-icon">${icon}</div>
+        <div class="node-icon">${icons[i % icons.length]}</div>
         <div class="node-info">
-            <h4>Server Alpha v.${i}</h4>
-            <p>Cost: PKR ${price} | Daily: PKR ${50*i}</p>
+            <h4>Cloud Node v.${i}</h4>
+            <p>PKR ${price} | Daily: PKR ${50*i}</p>
         </div>
-        <button class="buy-btn" onclick="buyNode(${price})">BUY</button>
+        <button onclick="alert('Investment Initiated!')" style="background:var(--neon); border:none; padding:8px 12px; border-radius:10px; font-size:9px; font-weight:800; margin-left:auto; cursor:pointer;">BUY</button>
       </div>`;
   }
 
   // --- AUTH LOGIC ---
   window.handleAuth = async () => {
-    const p = document.getElementById('authPhone').value;
-    const s = document.getElementById('authPass').value;
-    if(!p || !s) return alert("Fill all credentials, sweetie!");
+    const name = document.getElementById('authName').value;
+    const phone = document.getElementById('authPhone').value;
+    const pass = document.getElementById('authPass').value;
+    const terms = document.getElementById('terms').checked;
 
-    const r = ref(db, `users/${p}`);
-    const snap = await get(r);
+    if(!phone || !pass || !terms) return alert("Fill all details and accept terms, sweetie!");
 
-    if(isLogin) {
-        if(snap.exists() && snap.val().pass === s) {
-            localStorage.setItem('v_user', p);
+    const userRef = ref(db, `users/${phone}`);
+    const snap = await get(userRef);
+
+    if(snap.exists()) {
+        if(snap.val().pass === pass) {
+            localStorage.setItem('v_user', phone);
             location.reload();
-        } else alert("Invalid Node ID or Key!");
+        } else alert("Invalid Password!");
     } else {
-        if(snap.exists()) return alert("Node ID already active!");
-        await set(r, { pass: s, balance: 0, status: 'Active' });
-        localStorage.setItem('v_user', p);
+        if(!name) return alert("Please enter your name for first-time registration!");
+        await set(userRef, { name, pass, balance: 0, daily: 0, total: 0, status: 'Active' });
+        localStorage.setItem('v_user', phone);
         location.reload();
     }
   };
 
-  window.toggleAuth = () => {
-    isLogin = !isLogin;
-    document.getElementById('authSwitch').innerText = isLogin ? "New User? Register Node" : "Existing Operator? Access ID";
-  };
-
-  // --- FAKE PAYOUT SYSTEM ---
-  setInterval(() => {
-    const t = document.getElementById('toast');
-    const u = ["Ali", "Sara", "Khan", "Deep", "Zain"][Math.floor(Math.random()*5)];
-    const a = [1000, 5000, 12000, 800][Math.floor(Math.random()*4)];
-    t.innerHTML = `💸 <b>Transmission:</b> ${u} withdrawn <b>PKR ${a}</b> via JazzCash`;
-    t.style.display = 'block';
-    setTimeout(() => t.style.display = 'none', 4000);
-  }, 18000);
-
-  // --- GLOBAL UI ---
+  // --- CORE SYSTEM ---
   window.tab = (id, el) => {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -197,7 +191,11 @@
     document.getElementById('mainNav').style.display = 'flex';
     document.getElementById('dash').classList.add('active');
     onValue(ref(db, `users/${user}`), s => {
-        document.getElementById('uBal').innerText = (s.val().balance || 0).toLocaleString();
+        const d = s.val();
+        document.getElementById('uBal').innerText = (d.balance || 0).toLocaleString();
+        document.getElementById('uDaily').innerText = (d.daily || 0).toLocaleString();
+        document.getElementById('uTotal').innerText = (d.total || 0).toLocaleString();
+        document.getElementById('uNameDisplay').innerText = "Operator: " + d.name;
     });
   }
 </script>
