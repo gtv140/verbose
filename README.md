@@ -2,189 +2,158 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>VERBOSE — Quantum Cloud Infrastructure</title>
+<title>VERBOSE — Quantum Cloud</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
   :root { --neon: #00f7ff; --accent: #7000ff; --bg: #030303; --card: rgba(255,255,255,0.03); --border: rgba(255,255,255,0.08); --success: #00ff88; --error: #ff4646; --gold: #ffcc00; }
   * { box-sizing: border-box; transition: 0.3s; font-family: 'Plus Jakarta Sans', sans-serif; outline: none; }
   body { margin:0; background: var(--bg); color: #fff; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
 
-  /* HEADER */
-  header { text-align: center; padding: 50px 20px 20px; cursor: pointer; }
-  .logo-text { font-size: 28px; font-weight: 800; letter-spacing: 14px; text-shadow: 0 0 30px var(--neon); color: #fff; }
-  .page { max-width: 450px; margin: 0 auto; padding: 20px 20px 140px; display: none; }
-  .active { display: block !important; animation: fadeIn 0.5s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  /* LOGIN & SIGNUP SCREEN */
+  #authPage { position: fixed; inset: 0; background: var(--bg); z-index: 20000; padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+  .auth-card { width: 100%; max-width: 400px; background: var(--card); border: 1px solid var(--border); padding: 40px 25px; border-radius: 40px; backdrop-filter: blur(25px); text-align: center; }
+  .auth-logo { font-size: 32px; font-weight: 800; letter-spacing: 12px; text-shadow: 0 0 20px var(--neon); margin-bottom: 10px; }
+  
+  /* INPUTS & BUTTONS */
+  input { width: 100%; padding: 18px; margin-top: 15px; border-radius: 20px; border: 1px solid var(--border); background: rgba(255,255,255,0.02); color: #fff; font-size: 14px; }
+  .btn-primary { width: 100%; padding: 18px; border-radius: 20px; border: none; font-weight: 800; cursor: pointer; background: linear-gradient(135deg, var(--neon), var(--accent)); color: #fff; margin-top: 20px; box-shadow: 0 10px 20px rgba(112,0,255,0.2); }
+  .help-link { font-size: 11px; margin-top: 25px; display: block; color: var(--success); text-decoration: none; font-weight: 600; }
 
-  /* DASHBOARD CARDS */
-  .stat-card { background: var(--card); border: 1px solid var(--border); padding: 18px; border-radius: 24px; text-align: left; backdrop-filter: blur(15px); }
-  .stat-card small { font-size: 9px; opacity: 0.5; text-transform: uppercase; letter-spacing: 1px; }
-  .stat-card div { font-size: 18px; font-weight: 800; margin-top: 5px; color: var(--neon); }
+  /* HOME PAGE UI */
+  header { text-align: center; padding: 40px 20px 10px; cursor: pointer; }
+  .page { max-width: 450px; margin: 0 auto; padding: 10px 20px 140px; display: none; }
+  .active { display: block !important; animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
-  /* CHAT STYLING */
-  .chat-box { height: 350px; overflow-y: auto; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 25px; padding: 15px; margin-bottom: 10px; }
-  .chat-msg { margin-bottom: 12px; padding: 10px 15px; border-radius: 18px; background: rgba(255,255,255,0.04); font-size: 12px; position: relative; }
-  .chat-msg b { color: var(--neon); display: block; font-size: 10px; margin-bottom: 3px; }
-  .admin-msg { border: 1px solid var(--gold); background: rgba(255,204,0,0.05); }
-  .admin-msg b { color: var(--gold) !important; text-shadow: 0 0 5px var(--gold); }
-  .admin-badge { background: var(--gold); color: #000; padding: 2px 6px; border-radius: 5px; font-size: 8px; font-weight: 800; margin-left: 5px; }
-
-  /* CLOUD NODES */
-  .node-card { background: var(--card); border: 1px solid var(--border); border-radius: 30px; padding: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--accent); }
-  .node-info h4 { margin: 0; font-size: 14px; color: #fff; }
-  .node-info p { margin: 5px 0 0; font-size: 10px; opacity: 0.6; }
-  .btn-buy { background: var(--neon); color: #000; border: none; padding: 10px 18px; border-radius: 15px; font-weight: 800; font-size: 10px; cursor: pointer; }
+  .balance-card { background: linear-gradient(135deg, #0a0a0a, #000); border: 1px solid var(--neon); padding: 30px; border-radius: 35px; margin-bottom: 30px; text-align: left; }
+  
+  /* NODE LISTING */
+  .node-card { background: var(--card); border: 1px solid var(--border); border-radius: 35px; padding: 20px; display: flex; align-items: center; gap: 20px; margin-bottom: 15px; border-left: 4px solid var(--accent); }
+  .node-icon { width: 55px; height: 55px; background: rgba(0,247,255,0.05); border: 1px solid var(--neon); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 26px; }
+  .node-info h4 { margin: 0; font-size: 14px; letter-spacing: 0.5px; }
+  .node-info p { margin: 4px 0 0; font-size: 10px; opacity: 0.5; }
+  .btn-activate { background: var(--neon); color: #000; padding: 10px 16px; border-radius: 12px; font-size: 10px; font-weight: 800; cursor: pointer; margin-left: auto; border: none; }
 
   /* NAV */
-  .nav { position: fixed; bottom: 30px; left: 20px; right: 20px; background: rgba(10,10,10,0.85); backdrop-filter: blur(20px); display: none; justify-content: space-around; padding: 22px; border-radius: 40px; border: 1px solid var(--border); z-index: 1000; }
+  .nav { position: fixed; bottom: 30px; left: 20px; right: 20px; background: rgba(10,10,10,0.9); backdrop-filter: blur(20px); display: none; justify-content: space-around; padding: 22px; border-radius: 40px; border: 1px solid var(--border); z-index: 1000; }
   .nav-item { font-size: 9px; opacity: 0.4; font-weight: 800; cursor: pointer; color: #fff; text-transform: uppercase; }
   .nav-item.active { opacity: 1; color: var(--neon); }
-
-  /* ADMIN UI */
-  #adminDash { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; padding: 20px; overflow-y: auto; }
 </style>
 </head>
 <body>
 
+<div id="authPage">
+    <div class="auth-card">
+        <div class="auth-logo">VERBOSE</div>
+        <p style="font-size:9px; opacity:0.4; letter-spacing:3px;">QUANTUM DATA CENTER</p>
+        <div id="authBox">
+            <input id="authPhone" type="number" placeholder="Mobile Node ID">
+            <input id="authPass" type="password" placeholder="Cloud Key (Password)">
+            <button class="btn-primary" onclick="handleAuth()">LOGIN SYSTEM</button>
+            
+            <p id="authSwitch" style="font-size:10px; margin-top:20px; cursor:pointer; color:var(--neon);" onclick="toggleAuth()">New Operator? Create Account</p>
+            
+            <a href="https://wa.me/923705519562?text=Hi%20Admin,%20I%20forgot%20my%20VERBOSE%20password." class="help-link">
+                ⚡ FORGOT PASSWORD? CHAT WITH HELP DESK
+            </a>
+        </div>
+    </div>
+</div>
+
 <header id="adminTrigger">
     <div class="logo-text">VERBOSE</div>
-    <div style="font-size:8px; opacity:0.5; margin-top:8px; letter-spacing:4px;">QUANTUM CLOUD INFRASTRUCTURE</div>
+    <div style="font-size:8px; opacity:0.5; margin-top:8px; letter-spacing:4px;">NYC CLOUD v15.0</div>
 </header>
 
 <div id="dash" class="page">
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px;">
-        <div class="stat-card" style="grid-column: span 2; background: linear-gradient(135deg, #0a0a0a, #000); border-color: var(--neon);">
-            <small>Active Net Balance</small>
-            <div style="font-size:32px;">PKR <span id="uBal">0.00</span></div>
-        </div>
-        <div class="stat-card"><small>Daily Yield</small><div id="uDaily">0.00</div></div>
-        <div class="stat-card"><small>Total Mining</small><div id="uTotal">0.00</div></div>
+    <div class="balance-card">
+        <small style="opacity:0.5; text-transform:uppercase; letter-spacing:1px;">Quantum Balance</small>
+        <div style="font-size:32px; font-weight:800; margin-top:10px;">PKR <span id="uBal">0.00</span></div>
     </div>
-    <div class="stat-card" style="margin-bottom: 25px; border-style: dashed;">
-        <small>Share & Earn (10%)</small>
-        <div id="refLink" style="font-size: 10px; color: var(--accent); margin-top: 5px; word-break: break-all;">---</div>
-    </div>
-    <h3 style="letter-spacing:2px; font-size:12px; margin-bottom:15px;">CLOUD NODES (ONLINE)</h3>
-    <div id="plansList"></div>
+    
+    <h3 style="letter-spacing:2px; font-size:11px; margin: 0 0 20px 5px; opacity:0.7;">ACTIVE MINING SERVERS</h3>
+    <div id="nodeGrid"></div>
 </div>
 
-<div id="chatPage" class="page">
-    <h3 style="letter-spacing:2px; font-size:14px; margin-bottom:15px;">OPERATOR NETWORK CHAT</h3>
-    <div class="chat-box" id="chatContainer"></div>
-    <div style="display:flex; gap:10px;">
-        <input id="chatInput" placeholder="Type a transmission..." style="flex:1; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:15px; padding:15px; color:#fff;">
-        <button class="btn-buy" style="height:50px;" onclick="sendChatMessage()">SEND</button>
-    </div>
-</div>
-
-<div id="finance" class="page">
-    <div class="stat-card" style="margin-bottom:20px;">
-        <h3>DEPOSIT</h3>
-        <p style="font-size:10px; opacity:0.6;">JazzCash/SadaPay: 03705519562</p>
-        <input id="dAmt" type="number" placeholder="PKR Amount">
-        <input id="dTID" placeholder="TID Number">
-        <input type="file" id="dFile" style="font-size:10px; margin-top:10px;">
-        <button class="btn-buy" style="width:100%; margin-top:15px;" onclick="userDeposit()">SUBMIT ASSETS</button>
-    </div>
-    <div class="stat-card">
-        <h3>WITHDRAW</h3>
-        <input id="wAmt" type="number" placeholder="PKR Amount">
-        <input id="wNum" placeholder="Account Number">
-        <select id="wMethod"><option>JazzCash</option><option>EasyPaisa</option></select>
-        <button class="btn-quantum" style="background:var(--error); margin-top:15px;" onclick="userWithdraw()">REQUEST PAYOUT</button>
-    </div>
-</div>
-
-<div id="adminDash">
-    <div style="display:flex; justify-content:space-between; margin-bottom:25px;">
-        <h2 style="color:var(--neon); font-size:16px;">VERBOSE_ROOT_ACCESS</h2>
-        <button onclick="document.getElementById('adminDash').style.display='none'" style="color:var(--error); border:1px solid var(--error); background:none; padding:10px; border-radius:12px;">EXIT</button>
-    </div>
-    <div id="admContent">
-        </div>
-</div>
-
-<div class="nav" id="mainNav">
+<nav class="nav" id="mainNav">
     <div class="nav-item active" onclick="tab('dash', this)">Nodes</div>
     <div class="nav-item" onclick="tab('chatPage', this)">Chat</div>
     <div class="nav-item" onclick="tab('finance', this)">Wallet</div>
     <div class="nav-item" onclick="logout()">Exit</div>
-</div>
+</nav>
 
 <script type="module">
-  // FIREBASE CONFIG (verbose-6c008 active)
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getDatabase, ref, set, update, onValue, get, remove, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  import { getDatabase, ref, set, update, onValue, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBe5Q5jXpx3UvrHC9WOky9UWeDnP9SPfZI",
     authDomain: "verbose-6c008.firebaseapp.com",
     projectId: "verbose-6c008",
     databaseURL: "https://verbose-6c008-default-rtdb.firebaseio.com",
-    storageBucket: "verbose-6c008.appspot.com",
     appId: "1:867100945312:web:315dfb48fb34496cee12c5"
   };
 
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
-  let user = localStorage.getItem('v_user');
-  let isAdmin = (user === "nazim786");
+  let isLogin = true;
 
-  // --- RENDER 25 PLANS ---
-  const pList = document.getElementById('plansList');
-  for(let i=1; i<=25; i++){
-      let price = 500 * i;
-      let profit = 50 * i;
-      pList.innerHTML += `
-        <div class="node-card">
-            <div class="node-info">
-                <h4>Quantum Node v.${i}</h4>
-                <p>Cost: PKR ${price} | Daily Yield: PKR ${profit}</p>
-            </div>
-            <button class="btn-buy" onclick="buyPlan(${price}, ${profit})">ACTIVATE</button>
-        </div>`;
+  // --- RENDER 25 NODES ---
+  const icons = ["📡", "🛰️", "🚀", "🧬", "💎", "⚡", "🌀"];
+  const grid = document.getElementById('nodeGrid');
+  for(let i=1; i<=25; i++) {
+    let price = 500 * i;
+    let icon = icons[i % icons.length];
+    grid.innerHTML += `
+      <div class="node-card">
+        <div class="node-icon">${icon}</div>
+        <div class="node-info">
+            <h4>Quantum Server v.${i}</h4>
+            <p>Investment: PKR ${price} | Daily Yield: PKR ${50*i}</p>
+        </div>
+        <button class="btn-activate" onclick="buyNode(${price})">BUY</button>
+      </div>`;
   }
 
-  // --- LIVE CHAT SYSTEM ---
-  window.sendChatMessage = () => {
-    const input = document.getElementById('chatInput');
-    if(!input.value) return;
-    push(ref(db, 'chat'), {
-        sender: user,
-        msg: input.value,
-        role: isAdmin ? 'admin' : 'user',
-        time: Date.now()
-    });
-    input.value = '';
-  };
+  // --- LOGIN LOGIC ---
+  window.handleAuth = async () => {
+    const phone = document.getElementById('authPhone').value;
+    const pass = document.getElementById('authPass').value;
+    if(!phone || !pass) return alert("Sweetie, please fill all fields!");
 
-  onValue(ref(db, 'chat'), s => {
-    const container = document.getElementById('chatContainer');
-    container.innerHTML = '';
-    s.forEach(child => {
-        const d = child.val();
-        const isAdminMsg = d.role === 'admin';
-        container.innerHTML += `
-            <div class="chat-msg ${isAdminMsg ? 'admin-msg' : ''}">
-                <b>@${d.sender} ${isAdminMsg ? '<span class="admin-badge">ADMIN</span>' : ''}</b>
-                ${d.msg}
-            </div>`;
-    });
-    container.scrollTop = container.scrollHeight;
-  });
+    const userRef = ref(db, `users/${phone}`);
+    const snap = await get(userRef);
 
-  // --- ADMIN TRIGGER ---
-  let clicks = 0;
-  document.getElementById('adminTrigger').onclick = () => {
-    if(++clicks >= 7) {
-        let key = prompt("ENTER ROOT KEY:");
-        if(key === "nazim786") {
-            document.getElementById('adminDash').style.display = 'block';
-            // loadAdminPanel(); // Function to load lists
-        }
-        clicks = 0;
+    if(isLogin) {
+        if(snap.exists() && snap.val().pass === pass) {
+            localStorage.setItem('v_user', phone);
+            location.reload();
+        } else alert("Error: Security Key Mismatch!");
+    } else {
+        if(snap.exists()) return alert("This Node ID is already active!");
+        await set(userRef, { pass, balance: 0, status: 'Active' });
+        localStorage.setItem('v_user', phone);
+        location.reload();
     }
   };
+
+  window.toggleAuth = () => {
+    isLogin = !isLogin;
+    document.getElementById('authSwitch').innerText = isLogin ? "New Operator? Create Account" : "Access Existing Node ID";
+  };
+
+  window.logout = () => { localStorage.clear(); location.reload(); };
+
+  // --- UI INIT ---
+  const user = localStorage.getItem('v_user');
+  if(user) {
+    document.getElementById('authPage').style.display = 'none';
+    document.getElementById('mainNav').style.display = 'flex';
+    document.getElementById('dash').classList.add('active');
+    onValue(ref(db, `users/${user}`), s => {
+        document.getElementById('uBal').innerText = (s.val().balance || 0).toLocaleString();
+    });
+  }
 
   window.tab = (id, el) => {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -192,13 +161,6 @@
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     el.classList.add('active');
   };
-
-  // Main Auth Check
-  if(user) {
-    document.getElementById('dash').classList.add('active');
-    document.getElementById('mainNav').style.display = 'flex';
-    document.getElementById('refLink').innerText = window.location.origin + "?ref=" + user;
-  }
 </script>
 </body>
 </html>
